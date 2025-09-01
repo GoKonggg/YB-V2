@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- EXPLORE PAGE LOGIC ---
     const programsToggle = document.getElementById('programs-toggle');
     const coachesToggle = document.getElementById('coaches-toggle');
+    const searchInput = document.getElementById('search-input');
+
     const programsView = document.getElementById('programs-view');
     const coachesView = document.getElementById('coaches-view');
     
@@ -38,10 +40,9 @@ document.addEventListener('DOMContentLoaded', () => {
             coachesView.classList.add('hidden');
             programsToggle.classList.add('toggle-active');
             coachesToggle.classList.remove('toggle-active');
-            
-            // Update which filter set is visible inside the panel
-            programFilters.classList.remove('hidden');
-            coachFilters.classList.add('hidden');
+            searchInput.placeholder = "Search for programs...";
+            // Trigger search filter when toggling
+            filterContent(); 
         });
 
         coachesToggle.addEventListener('click', () => {
@@ -49,10 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
             programsView.classList.add('hidden');
             coachesToggle.classList.add('toggle-active');
             programsToggle.classList.remove('toggle-active');
-            
-            // Update which filter set is visible inside the panel
-            coachFilters.classList.remove('hidden');
-            programFilters.classList.add('hidden');
+            searchInput.placeholder = "Search for coaches...";
+            // Trigger search filter when toggling
+            filterContent();
         });
     }
 
@@ -61,6 +61,35 @@ document.addEventListener('DOMContentLoaded', () => {
         filterButton.addEventListener('click', () => {
             filterPanel.classList.toggle('hidden');
         });
+    }
+
+    const filterContent = () => {
+        const searchTerm = searchInput.value.toLowerCase();
+        let itemsToFilter;
+        
+        // Cek view mana yang sedang aktif
+        if (!programsView.classList.contains('hidden')) {
+            itemsToFilter = programsView.querySelectorAll('.program-card');
+        } else {
+            itemsToFilter = coachesView.querySelectorAll('.coach-card');
+        }
+        
+        // Loop melalui setiap item dan tampilkan/sembunyikan berdasarkan pencarian
+        itemsToFilter.forEach(item => {
+            const titleElement = item.querySelector('.card-title');
+            const itemText = titleElement.textContent.toLowerCase();
+            
+            if (itemText.includes(searchTerm)) {
+                item.classList.remove('hidden');
+            } else {
+                item.classList.add('hidden');
+            }
+        });
+    };
+
+    // Tambahkan event listener ke search bar
+    if(searchInput) {
+        searchInput.addEventListener('keyup', filterContent);
     }
     
     // The "Apply" button also hides the filter panel

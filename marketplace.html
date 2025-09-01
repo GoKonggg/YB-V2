@@ -45,6 +45,11 @@
                     <h2 class="font-bold text-xl text-gray-900">Explore</h2>
                 </div>
 
+                <div class="relative mb-6">
+                    <input id="search-input" type="text" placeholder="Search for programs..." class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400 transition">
+                    <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+
                 <div class="flex items-center space-x-2 mb-4">
                     <div class="flex-grow p-1 bg-gray-200 rounded-xl flex justify-between items-center text-sm font-semibold text-gray-600">
                         <button id="programs-toggle" class="w-1/2 p-2 rounded-lg transition-all duration-300 toggle-active">Programs</button>
@@ -108,10 +113,10 @@
 </div>
 
                 <div id="programs-view" class="space-y-4">
-                    <div class="glass-card rounded-xl overflow-hidden shadow-sm">
+                    <div class="program-card glass-card rounded-xl overflow-hidden shadow-sm">
                         <img src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Program" class="w-full h-32 object-cover">
                         <div class="p-4">
-                            <p class="font-bold text-gray-900">Functional Full Body</p>
+                            <p class="card-title font-bold text-gray-900">Functional Full Body</p>
                             <p class="text-sm text-gray-600 mb-3">By Dave Spitz</p>
                             <div class="flex justify-between items-center">
                                 <p class="text-pink-500 font-bold">$15</p>
@@ -119,10 +124,10 @@
                             </div>
                         </div>
                     </div>
-                    <div class="glass-card rounded-xl overflow-hidden shadow-sm">
+                    <div class="program-card glass-card rounded-xl overflow-hidden shadow-sm">
                         <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Program" class="w-full h-32 object-cover">
                         <div class="p-4">
-                            <p class="font-bold text-gray-900">The Barbell WOD</p>
+                            <p class="card-title font-bold text-gray-900">The Barbell WOD</p>
                             <p class="text-sm text-gray-600 mb-3">By Sarah Williams</p>
                              <div class="flex justify-between items-center">
                                 <p class="text-pink-500 font-bold">$12/mo</p>
@@ -133,11 +138,11 @@
                 </div>
 
                 <div id="coaches-view" class="space-y-4 hidden">
-                    <a href="coach-profile.html" class="block glass-card rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <a href="coach-profile.html" class="coach-card block glass-card rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow duration-200">
                         <div class="flex items-center space-x-4">
                            <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="w-16 h-16 rounded-full object-cover">
                             <div>
-                                <p class="font-bold text-gray-900">Alex Johnson</p>
+                                <p class="card-title font-bold text-gray-900">Alex Johnson</p>
                                 <p class="text-sm text-gray-600">Strength & Conditioning</p>
                                 <p class="text-xs font-semibold text-gray-500 mt-1">Starts from $25/session</p>
                             </div>
@@ -146,11 +151,11 @@
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </div>
                     </a>
-                    <a href="maria-profile.html" class="block glass-card rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <a href="maria-profile.html" class="coach-card block glass-card rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow duration-200">
                         <div class="flex items-center space-x-4">
                             <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="w-16 h-16 rounded-full object-cover">
                              <div>
-                                <p class="font-bold text-gray-900">Maria Garcia</p>
+                                <p class="card-title font-bold text-gray-900">Maria Garcia</p>
                                 <p class="text-sm text-gray-600">Certified Nutritionist</p>
                                 <p class="text-xs font-semibold text-gray-500 mt-1">Starts from $20/session</p>
                             </div>
