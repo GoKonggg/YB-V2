@@ -1,4 +1,4 @@
-// File: main.js
+// File: main.js (Versi Final & Lengkap)
 
 document.addEventListener('DOMContentLoaded', () => {
     
@@ -16,11 +16,168 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     // =================================================================
+    // LOGIKA UMUM (NAVBAR & MENU)
+    // =================================================================
+    const plusButton = document.getElementById('plus-button');
+    const plusMenu = document.getElementById('plus-menu');
+
+    if (plusButton && plusMenu) {
+        plusButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            plusMenu.classList.toggle('hidden');
+        });
+
+        window.addEventListener('click', () => {
+            if (!plusMenu.classList.contains('hidden')) {
+                plusMenu.classList.add('hidden');
+            }
+        });
+    }
+
+    // =================================================================
+    // LOGIKA KHUSUS UNTUK HALAMAN diary.html
+    // =================================================================
+    const caloriesConsumedElement = document.getElementById('calories-consumed');
+    if (caloriesConsumedElement) {
+        const newFoodJSON = sessionStorage.getItem('newlyAddedFood');
+        if (newFoodJSON) {
+            const newFood = JSON.parse(newFoodJSON);
+            const cardBody = document.getElementById(`${newFood.meal}-card-body`);
+            
+            if (cardBody) {
+                const placeholder = cardBody.querySelector('.text-center');
+                if (placeholder) {
+                    placeholder.remove();
+                }
+
+                const foodElement = document.createElement('div');
+                foodElement.className = 'flex justify-between items-center text-sm p-2 bg-white/30 rounded-lg';
+                foodElement.innerHTML = `
+                    <div>
+                        <p class="font-semibold text-gray-800">${newFood.name}</p>
+                        <p class="text-xs text-gray-500">${newFood.serving}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-semibold text-gray-700">${newFood.calories} kal</p>
+                        <p class="text-xs text-gray-500">${newFood.time || ''}</p>
+                    </div>
+                `;
+                cardBody.appendChild(foodElement);
+
+                let currentCalories = parseInt(caloriesConsumedElement.textContent, 10);
+                currentCalories += newFood.calories;
+                caloriesConsumedElement.textContent = currentCalories;
+                
+                const caloriesProgress = document.getElementById('calories-progress');
+                const totalCaloriesGoal = 1836;
+                const progressPercentage = (currentCalories / totalCaloriesGoal) * 100;
+                caloriesProgress.style.width = `${Math.min(progressPercentage, 100)}%`;
+
+                sessionStorage.removeItem('newlyAddedFood');
+            }
+        }
+    }
+
+    // =================================================================
+    // LOGIKA KHUSUS UNTUK HALAMAN add-food.html
+    // =================================================================
+    const foodListContainer = document.getElementById('food-list');
+    if (foodListContainer) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const mealType = urlParams.get('meal') || 'breakfast';
+
+        const activeTab = document.getElementById(`tab-${mealType}`);
+        if (activeTab) {
+            activeTab.classList.add('bg-pink-500', 'text-white', 'shadow');
+            activeTab.classList.remove('text-gray-500');
+        }
+
+        let foodListHTML = '<div class="space-y-3">';
+        foods.forEach(food => {
+            const urlEncodedName = encodeURIComponent(food.name);
+            const urlEncodedServing = encodeURIComponent(food.serving);
+            
+            foodListHTML += `
+                <div class="food-item flex items-center justify-between p-3 rounded-lg bg-white/50">
+                    <div>
+                        <p class="font-bold text-gray-800">${food.name}</p>
+                        <p class="text-sm text-gray-500">${food.calories} kal, ${food.serving}</p>
+                    </div>
+                    <a href="add-food-details.html?meal=${mealType}&name=${urlEncodedName}&calories=${food.calories}&serving=${urlEncodedServing}&carbs=${food.carbs}&fat=${food.fat}&protein=${food.protein}" class="add-food-btn p-2 text-pink-500 rounded-full hover:bg-pink-100">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                    </a>
+                </div>
+            `;
+        });
+        foodListHTML += '</div>';
+        foodListContainer.innerHTML = foodListHTML;
+    }
+
+    // =================================================================
+    // LOGIKA KHUSUS UNTUK HALAMAN add-food-details.html
+    // =================================================================
+    const saveFoodBtn = document.getElementById('save-food-btn');
+    if(saveFoodBtn) {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        const meal = urlParams.get('meal');
+        const name = decodeURIComponent(urlParams.get('name'));
+        const calories = parseInt(urlParams.get('calories'));
+        const serving = decodeURIComponent(urlParams.get('serving'));
+        const carbs = parseFloat(urlParams.get('carbs'));
+        const fat = parseFloat(urlParams.get('fat'));
+        const protein = parseFloat(urlParams.get('protein'));
+
+        document.getElementById('food-name').textContent = name;
+        document.getElementById('food-serving').textContent = serving;
+        document.getElementById('meal-type').textContent = meal;
+        document.getElementById('food-calories').textContent = calories;
+        document.getElementById('food-carbs').textContent = carbs + ' g';
+        document.getElementById('food-fat').textContent = fat + ' g';
+        document.getElementById('food-protein').textContent = protein + ' g';
+        document.getElementById('back-link').href = `add-food.html?meal=${meal}`;
+        
+        const timeDisplay = document.getElementById('food-time');
+        const now = new Date();
+        let hours = now.getHours();
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        const formattedTime = `${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
+        timeDisplay.textContent = formattedTime;
+
+        const caloriesFromCarbs = carbs * 4;
+        const caloriesFromFat = fat * 9;
+        const caloriesFromProtein = protein * 4;
+        const totalMacroCalories = caloriesFromCarbs + caloriesFromFat + caloriesFromProtein || 1;
+        const carbsPercent = (caloriesFromCarbs / totalMacroCalories) * 100;
+        const fatPercent = (caloriesFromFat / totalMacroCalories) * 100;
+        const proteinPercent = (caloriesFromProtein / totalMacroCalories) * 100;
+        const carbsArc = document.querySelector('#carbs-arc circle');
+        const fatArc = document.querySelector('#fat-arc circle');
+        const proteinArc = document.querySelector('#protein-arc circle');
+        let accumulatedPercent = 0;
+        carbsArc.style.strokeDasharray = `${carbsPercent} 100`;
+        accumulatedPercent += carbsPercent;
+        fatArc.style.strokeDasharray = `${fatPercent} 100`;
+        fatArc.style.strokeDashoffset = -accumulatedPercent;
+        accumulatedPercent += fatPercent;
+        proteinArc.style.strokeDasharray = `${proteinPercent} 100`;
+        proteinArc.style.strokeDashoffset = -accumulatedPercent;
+
+        saveFoodBtn.addEventListener('click', () => {
+            const foodData = { name, calories, serving, meal, time: formattedTime };
+            sessionStorage.setItem('newlyAddedFood', JSON.stringify(foodData));
+            window.location.href = 'diary.html';
+        });
+    }
+
+    // =================================================================
     // LOGIKA UNTUK HALAMAN share-food.html
     // =================================================================
     const shareFoodListContainer = document.getElementById('share-food-list');
     if (shareFoodListContainer) {
-        // Logika Tab
         const tabCreate = document.getElementById('tab-create');
         const tabFind = document.getElementById('tab-find');
         const contentCreate = document.getElementById('content-create');
@@ -33,7 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
             tabFind.classList.remove('border-pink-500', 'text-pink-500');
             tabFind.classList.add('border-transparent', 'text-gray-400');
         });
-
         tabFind.addEventListener('click', () => {
             contentFind.classList.remove('hidden');
             contentCreate.classList.add('hidden');
@@ -41,8 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tabCreate.classList.remove('border-pink-500', 'text-pink-500');
             tabCreate.classList.add('border-transparent', 'text-gray-400');
         });
-
-        // Isi daftar makanan "Find From List"
+        
         let foodListHTML = '';
         foods.forEach(food => {
             const foodParams = new URLSearchParams(food).toString();
@@ -60,7 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         shareFoodListContainer.innerHTML = foodListHTML;
         
-        // Logika untuk tombol share dari form "Create Food"
         document.getElementById('share-custom-food-btn').addEventListener('click', () => {
             const customFood = {
                 name: document.getElementById('create-name').value,
@@ -97,7 +251,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 likes: 0,
                 comments: 0
             };
-
             sessionStorage.setItem('newPost', JSON.stringify(newPost));
             window.location.href = 'community.html?tab=friends';
         });
@@ -108,11 +261,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // =================================================================
     const feedFriendsContainer = document.getElementById('feed-friends');
     if (feedFriendsContainer) {
-        // Logika Tab
         const tabExplore = document.getElementById('tab-explore');
         const tabFriends = document.getElementById('tab-friends');
-        const feedExplore = document.getElementById('feed-explore');
         
+        // --- PERBAIKAN DI SINI ---
+        // Pindahkan deklarasi variabel ini ke atas
+        const feedExplore = document.getElementById('feed-explore');
+        const feedFriends = document.getElementById('feed-friends'); 
+        // --- PERBAIKAN SELESAI ---
+
         const setActiveTab = (activeTab, inactiveTab, activeFeed, inactiveFeed) => {
              activeTab.classList.add('border-pink-500', 'text-pink-500');
              inactiveTab.classList.remove('border-pink-500', 'text-pink-500');
@@ -123,13 +280,14 @@ document.addEventListener('DOMContentLoaded', () => {
         
         tabExplore.addEventListener('click', () => setActiveTab(tabExplore, tabFriends, feedExplore, feedFriends));
         tabFriends.addEventListener('click', () => setActiveTab(tabFriends, tabExplore, feedFriends, feedExplore));
-
-        // Cek apakah ada post baru dari sessionStorage
+        
         const newPostJSON = sessionStorage.getItem('newPost');
+        const urlParams = new URLSearchParams(window.location.search);
+
         if (newPostJSON) {
+            setActiveTab(tabFriends, tabExplore, feedFriends, feedExplore);
+
             const post = JSON.parse(newPostJSON);
-            
-            // Buat elemen HTML untuk post baru
             const postElement = document.createElement('div');
             postElement.className = 'glass-card rounded-xl p-4';
             postElement.innerHTML = `
@@ -157,16 +315,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             
-            // Tambahkan post baru ke bagian atas feed Friends
             feedFriendsContainer.prepend(postElement);
-
-            // Hapus dari storage agar tidak muncul lagi saat refresh
             sessionStorage.removeItem('newPost');
-        }
-
-        // Cek URL untuk mengaktifkan tab Friends
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('tab') === 'friends') {
+        } 
+        else if (urlParams.get('tab') === 'friends') {
             setActiveTab(tabFriends, tabExplore, feedFriends, feedExplore);
         }
     }
