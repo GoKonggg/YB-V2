@@ -47,9 +47,8 @@ function nextScreen() {
     } else if (currentScreenIndex === 5) {
         nextScreenNumber = 6;
     } else if (currentScreenIndex === 6) {
-        // CHANGE: Redirect to the diary page instead of showing screen 8
         window.location.href = 'diary.html';
-        return; // Stop the function here
+        return;
     }
 
     if (nextScreenNumber === 6) {
@@ -61,14 +60,10 @@ function nextScreen() {
 
 function prevScreen() {
     if (currentScreenIndex <= 1) return;
-
     let prevScreenNumber = currentScreenIndex - 1;
-
-    // If we are at the result screen (6) and the goal was to maintain, we should go back to activity (3)
     if (currentScreenIndex === 6 && userData.goal === 'maintain_weight') {
         prevScreenNumber = 3;
     }
-    
     showScreen(prevScreenNumber);
 }
 
@@ -84,12 +79,10 @@ function showScreen(screenNumber) {
         targetScreen.classList.add('visible');
     }
 
-    // UI elements visibility
     const progressContainer = document.getElementById('progress-container');
-
-    if (screenNumber >= 1 && screenNumber < 7) { // Onboarding screens
+    if (screenNumber >= 1 && screenNumber < 7) {
         progressContainer.classList.remove('hidden');
-    } else { // Landing, Home, or final sign up screen
+    } else {
         progressContainer.classList.add('hidden');
     }
     
@@ -103,11 +96,9 @@ function updateProgressBar() {
         document.getElementById('progress-bar').style.width = `0%`;
         return;
     }
-    // Cap progress at 100% on the result screen
     if (step > totalOnboardingScreens) {
         step = totalOnboardingScreens;
     }
-    
     const progress = (step / totalOnboardingScreens) * 100;
     document.getElementById('progress-bar').style.width = `${progress}%`;
 }
@@ -139,7 +130,7 @@ function saveScreenData(screenNumber) {
         const day = document.getElementById('dob-day').value.padStart(2, '0');
         const month = document.getElementById('dob-month').value.padStart(2, '0');
         const year = document.getElementById('dob-year').value;
-        userData.dob = `${year}-${month}-${day}`; // Format YYYY-MM-DD
+        userData.dob = `${year}-${month}-${day}`;
         userData.height = parseFloat(document.getElementById('height').value);
         userData.current_weight = parseFloat(document.getElementById('current_weight').value);
     }
@@ -153,7 +144,6 @@ function generatePaceScreen() {
     const goal = userData.goal;
     const weight = userData.current_weight;
     let content = '';
-
     if (goal === 'fat_loss') {
         const pace1 = (weight * 0.005).toFixed(2);
         const pace2 = (weight * 0.0075).toFixed(2);
@@ -205,42 +195,28 @@ function generatePaceScreen() {
 function calculateETA() {
     const { goal, current_weight, goal_weight, pace } = userData;
     if (goal === 'maintain_weight' || !goal_weight || !pace || pace <= 0) return null;
-
     const weightDifference = Math.abs(current_weight - goal_weight);
     if (weightDifference <= 0) return null;
-
     const weeks = weightDifference / pace;
     const days = Math.ceil(weeks * 7);
-
     const etaDate = new Date();
     etaDate.setDate(etaDate.getDate() + days);
-    
-    return etaDate.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
+    return etaDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 function animateCountUp(el, to) {
-    if (!el) {
-        console.error("animateCountUp: Element not found");
-        return;
-    }
+    if (!el) return;
     const finalValue = Math.round(to);
     if (isNaN(finalValue)) return;
-
     let from = 0;
-    const duration = 1000; // ms
-    const frameDuration = 1000 / 60; // 60fps
+    const duration = 1000;
+    const frameDuration = 1000 / 60;
     const totalFrames = Math.round(duration / frameDuration);
     const increment = finalValue / totalFrames;
-
     let currentFrame = 0;
     const timer = setInterval(() => {
         currentFrame++;
         from += increment;
-
         if (currentFrame >= totalFrames) {
             el.textContent = finalValue;
             clearInterval(timer);
@@ -248,7 +224,6 @@ function animateCountUp(el, to) {
             el.textContent = Math.round(from);
         }
     }, frameDuration);
-
     if (finalValue === 0) {
         el.textContent = 0;
         clearInterval(timer);
@@ -258,10 +233,8 @@ function animateCountUp(el, to) {
 function showResult() {
     const calculatingDiv = document.getElementById('calculating');
     const resultContentDiv = document.getElementById('result-content');
-    
     calculatingDiv.style.display = 'flex';
     resultContentDiv.style.display = 'none';
-
     resultContentDiv.querySelectorAll('.fade-in-up').forEach(el => {
         el.classList.remove('fade-in-up');
         el.style.opacity = '0';
@@ -269,27 +242,15 @@ function showResult() {
 
     setTimeout(() => {
         const finalCalories = calculateCalories();
+        // [DIPERBAIKI] Pindahkan baris ini ke sini agar dieksekusi setelah `finalCalories` dihitung
+        localStorage.setItem('calorieGoal', Math.round(finalCalories));
+        
         const calorieEl = document.getElementById('calorie-result');
         animateCountUp(calorieEl, finalCalories);
         
-        let subtext = '';
-        if(userData.goal === 'fat_loss') {
-            subtext = `Based on your target to lose ${userData.pace} kg per week.`;
-        } else if (userData.goal === 'muscle_gain') {
-            subtext = `Based on your target to gain ${userData.pace} kg per week.`;
-        } else {
-            subtext = `This is your maintenance calorie to keep your current weight.`;
-        }
-        
-        const subtextEl = document.getElementById('result-subtext');
-        if (subtextEl) {
-            subtextEl.textContent = subtext;
-        }
-
         const etaContainer = document.getElementById('eta-container');
         const etaResult = document.getElementById('eta-result');
         const eta = calculateETA();
-
         if (eta && etaResult && etaContainer) {
             etaResult.textContent = eta;
             etaContainer.classList.remove('hidden');
@@ -299,7 +260,6 @@ function showResult() {
 
         calculatingDiv.style.display = 'none';
         resultContentDiv.style.display = 'block';
-
         resultContentDiv.querySelectorAll('.opacity-0').forEach(el => {
             el.classList.add('fade-in-up');
         });
@@ -310,14 +270,12 @@ function calculateCalories() {
     const { gender, dob, height, current_weight, activity, goal, pace } = userData;
     if (!gender || !dob || !height || !current_weight || !activity) return 0;
     const age = new Date().getFullYear() - new Date(dob).getFullYear();
-    
     let bmr = 0;
     if (gender === 'male') {
         bmr = 88.362 + (13.397 * current_weight) + (4.799 * height) - (5.677 * age);
-    } else { // female
+    } else {
         bmr = 447.593 + (9.247 * current_weight) + (3.098 * height) - (4.330 * age);
     }
-
     const activityMultipliers = {
         sedentary: 1.2,
         lightly_active: 1.375,
@@ -325,9 +283,7 @@ function calculateCalories() {
         very_active: 1.725,
         extra_active: 1.9,
     };
-    
     let tdee = bmr * activityMultipliers[activity];
-
     if (goal === 'fat_loss' && pace) {
         const weeklyDeficit = pace * 7700;
         tdee -= (weeklyDeficit / 7);
@@ -335,14 +291,12 @@ function calculateCalories() {
         const weeklySurplus = pace * 3500;
         tdee += (weeklySurplus / 7);
     }
-
     return tdee;
 }
 
 function restart(event) {
     if(event) event.preventDefault();
     Object.keys(userData).forEach(k => userData[k] = null);
-
     document.querySelectorAll('.option-card').forEach(el => el.classList.remove('selected'));
     document.querySelectorAll('form').forEach(form => form.reset());
     document.getElementById('eta-container').classList.add('hidden');
@@ -353,16 +307,12 @@ function populateDateDropdowns() {
     const daySelect = document.getElementById('dob-day');
     const monthSelect = document.getElementById('dob-month');
     const yearSelect = document.getElementById('dob-year');
-
-    // Populate days
     for (let i = 1; i <= 31; i++) {
         const option = document.createElement('option');
         option.value = i;
         option.textContent = i;
         daySelect.appendChild(option);
     }
-
-    // Populate months
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     months.forEach((month, index) => {
         const option = document.createElement('option');
@@ -370,11 +320,9 @@ function populateDateDropdowns() {
         option.textContent = month.substring(0,3);
         monthSelect.appendChild(option);
     });
-
-    // Populate years
     const currentYear = new Date().getFullYear();
     const startYear = currentYear - 100;
-    for (let i = currentYear -18; i >= startYear; i--) {
+    for (let i = currentYear - 18; i >= startYear; i--) {
         const option = document.createElement('option');
         option.value = i;
         option.textContent = i;
@@ -382,8 +330,6 @@ function populateDateDropdowns() {
     }
 }
 
-// Initialize
 showScreen(0);
 populateDateDropdowns();
 
-// NOTE: The DOMContentLoaded listener for the plus button has been removed.

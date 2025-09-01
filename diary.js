@@ -5,7 +5,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const caloriesConsumedElement = document.getElementById('calories-consumed');
     if (!caloriesConsumedElement) return;
 
-    const totalCaloriesGoal = 1836;
+    // [DIUBAH] Ambil target kalori dari localStorage, atau gunakan nilai default
+    const savedGoal = localStorage.getItem('calorieGoal');
+    const totalCaloriesGoal = savedGoal ? parseInt(savedGoal, 10) : 1836;
+
+    // [BARU] Perbarui tampilan target kalori di UI
+    const caloriesGoalElement = document.getElementById('calories-goal');
+    if (caloriesGoalElement) {
+        caloriesGoalElement.textContent = `/ ${totalCaloriesGoal}`;
+    }
 
     const updateTotalCalories = () => {
         let total = 0;
@@ -47,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let startX = 0;
         let currentX = 0;
         let isSwiping = false;
-        const deleteThreshold = -100; // Jarak geser minimal untuk menghapus (dalam pixel)
+        const deleteThreshold = -100;
         const content = element.querySelector('.food-item-content');
         const deleteAction = element.querySelector('.delete-action');
 
@@ -63,9 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
             currentX = e.touches[0].clientX;
             let diff = currentX - startX;
             
-            if (diff < 0) { // Hanya saat geser ke kiri
+            if (diff < 0) {
                 content.style.transform = `translateX(${diff}px)`;
-                // Warna merah akan muncul seiring Anda menggeser
                 deleteAction.style.opacity = Math.min(Math.abs(diff) / Math.abs(deleteThreshold), 1);
             }
         });
@@ -78,10 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const diff = currentX - startX;
             
-            // Jika jarak geser melewati ambang batas, hapus item
             if (diff < deleteThreshold) {
                 deleteItem(element);
-            } else { // Jika tidak, kembalikan ke posisi semula
+            } else {
                 content.style.transform = 'translateX(0)';
                 deleteAction.style.opacity = '0';
             }
@@ -92,21 +98,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const deleteItem = (element) => {
         const cardBody = element.parentElement;
         
-        // Animasi "collapse"
         element.style.maxHeight = '0px';
         element.style.opacity = '0';
         
-        // Tunggu animasi selesai sebelum benar-benar menghapus elemen
         setTimeout(() => {
             element.remove();
             updateTotalCalories();
 
-            // Cek jika card meal kosong, tampilkan kembali placeholder
             if (cardBody.children.length === 0) {
                  const mealType = cardBody.id.split('-')[0];
                  cardBody.innerHTML = `<div class="text-center text-gray-500 py-6 bg-white/20 rounded-lg"><p class="text-sm">No ${mealType} logged yet.</p></div>`;
             }
-        }, 400); // Sesuaikan dengan durasi transisi di CSS
+        }, 400);
     };
 
     const processNewFood = () => {
@@ -131,3 +134,4 @@ document.addEventListener('DOMContentLoaded', () => {
     processNewFood();
     updateTotalCalories();
 });
+
