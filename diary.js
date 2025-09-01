@@ -1,50 +1,43 @@
-// File: diary.js (Versi Debugging)
+// File: diary.js
+// Fungsi: Menampilkan makanan yang baru ditambahkan di halaman Diary.
 
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("Halaman selesai dimuat, diary.js mulai berjalan...");
+document.addEventListener('DOMContentLoaded', () => {
+    const caloriesConsumedElement = document.getElementById('calories-consumed');
+    if (!caloriesConsumedElement) return; // Hanya berjalan di halaman diary
 
-    // Mencari tombol plus di HTML
-    console.log("Mencari elemen dengan id='plus-button'...");
-    const plusButton = document.getElementById('plus-button');
-
-    // Mencari menu di HTML
-    console.log("Mencari elemen dengan id='plus-menu'...");
-    const plusMenu = document.getElementById('plus-menu');
-
-    // Memeriksa apakah tombol ditemukan atau tidak
-    if (plusButton) {
-        console.log("✅ Tombol Plus DITEMUKAN!");
-    } else {
-        console.error("❌ Tombol Plus TIDAK Ditemukan! Periksa lagi id='plus-button' di HTML.");
-        return; // Hentikan eksekusi jika tombol tidak ada
-    }
-
-    // Memeriksa apakah menu ditemukan atau tidak
-    if (plusMenu) {
-        console.log("✅ Menu DITEMUKAN!");
-    } else {
-        console.error("❌ Menu TIDAK Ditemukan! Periksa lagi id='plus-menu' di HTML.");
-        return; // Hentikan eksekusi jika menu tidak ada
-    }
-
-    // Menambahkan event listener HANYA ke tombol plus
-    console.log("Menambahkan event listener 'click' ke Tombol Plus...");
-    plusButton.addEventListener('click', function(event) {
-        // Mencegah klik menyebar ke elemen lain
-        event.stopPropagation();
+    const newFoodJSON = sessionStorage.getItem('newlyAddedFood');
+    if (newFoodJSON) {
+        const newFood = JSON.parse(newFoodJSON);
+        const cardBody = document.getElementById(`${newFood.meal}-card-body`);
         
-        // Pesan ini HANYA akan muncul jika tombol plus yang BENAR-BENAR diklik
-        console.log("🎉 Tombol Plus DIKLIK! Menampilkan/menyembunyikan menu.");
-        
-        plusMenu.classList.toggle('hidden');
-    });
+        if (cardBody) {
+            const placeholder = cardBody.querySelector('.text-center');
+            if (placeholder) placeholder.remove();
 
-    console.log("Setup selesai. Menunggu klik pada tombol plus...");
+            const foodElement = document.createElement('div');
+            foodElement.className = 'flex justify-between items-center text-sm p-2 bg-white/30 rounded-lg';
+            foodElement.innerHTML = `
+                <div>
+                    <p class="font-semibold text-gray-800">${newFood.name}</p>
+                    <p class="text-xs text-gray-500">${newFood.serving}</p>
+                </div>
+                <div class="text-right">
+                    <p class="font-semibold text-gray-700">${newFood.calories} kal</p>
+                    <p class="text-xs text-gray-500">${newFood.time || ''}</p>
+                </div>
+            `;
+            cardBody.appendChild(foodElement);
 
-    // Event listener untuk window tetap sama
-    window.addEventListener('click', function() {
-        if (!plusMenu.classList.contains('hidden')) {
-            plusMenu.classList.add('hidden');
+            let currentCalories = parseInt(caloriesConsumedElement.textContent, 10);
+            currentCalories += newFood.calories;
+            caloriesConsumedElement.textContent = currentCalories;
+            
+            const caloriesProgress = document.getElementById('calories-progress');
+            const totalCaloriesGoal = 1836;
+            const progressPercentage = (currentCalories / totalCaloriesGoal) * 100;
+            caloriesProgress.style.width = `${Math.min(progressPercentage, 100)}%`;
+
+            sessionStorage.removeItem('newlyAddedFood');
         }
-    });
+    }
 });
