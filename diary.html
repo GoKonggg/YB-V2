@@ -18,6 +18,9 @@
         .bg-primary-gradient {
             background-image: linear-gradient(to right, #ec4899, #d946ef);
         }
+        .progress-track-bg {
+    background-color: rgba(223, 221, 223, 0.8); /* Warna putih yang lebih solid */
+}
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen p-4">
@@ -46,7 +49,7 @@
     </div>
     <span class="text-pink-500 font-semibold">Calories</span>
 </div>
-                    <div class="w-full bg-white/30 rounded-full h-2">
+                    <div class="w-full progress-track-bg rounded-full h-2">
                         <div id="calories-progress" class="bg-pink-500 h-2 rounded-full" style="width: 1%"></div>
                     </div>
                 </div>
@@ -72,7 +75,7 @@
                     <div class="glass-card rounded-xl p-4">
                         <div class="flex justify-between items-center mb-3">
                             <div class="flex items-center">
-    <img src="./ASSET/frying-pan.png" alt="Breakfast image" class="w-8 h-8 mr-3">
+    <img src="./ASSET/sandwich.png" alt="Breakfast image" class="w-8 h-8 mr-3">
     <h3 class="font-bold text-lg text-gray-900">Lunch</h3>
 </div>
                             <a href="add-food.html?meal=lunch" class="text-pink-500 p-1 rounded-full">
