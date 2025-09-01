@@ -242,7 +242,6 @@ function showResult() {
 
     setTimeout(() => {
         const finalCalories = calculateCalories();
-        // [DIPERBAIKI] Pindahkan baris ini ke sini agar dieksekusi setelah `finalCalories` dihitung
         localStorage.setItem('calorieGoal', Math.round(finalCalories));
         
         const calorieEl = document.getElementById('calorie-result');
@@ -270,12 +269,14 @@ function calculateCalories() {
     const { gender, dob, height, current_weight, activity, goal, pace } = userData;
     if (!gender || !dob || !height || !current_weight || !activity) return 0;
     const age = new Date().getFullYear() - new Date(dob).getFullYear();
+    
     let bmr = 0;
     if (gender === 'male') {
-        bmr = 88.362 + (13.397 * current_weight) + (4.799 * height) - (5.677 * age);
-    } else {
-        bmr = 447.593 + (9.247 * current_weight) + (3.098 * height) - (4.330 * age);
+        bmr = (10 * current_weight) + (6.25 * height) - (5 * age) + 5;
+    } else { // female
+        bmr = (10 * current_weight) + (6.25 * height) - (5 * age) - 161;
     }
+
     const activityMultipliers = {
         sedentary: 1.2,
         lightly_active: 1.375,
@@ -283,14 +284,18 @@ function calculateCalories() {
         very_active: 1.725,
         extra_active: 1.9,
     };
+    
     let tdee = bmr * activityMultipliers[activity];
+
     if (goal === 'fat_loss' && pace) {
-        const weeklyDeficit = pace * 7700;
+        // [DIUBAH] Mengganti 7700 menjadi 7000
+        const weeklyDeficit = pace * 7000;
         tdee -= (weeklyDeficit / 7);
     } else if (goal === 'muscle_gain' && pace) {
         const weeklySurplus = pace * 3500;
         tdee += (weeklySurplus / 7);
     }
+
     return tdee;
 }
 
