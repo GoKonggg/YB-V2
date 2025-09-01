@@ -1,0 +1,99 @@
+body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Color palette definition */
+        .bg-primary { background-color: #E54B8C; }
+        .bg-secondary { background-color: #D1A3B4; }
+        .bg-background { background-color: #FEF7F9; }
+        .text-primary { color: #E54B8C; }
+        .text-dark { color: #3D3D3D; }
+        .border-primary { border-color: #E54B8C; }
+        .border-secondary { border-color: #D1A3B4; }
+
+        
+        
+        /* Style for selected option */
+        .option-card.selected {
+            border-color: #E54B8C;
+            background-color: #FEF7F9;
+            box-shadow: 0 4px 14px 0 rgba(229, 75, 140, 0.2);
+        }
+        
+        /* Screen transition styles */
+        .screen {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+        .screen.hidden {
+            opacity: 0;
+            transform: translateX(20px);
+            pointer-events: none;
+            position: absolute;
+        }
+        .screen.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        /* Custom input style */
+        .form-input {
+            border: 2px solid #EAEAEA;
+            transition: border-color 0.3s;
+        }
+        .form-input:focus {
+            border-color: #E54B8C;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(229, 75, 140, 0.2);
+        }
+
+        /* Animation for result screen */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in-up {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.5);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+        .bg-primary-gradient {
+            background-image: linear-gradient(to right, #ec4899, #d946ef);
+        }
+
+        
+        .animation-delay-neg-4s {
+            animation-delay: -4s;
+        }
+
+        
+        /* Style untuk Pop-up Menu */
+#plus-menu {
+    transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+}
+
+#plus-menu.hidden {
+    transform: translate(-50%, 10px); /* Posisi saat tersembunyi sedikit di bawah */
+    opacity: 0;
+    pointer-events: none; /* Agar tidak bisa diklik saat tersembunyi */
+}
+
+#plus-menu:not(.hidden) {
+    transform: translate(-50%, 0); /* Posisi saat muncul */
+    opacity: 1;
+}
+
+/* Tambahkan di akhir file style.css */
+button:disabled {
+    cursor: not-allowed;
+}
+
+/* Add this new class to your style.css file */
+.nav-background {
+    background-color: white;
+    border-top: 1px solid #F3F4F6; /* Light gray top border for separation */
+    box-shadow: 0 -4px 12px 0 rgba(0, 0, 0, 0.05); /* Soft shadow pointing upwards */
+}

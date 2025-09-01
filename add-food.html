@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Tracker - Add Food</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+        .bg-primary-gradient {
+            background-image: linear-gradient(to right, #ec4899, #d946ef);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen p-4">
+
+    <div id="app-container" class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden relative h-[800px]">
+        
+        <div class="relative flex flex-col h-full bg-gray-50">
+            <div class="absolute top-0 -left-16 w-72 h-72 bg-pink-300 rounded-full opacity-30 filter blur-3xl"></div>
+            <div class="absolute bottom-0 -right-16 w-72 h-72 bg-purple-300 rounded-full opacity-30 filter blur-3xl"></div>
+            
+            <div class="relative z-10 flex flex-col h-full px-6 pt-8">
+                <div class="flex items-center justify-between mb-4 flex-shrink-0">
+                    <a href="diary.html" class="p-2 text-gray-600 rounded-full hover:bg-white/30">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </a>
+                    <h1 class="text-xl font-bold text-gray-900">Meal Time!</h1>
+                    <div class="w-10"></div>
+                </div>
+
+                <div class="flex justify-center space-x-2 mb-4 flex-shrink-0">
+                    <button id="tab-breakfast" class="px-3 py-2 text-sm font-semibold text-gray-500 rounded-full">Breakfast</button>
+                    <button id="tab-lunch" class="px-3 py-2 text-sm font-semibold text-gray-500 rounded-full">Lunch</button>
+                    <button id="tab-dinner" class="px-3 py-2 text-sm font-semibold text-gray-500 rounded-full">Dinner</button>
+                    <button id="tab-snacks" class="px-3 py-2 text-sm font-semibold text-gray-500 rounded-full">Snacks</button>
+                </div>
+
+                <div class="relative mb-4 flex-shrink-0">
+                    <input type="text" placeholder="Search foods..." class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-400">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+                
+                <div id="food-list" class="flex-grow overflow-y-auto -mr-2 pr-2 pb-28">
+                    </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="main.js"></script>
+</body>
+</html>
