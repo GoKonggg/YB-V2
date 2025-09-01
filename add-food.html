@@ -5,19 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Food Tracker - Add Food</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-        }
-        .bg-primary-gradient {
-            background-image: linear-gradient(to right, #ec4899, #d946ef);
-        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen p-4">
@@ -48,13 +38,29 @@
                     <input type="text" placeholder="Search foods..." class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-400">
                     <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
+
+                <div class="flex border-b border-gray-200 mb-4 flex-shrink-0">
+                    <button id="subtab-all" class="flex-1 text-center font-semibold py-2 border-b-2 border-pink-500 text-pink-500">All Food</button>
+                    <button id="subtab-my" class="flex-1 text-center font-semibold py-2 border-b-2 border-transparent text-gray-500">My Food</button>
+                    <button id="subtab-quick" class="flex-1 text-center font-semibold py-2 border-b-2 border-transparent text-gray-500">Quick Add</button>
+                </div>
                 
-                <div id="food-list" class="flex-grow overflow-y-auto -mr-2 pr-2 pb-28">
+                <div class="flex-grow overflow-y-auto -mr-2 pr-2 pb-28">
+                    <div id="content-all" class="space-y-3">
+                        </div>
+                    <div id="content-my" class="hidden text-center text-gray-500 pt-10">
+                        <p>You haven't saved any food yet.</p>
                     </div>
-            </div>
+                    <div id="content-quick" class="hidden space-y-4">
+                        <input type="text" placeholder="Food name (e.g., Quick Apple)" class="w-full p-3 border rounded-lg">
+                        <input type="number" placeholder="Total Calories" class="w-full p-3 border rounded-lg">
+                        <button class="w-full bg-pink-500 text-white font-bold py-3 rounded-lg">Add Quick Food</button>
+                    </div>
+                </div>
+                </div>
         </div>
     </div>
     
-    <script src="main.js"></script>
+    <script src="add-food.js"></script>
 </body>
 </html>
