@@ -1,29 +1,28 @@
-// File: main.js
-// Fungsi: Mengontrol menu pop-up dari tombol plus besar di navbar dan
-// mengingat halaman asal saat tombol plus ditekan.
-
 document.addEventListener('DOMContentLoaded', () => {
-    
-    // =================================================================
-    // LOGIKA UMUM (NAVBAR & MENU)
-    // =================================================================
-    const plusButton = document.getElementById('plus-button');
-    const plusMenu = document.getElementById('plus-menu');
+        
+        const plusButton = document.getElementById('plus-button');
+        const plusIcon = plusButton.querySelector('svg');
+        const emblemMenu = document.getElementById('emblem-menu');
+        const menuOverlay = document.getElementById('menu-overlay');
 
-    if (plusButton && plusMenu) {
-        plusButton.addEventListener('click', (event) => {
-            // Simpan halaman saat ini sebelum membuka menu
-            // Ini akan digunakan oleh halaman lain untuk link "kembali" yang cerdas
-            sessionStorage.setItem('flowOrigin', window.location.pathname); 
+        if (plusButton && emblemMenu && menuOverlay) {
+            plusButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                
+                const isHidden = emblemMenu.classList.toggle('hidden');
+                menuOverlay.classList.toggle('hidden');
+                
+                if (!isHidden) {
+                    plusIcon.style.transform = 'rotate(45deg)';
+                } else {
+                    plusIcon.style.transform = 'rotate(0deg)';
+                }
+            });
 
-            event.stopPropagation();
-            plusMenu.classList.toggle('hidden');
-        });
-
-        window.addEventListener('click', () => {
-            if (!plusMenu.classList.contains('hidden')) {
-                plusMenu.classList.add('hidden');
-            }
-        });
-    }
-});
+            menuOverlay.addEventListener('click', () => {
+                emblemMenu.classList.add('hidden');
+                menuOverlay.classList.add('hidden');
+                plusIcon.style.transform = 'rotate(0deg)';
+            });
+        }
+    });

@@ -20,23 +20,21 @@
             </div>
         </div>
 
-        <div id="screen-0" class="screen visible">
-             <div class="text-center pt-12 pb-8">
-                <svg class="w-24 h-24 mx-auto text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M2 12h20"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 7h2v10H5z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 7h2v10h-2z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 9h2v6H3z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9h2v6h-2z"></path>
-                </svg>
-                <h1 class="text-4xl font-bold text-dark mt-4">Food track</h1>
-                <p class="text-gray-500 mt-2">Your personal journey to health starts here.</p>
-            </div>
-            <div class="space-y-4 pt-4">
-                <button onclick="showScreen(1)" class="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 transition-opacity">Get Started</button>
-                <button onclick="window.location.href='diary.html'" class="w-full bg-white text-primary border-2 border-primary font-bold py-3 px-4 rounded-lg hover:bg-pink-50 transition-colors">Log In</button>
-            </div>
-        </div>
+        <div id="screen-0" class="screen visible flex flex-col justify-center items-center h-full px-8">
+
+    <div class="text-center">
+        <img src="./ASSET/Ananas-logo.png" class="mx-auto">
+        <h1 class="text-4xl font-bold text-dark mt-4">Lorem Ipsum</h1>
+        <p class="text-gray-500 mt-2">Your personal journey to health starts here.</p>
+    </div>
+
+    <div class="space-y-4 pt-12 w-full">
+        <button onclick="showScreen(1)" class="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 transition-opacity">Get Started</button>
+        <button onclick="window.location.href='diary.html'" class="w-full bg-white text-primary border-2 border-primary font-bold py-3 px-4 rounded-lg hover:bg-pink-50 transition-colors">Log In As User (Demo)</button>
+        <button onclick="window.location.href='coach-dashboard.html'" class="w-full bg-white text-primary border-2 border-primary font-bold py-3 px-4 rounded-lg hover:bg-pink-50 transition-colors">Log In As Coach (Demo)</button>
+    </div>
+
+</div>
 
         <div id="screen-1" class="screen hidden">
             <div class="relative flex items-center justify-center mb-2 h-8">

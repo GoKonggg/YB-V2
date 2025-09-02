@@ -1,99 +1,132 @@
-body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* Color palette definition */
-        .bg-primary { background-color: #E54B8C; }
-        .bg-secondary { background-color: #D1A3B4; }
-        .bg-background { background-color: #FEF7F9; }
-        .text-primary { color: #E54B8C; }
-        .text-dark { color: #3D3D3D; }
-        .border-primary { border-color: #E54B8C; }
-        .border-secondary { border-color: #D1A3B4; }
-
-        
-        
-        /* Style for selected option */
-        .option-card.selected {
-            border-color: #E54B8C;
-            background-color: #FEF7F9;
-            box-shadow: 0 4px 14px 0 rgba(229, 75, 140, 0.2);
-        }
-        
-        /* Screen transition styles */
-        .screen {
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-        }
-        .screen.hidden {
-            opacity: 0;
-            transform: translateX(20px);
-            pointer-events: none;
+/* CSS untuk Background Overlay */
+        #menu-overlay {
             position: absolute;
-        }
-        .screen.visible {
+            inset: 0;
+            background-color: rgba(249, 250, 251, 0.4); 
+            backdrop-filter: blur(3px);
+            z-index: 25;
             opacity: 1;
-            transform: translateX(0);
+            transform: scale(1);
+            transform-origin: 50% calc(100% - 80px);
+            transition: opacity 0.3s ease-in-out, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            -webkit-mask-image: radial-gradient(circle at 50% calc(100% - 80px), black 200px, transparent 300px);
+            mask-image: radial-gradient(circle at 50% calc(100% - 80px), black 200px, transparent 300px);
+        }
+        #menu-overlay.hidden {
+            opacity: 0;
+            transform: scale(0);
+            pointer-events: none;
+        }
+
+        /* CSS for Pentagon Emblem Menu */
+        #emblem-menu {
+            position: absolute;
+            bottom: 80px; 
+            left: 50%;
+            width: 280px; 
+            height: 200px;
+            margin-left: -140px;
+            z-index: 30;
+            pointer-events: none; 
+        }
+
+        /* [DIUBAH] Keyframe animations untuk setiap emblem */
+        @keyframes fly-out-1 {
+            from { transform: translateY(0) scale(0.1) rotate(-180deg); opacity: 0; }
+            to { transform: translateX(-65px) translateY(-25px) scale(1) rotate(0deg); opacity: 1; }
+        }
+        @keyframes fly-out-2 {
+            from { transform: translateY(0) scale(0.1) rotate(-180deg); opacity: 0; }
+            to { transform: translateX(-105px) translateY(-90px) scale(1) rotate(0deg); opacity: 1; }
+        }
+        @keyframes fly-out-3 {
+            from { transform: translateY(0) scale(0.1) rotate(-180deg); opacity: 0; }
+            to { transform: translateX(0px) translateY(-130px) scale(1) rotate(0deg); opacity: 1; }
+        }
+        @keyframes fly-out-4 {
+            from { transform: translateY(0) scale(0.1) rotate(-180deg); opacity: 0; }
+            to { transform: translateX(105px) translateY(-90px) scale(1) rotate(0deg); opacity: 1; }
+        }
+        @keyframes fly-out-5 {
+            from { transform: translateY(0) scale(0.1) rotate(-180deg); opacity: 0; }
+            to { transform: translateX(65px) translateY(-25px) scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .emblem-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 72px;
+            height: 72px;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-decoration: none;
+            color: #4b5563;
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            margin-left: -36px;
+            pointer-events: none;
+            opacity: 0;
+            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+        }
+
+        #emblem-menu.hidden .emblem-item {
+            opacity: 0;
+            pointer-events: none;
+            animation: none;
+        }
+
+        /* [DIUBAH] Terapkan animasi saat menu terlihat */
+        #emblem-menu:not(.hidden) .emblem-item {
+            pointer-events: auto;
+            animation-duration: 0.6s;
+            animation-fill-mode: forwards;
+            animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        #emblem-menu:not(.hidden) .emblem-item:nth-child(1) {
+            animation-name: fly-out-1;
+            animation-delay: 0s;
+        }
+        #emblem-menu:not(.hidden) .emblem-item:nth-child(2) {
+            animation-name: fly-out-2;
+            animation-delay: 0.08s;
+        }
+        #emblem-menu:not(.hidden) .emblem-item:nth-child(3) {
+            animation-name: fly-out-3;
+            animation-delay: 0.16s;
+        }
+        #emblem-menu:not(.hidden) .emblem-item:nth-child(4) {
+            animation-name: fly-out-4;
+            animation-delay: 0.24s;
+        }
+        #emblem-menu:not(.hidden) .emblem-item:nth-child(5) {
+            animation-name: fly-out-5;
+            animation-delay: 0.32s;
         }
         
-        /* Custom input style */
-        .form-input {
-            border: 2px solid #EAEAEA;
-            transition: border-color 0.3s;
-        }
-        .form-input:focus {
-            border-color: #E54B8C;
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(229, 75, 140, 0.2);
+        #emblem-menu:not(.hidden) .emblem-item:nth-child(1):hover { transform: translateX(-65px) translateY(-25px) scale(1.1); }
+        #emblem-menu:not(.hidden) .emblem-item:nth-child(2):hover { transform: translateX(-105px) translateY(-90px) scale(1.1); }
+        #emblem-menu:not(.hidden) .emblem-item:nth-child(3):hover { transform: translateX(0px) translateY(-130px) scale(1.1); }
+        #emblem-menu:not(.hidden) .emblem-item:nth-child(4):hover { transform: translateX(105px) translateY(-90px) scale(1.1); }
+        #emblem-menu:not(.hidden) .emblem-item:nth-child(5):hover { transform: translateX(65px) translateY(-25px) scale(1.1); }
+
+        .emblem-item:hover {
+            box-shadow: 0 8px 16px rgba(236, 72, 153, 0.3);
         }
 
-        /* Animation for result screen */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .emblem-item svg {
+            width: 28px;
+            height: 28px;
+            color: #ec4899; /* text-pink-500 */
+            margin-bottom: 4px;
         }
-        .fade-in-up {
-            animation: fadeIn 0.6s ease-out forwards;
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.5);
-            -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-        }
-        .bg-primary-gradient {
-            background-image: linear-gradient(to right, #ec4899, #d946ef);
-        }
-
         
-        .animation-delay-neg-4s {
-            animation-delay: -4s;
+        .emblem-item span {
+            font-size: 10px;
+            font-weight: 500;
+            text-align: center;
         }
-
-        
-        /* Style untuk Pop-up Menu */
-#plus-menu {
-    transition: transform 0.2s ease-out, opacity 0.2s ease-out;
-}
-
-#plus-menu.hidden {
-    transform: translate(-50%, 10px); /* Posisi saat tersembunyi sedikit di bawah */
-    opacity: 0;
-    pointer-events: none; /* Agar tidak bisa diklik saat tersembunyi */
-}
-
-#plus-menu:not(.hidden) {
-    transform: translate(-50%, 0); /* Posisi saat muncul */
-    opacity: 1;
-}
-
-/* Tambahkan di akhir file style.css */
-button:disabled {
-    cursor: not-allowed;
-}
-
-/* Add this new class to your style.css file */
-.nav-background {
-    background-color: white;
-    border-top: 1px solid #F3F4F6; /* Light gray top border for separation */
-    box-shadow: 0 -4px 12px 0 rgba(0, 0, 0, 0.05); /* Soft shadow pointing upwards */
-}
