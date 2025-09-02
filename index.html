@@ -3,217 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Food Tracker Prototype</title>
+    <title>Food Tracker Onboarding</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+        .bg-primary-gradient {
+            background-image: linear-gradient(to right, #ec4899, #d946ef);
+        }
+        .form-input-custom {
+            background-color: rgba(229, 231, 235, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: box-shadow 0.2s;
+        }
+        .form-input-custom:focus {
+            box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.5);
+            outline: none;
+        }
+        .option-card.selected {
+            border-color: #ec4899;
+            box-shadow: 0 0 0 2px #ec4899;
+        }
+        .fade-in-up {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
-<body class="bg-background text-dark flex items-center justify-center min-h-screen p-4">
+<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen p-4">
 
-    <div id="app-container" class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-xl p-6 md:p-8 relative h-[800px]">
+    <div id="app-container" class="w-full max-w-md mx-auto bg-gray-50 rounded-2xl shadow-xl relative h-[800px] overflow-hidden">
         
-        <div id="progress-container" class="hidden mb-6">
-            <div class="w-full bg-gray-200 rounded-full h-2">
-                <div id="progress-bar" class="bg-primary h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
-            </div>
-        </div>
+        <div class="absolute top-0 -left-16 w-72 h-72 bg-pink-300 rounded-full opacity-30 filter blur-3xl"></div>
+        <div class="absolute bottom-0 -right-16 w-72 h-72 bg-purple-300 rounded-full opacity-30 filter blur-3xl"></div>
 
-        <div id="screen-0" class="screen visible flex flex-col justify-center items-center h-full px-8">
-
-    <div class="text-center">
-        <img src="./ASSET/Ananas-logo.png" class="mx-auto">
-        <h1 class="text-4xl font-bold text-dark mt-4">Lorem Ipsum</h1>
-        <p class="text-gray-500 mt-2">Your personal journey to health starts here.</p>
-    </div>
-
-    <div class="space-y-4 pt-12 w-full">
-        <button onclick="showScreen(1)" class="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 transition-opacity">Get Started</button>
-        <button onclick="window.location.href='diary.html'" class="w-full bg-white text-primary border-2 border-primary font-bold py-3 px-4 rounded-lg hover:bg-pink-50 transition-colors">Log In As User (Demo)</button>
-        <button onclick="window.location.href='coach-dashboard.html'" class="w-full bg-white text-primary border-2 border-primary font-bold py-3 px-4 rounded-lg hover:bg-pink-50 transition-colors">Log In As Coach (Demo)</button>
-    </div>
-
-</div>
-
-        <div id="screen-1" class="screen hidden">
-            <div class="relative flex items-center justify-center mb-2 h-8">
-                <h1 class="text-2xl font-bold">Welcome!</h1>
-            </div>
-            <p class="text-center text-gray-500 mb-8">To get started, what's your main goal?</p>
-            
-            <div class="space-y-4">
-                <div onclick="selectOption('goal', 'fat_loss', this)" class="option-card border-2 border-gray-200 p-5 rounded-xl cursor-pointer transition-all duration-300 hover:shadow-md">
-                    <h3 class="font-semibold text-lg">Fat Loss</h3>
-                </div>
-                <div onclick="selectOption('goal', 'maintain_weight', this)" class="option-card border-2 border-gray-200 p-5 rounded-xl cursor-pointer transition-all duration-300 hover:shadow-md">
-                    <h3 class="font-semibold text-lg">Maintain Weight</h3>
-                </div>
-                <div onclick="selectOption('goal', 'muscle_gain', this)" class="option-card border-2 border-gray-200 p-5 rounded-xl cursor-pointer transition-all duration-300 hover:shadow-md">
-                    <h3 class="font-semibold text-lg">Muscle Gain</h3>
+        <div class="relative z-10 h-full flex flex-col p-6">
+            <div id="progress-container" class="hidden h-2 mb-6">
+                <div class="w-full bg-gray-200/50 rounded-full h-2">
+                    <div id="progress-bar" class="bg-primary-gradient h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
                 </div>
             </div>
 
-            <button onclick="nextScreen()" id="btn-screen-1" class="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg mt-8 hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed" disabled>Continue</button>
-        </div>
-
-        <div id="screen-2" class="screen hidden">
-            <div class="relative flex items-center justify-center mb-2 h-8">
-                <button onclick="prevScreen()" class="absolute left-0 text-gray-500 hover:text-dark p-1 rounded-full hover:bg-gray-100 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                </button>
-                <h1 class="text-2xl font-bold">About You</h1>
-            </div>
-            <p class="text-center text-gray-500 mb-8">This info helps us calculate your BMR (Basal Metabolic Rate).</p>
-            
-            <form id="form-screen-2" class="space-y-4">
-                <div>
-                    <label class="font-semibold">Gender</label>
-                    <div class="grid grid-cols-2 gap-4 mt-2">
-                        <div onclick="selectOption('gender', 'male', this)" class="option-card text-center border-2 border-gray-200 p-4 rounded-xl cursor-pointer">Male</div>
-                        <div onclick="selectOption('gender', 'female', this)" class="option-card text-center border-2 border-gray-200 p-4 rounded-xl cursor-pointer">Female</div>
+            <div class="flex-grow flex flex-col">
+                <div id="screen-0" class="screen visible flex flex-col justify-center items-center h-full">
+                    <div class="text-center">
+                        <img src="./ASSET/Ananas-logo.png" alt="Ananas Logo" class="mx-auto" style="mix-blend-mode: multiply;">
+                        <h1 class="text-4xl font-bold text-gray-800 mt-6">Welcome</h1>
+                        <p class="text-gray-500 mt-2">Your personal journey to health starts here.</p>
+                    </div>
+                    <div class="space-y-4 pt-12 w-full">
+                        <button onclick="showScreen(1)" class="w-full bg-primary-gradient text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:opacity-90 transition-opacity">Get Started</button>
+                        <button onclick="window.location.href='diary.html'" class="w-full glass-card text-pink-500 font-bold py-3 px-4 rounded-xl hover:bg-white/50 transition-colors">Log In As User (Demo)</button>
+                        <button onclick="window.location.href='coach-dashboard.html'" class="w-full glass-card text-pink-500 font-bold py-3 px-4 rounded-xl hover:bg-white/50 transition-colors">Log In As Coach (Demo)</button>
                     </div>
                 </div>
-                <div>
-                    <label class="font-semibold">Date of Birth</label>
-                    <div class="grid grid-cols-3 gap-2 mt-2">
-                        <select id="dob-day" class="form-input w-full p-3 rounded-lg bg-white">
-                            <option value="">Day</option>
-                        </select>
-                        <select id="dob-month" class="form-input w-full p-3 rounded-lg bg-white">
-                            <option value="">Month</option>
-                        </select>
-                        <select id="dob-year" class="form-input w-full p-3 rounded-lg bg-white">
-                            <option value="">Year</option>
-                        </select>
+
+                <div id="screen-1" class="screen hidden">
+                    <h1 class="text-2xl font-bold text-center">Welcome!</h1>
+                    <p class="text-center text-gray-500 mb-8">To get started, what's your main goal?</p>
+                    <div class="space-y-4">
+                        <div onclick="selectOption('goal', 'fat_loss', this)" class="option-card glass-card p-5 rounded-xl cursor-pointer transition-all duration-300">
+                            <h3 class="font-semibold text-lg text-gray-800">Fat Loss</h3>
+                        </div>
+                        <div onclick="selectOption('goal', 'maintain_weight', this)" class="option-card glass-card p-5 rounded-xl cursor-pointer transition-all duration-300">
+                            <h3 class="font-semibold text-lg text-gray-800">Maintain Weight</h3>
+                        </div>
+                        <div onclick="selectOption('goal', 'muscle_gain', this)" class="option-card glass-card p-5 rounded-xl cursor-pointer transition-all duration-300">
+                            <h3 class="font-semibold text-lg text-gray-800">Muscle Gain</h3>
+                        </div>
                     </div>
+                    <button onclick="nextScreen()" id="btn-screen-1" class="w-full bg-primary-gradient text-white font-bold py-3 px-4 rounded-lg mt-8 hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed" disabled>Continue</button>
                 </div>
-                <div>
-                    <label for="height" class="font-semibold">Height (cm)</label>
-                    <input type="number" id="height" placeholder="e.g., 170" class="form-input w-full p-3 rounded-lg mt-2">
-                </div>
-                <div>
-                    <label for="current_weight" class="font-semibold">Current Weight (kg)</label>
-                    <input type="number" id="current_weight" placeholder="e.g., 65" class="form-input w-full p-3 rounded-lg mt-2">
-                </div>
-            </form>
 
-            <button onclick="nextScreen()" id="btn-screen-2" class="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg mt-8 hover:opacity-90 transition-opacity">Continue</button>
-        </div>
-
-        <div id="screen-3" class="screen hidden">
-             <div class="relative flex items-center justify-center mb-2 h-8">
-                <button onclick="prevScreen()" class="absolute left-0 text-gray-500 hover:text-dark p-1 rounded-full hover:bg-gray-100 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                </button>
-                <h1 class="text-2xl font-bold">Your Lifestyle</h1>
-            </div>
-            <p class="text-center text-gray-500 mb-8">How active are you? Be honest! This is key to calculating your total daily calorie needs.</p>
-            
-            <div class="space-y-3">
-                <div onclick="selectOption('activity', 'sedentary', this)" class="option-card border-2 border-gray-200 p-4 rounded-xl cursor-pointer">
-                    <h3 class="font-semibold">Sedentary</h3>
-                    <p class="text-sm text-gray-500">Office job, very little exercise</p>
-                </div>
-                <div onclick="selectOption('activity', 'lightly_active', this)" class="option-card border-2 border-gray-200 p-4 rounded-xl cursor-pointer">
-                    <h3 class="font-semibold">Lightly Active</h3>
-                    <p class="text-sm text-gray-500">Light exercise 1-3 days/week</p>
-                </div>
-                <div onclick="selectOption('activity', 'moderately_active', this)" class="option-card border-2 border-gray-200 p-4 rounded-xl cursor-pointer">
-                    <h3 class="font-semibold">Moderately Active</h3>
-                    <p class="text-sm text-gray-500">Moderate exercise 3-5 days/week</p>
-                </div>
-                 <div onclick="selectOption('activity', 'very_active', this)" class="option-card border-2 border-gray-200 p-4 rounded-xl cursor-pointer">
-                    <h3 class="font-semibold">Very Active</h3>
-                    <p class="text-sm text-gray-500">Hard exercise 6-7 days/week</p>
-                </div>
-                <div onclick="selectOption('activity', 'extra_active', this)" class="option-card border-2 border-gray-200 p-4 rounded-xl cursor-pointer">
-                    <h3 class="font-semibold">Extra Active</h3>
-                    <p class="text-sm text-gray-500">Hard physical job or athlete</p>
-                </div>
-            </div>
-
-            <button onclick="nextScreen()" id="btn-screen-3" class="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg mt-8 hover:opacity-90 transition-opacity disabled:opacity-50" disabled>Continue</button>
-        </div>
-        
-        <div id="screen-4" class="screen hidden">
-            </div>
-
-        <div id="screen-5" class="screen hidden">
-            <div class="relative flex items-center justify-center mb-2 h-8">
-                <button onclick="prevScreen()" class="absolute left-0 text-gray-500 hover:text-dark p-1 rounded-full hover:bg-gray-100 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                </button>
-                <h1 class="text-2xl font-bold">Your Target</h1>
-            </div>
-            <p class="text-center text-gray-500 mb-8">This is the finish line we'll work towards together.</p>
-            
-            <div>
-                <label for="goal_weight" class="font-semibold">Goal Weight (kg)</label>
-                <input type="number" id="goal_weight" placeholder="e.g., 55" class="form-input w-full p-3 rounded-lg mt-2">
-            </div>
-            
-            <button onclick="nextScreen()" id="btn-screen-5" class="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg mt-8 hover:opacity-90 transition-opacity">Continue</button>
-        </div>
-
-        <div id="screen-6" class="screen hidden text-center">
-            <div id="calculating" class="flex flex-col items-center justify-center h-full">
-                 <svg class="animate-spin h-10 w-10 text-primary mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                 </svg>
-                <h2 class="text-xl font-semibold">Calculating your plan...</h2>
-            </div>
-            <div id="result-content" class="hidden">
-                <h1 class="text-2xl font-bold mb-2 opacity-0 fade-in-up">All set! Here's your starting plan.</h1>
-                <p class="text-gray-500 mb-6 opacity-0 fade-in-up" style="animation-delay: 0.2s;">Your recommended daily calories:</p>
-                <div class="bg-primary bg-opacity-10 p-6 rounded-full w-44 h-44 mx-auto flex items-center justify-center mb-6 opacity-0 fade-in-up" style="animation-delay: 0.4s;">
-                    <div class="bg-primary rounded-full w-32 h-32 flex flex-col items-center justify-center text-white">
-                        <span id="calorie-result" class="text-3xl font-bold">0</span>
-                        <span class="text-md">kcal</span>
+                <div id="screen-2" class="screen hidden">
+                    <div class="relative flex items-center justify-center mb-2 h-8">
+                        <button onclick="prevScreen()" class="absolute left-0 text-gray-500 hover:text-gray-900 p-1 rounded-full hover:bg-white/50 transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                        <h1 class="text-2xl font-bold">About You</h1>
                     </div>
+                    <p class="text-center text-gray-500 mb-8">This helps us calculate your calorie needs.</p>
+                    <form id="form-screen-2" class="space-y-4">
+                        <div>
+                            <label class="font-semibold text-gray-800">Gender</label>
+                            <div class="grid grid-cols-2 gap-4 mt-2">
+                                <div onclick="selectOption('gender', 'male', this)" class="option-card text-center glass-card p-4 rounded-xl cursor-pointer">Male</div>
+                                <div onclick="selectOption('gender', 'female', this)" class="option-card text-center glass-card p-4 rounded-xl cursor-pointer">Female</div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="font-semibold text-gray-800">Date of Birth</label>
+                            <div class="grid grid-cols-3 gap-2 mt-2">
+                                <select id="dob-day" class="form-input-custom w-full p-3 rounded-lg"><option value="">Day</option></select>
+                                <select id="dob-month" class="form-input-custom w-full p-3 rounded-lg"><option value="">Month</option></select>
+                                <select id="dob-year" class="form-input-custom w-full p-3 rounded-lg"><option value="">Year</option></select>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="height" class="font-semibold text-gray-800">Height (cm)</label>
+                            <input type="number" id="height" placeholder="e.g., 170" class="form-input-custom w-full p-3 rounded-lg mt-2">
+                        </div>
+                        <div>
+                            <label for="current_weight" class="font-semibold text-gray-800">Current Weight (kg)</label>
+                            <input type="number" id="current_weight" placeholder="e.g., 65" class="form-input-custom w-full p-3 rounded-lg mt-2">
+                        </div>
+                    </form>
+                    <button onclick="nextScreen()" id="btn-screen-2" class="w-full bg-primary-gradient text-white font-bold py-3 px-4 rounded-lg mt-8 hover:opacity-90 transition-opacity">Continue</button>
+                </div>
+
+                <div id="screen-3" class="screen hidden">
+                     <div class="relative flex items-center justify-center mb-2 h-8">
+                        <button onclick="prevScreen()" class="absolute left-0 text-gray-500 hover:text-gray-900 p-1 rounded-full hover:bg-white/50 transition-colors">
+                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                        <h1 class="text-2xl font-bold">Your Lifestyle</h1>
+                    </div>
+                    <p class="text-center text-gray-500 mb-8">How active are you? Be honest!</p>
+                    <div class="space-y-3">
+                        <div onclick="selectOption('activity', 'sedentary', this)" class="option-card glass-card p-4 rounded-xl cursor-pointer"><h3 class="font-semibold">Sedentary</h3><p class="text-sm text-gray-500">Office job, little exercise</p></div>
+                        <div onclick="selectOption('activity', 'lightly_active', this)" class="option-card glass-card p-4 rounded-xl cursor-pointer"><h3 class="font-semibold">Lightly Active</h3><p class="text-sm text-gray-500">Light exercise 1-3 days/week</p></div>
+                        <div onclick="selectOption('activity', 'moderately_active', this)" class="option-card glass-card p-4 rounded-xl cursor-pointer"><h3 class="font-semibold">Moderately Active</h3><p class="text-sm text-gray-500">Moderate exercise 3-5 days/week</p></div>
+                         <div onclick="selectOption('activity', 'very_active', this)" class="option-card glass-card p-4 rounded-xl cursor-pointer"><h3 class="font-semibold">Very Active</h3><p class="text-sm text-gray-500">Hard exercise 6-7 days/week</p></div>
+                         <div onclick="selectOption('activity', 'extra_active', this)" class="option-card glass-card p-4 rounded-xl cursor-pointer"><h3 class="font-semibold">Extra Active</h3><p class="text-sm text-gray-500">Hard physical job or athlete</p></div>
+                    </div>
+                    <button onclick="nextScreen()" id="btn-screen-3" class="w-full bg-primary-gradient text-white font-bold py-3 px-4 rounded-lg mt-8 hover:opacity-90 transition-opacity disabled:opacity-50" disabled>Continue</button>
                 </div>
                 
-                <div id="eta-container" class="mb-6 hidden opacity-0 fade-in-up" style="animation-delay: 0.6s;">
-                    <p class="text-gray-600">Estimated date to reach your goal:</p>
-                    <p id="eta-result" class="text-xl font-bold text-primary"></p>
+                <div id="screen-4" class="screen hidden"></div>
+
+                <div id="screen-5" class="screen hidden">
+                    <div class="relative flex items-center justify-center mb-2 h-8">
+                        <button onclick="prevScreen()" class="absolute left-0 text-gray-500 hover:text-gray-900 p-1 rounded-full hover:bg-white/50 transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                        <h1 class="text-2xl font-bold">Your Target</h1>
+                    </div>
+                    <p class="text-center text-gray-500 mb-8">This is the finish line we'll work towards.</p>
+                    <div>
+                        <label for="goal_weight" class="font-semibold text-gray-800">Goal Weight (kg)</label>
+                        <input type="number" id="goal_weight" placeholder="e.g., 55" class="form-input-custom w-full p-3 rounded-lg mt-2">
+                    </div>
+                    <button onclick="nextScreen()" id="btn-screen-5" class="w-full bg-primary-gradient text-white font-bold py-3 px-4 rounded-lg mt-8 hover:opacity-90 transition-opacity">Continue</button>
                 </div>
 
-                <button onclick="nextScreen()" class="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 transition-opacity opacity-0 fade-in-up mb-4" style="animation-delay: 0.8s;">Finish Setup</button>
+                <div id="screen-6" class="screen hidden text-center flex-col justify-center items-center h-full">
+                    <div id="calculating" class="flex flex-col items-center justify-center">
+                         <svg class="animate-spin h-10 w-10 text-pink-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <h2 class="text-xl font-semibold text-gray-800">Calculating your plan...</h2>
+                    </div>
+                    <div id="result-content" class="hidden">
+                        <h1 class="text-2xl font-bold mb-2 opacity-0 fade-in-up">All set!</h1>
+                        <p class="text-gray-500 mb-6 opacity-0 fade-in-up" style="animation-delay: 0.2s;">Your recommended daily calories:</p>
+                        <div class="bg-pink-500/10 p-6 rounded-full w-44 h-44 mx-auto flex items-center justify-center mb-6 opacity-0 fade-in-up" style="animation-delay: 0.4s;">
+                            <div class="bg-primary-gradient rounded-full w-32 h-32 flex flex-col items-center justify-center text-white shadow-xl">
+                                <span id="calorie-result" class="text-3xl font-bold">0</span>
+                                <span class="text-md">kcal</span>
+                            </div>
+                        </div>
+                        <div id="eta-container" class="mb-6 hidden opacity-0 fade-in-up" style="animation-delay: 0.6s;">
+                            <p class="text-gray-600">Estimated date to reach your goal:</p>
+                            <p id="eta-result" class="text-xl font-bold text-pink-500"></p>
+                        </div>
+                        <button onclick="nextScreen()" class="w-full bg-primary-gradient text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 transition-opacity opacity-0 fade-in-up" style="animation-delay: 0.8s;">Finish Setup</button>
+                    </div>
+                </div>
+
+                <div id="screen-7" class="screen hidden text-center flex flex-col justify-center h-full">
+                    <h1 class="text-2xl font-bold text-pink-500 mb-2">You're all set!</h1>
+                    <p class="text-gray-500 mb-8">Sign up and start your journey now.</p>
+                    <div class="space-y-4">
+                        <button class="w-full flex items-center justify-center text-center glass-card p-3 rounded-xl font-semibold hover:bg-white/50 transition-colors">
+                           <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
+                            Continue with Email
+                        </button>
+                    </div>
+                    <a href="#" onclick="restart(event)" class="text-sm text-gray-500 mt-6 inline-block">Recalculate my plan</a>
+                </div>
             </div>
         </div>
-
-        <div id="screen-7" class="screen hidden text-center">
-            <h1 class="text-2xl font-bold text-primary mb-2">You're all set</h1>
-            <p class="text-gray-500 mb-8">Sign up and start your journey now!</p>
-            <div class="space-y-4">
-                <button class="w-full flex items-center justify-center text-center border-2 border-gray-200 p-3 rounded-xl font-semibold hover:bg-gray-50 transition-colors">
-                    <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
-                    </svg>
-                    Continue with Email
-                </button>
-                <button class="w-full flex items-center justify-center text-center border-2 border-gray-200 p-3 rounded-xl font-semibold hover:bg-gray-50 transition-colors">
-                     <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-                        <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
-                        <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
-                        <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
-                        <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C39.901,35.636,44,29.13,44,20C44,22.659,43.862,21.35,43.611,20.083z"/>
-                    </svg>
-                    Continue with Google
-                </button>
-                <button class="w-full flex items-center justify-center text-center border-2 border-gray-200 p-3 rounded-xl font-semibold hover:bg-gray-50 transition-colors">
-                    <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12.01,2.08C9.94,2.08,8.66,3.34,7.53,3.34C6.4,3.34,5.24,2.08,3.22,2.08C1.2,2.08,0,3.24,0,5.32c0,3.2,2.3,6.23,4.1,8.31c0.88,1.02,1.82,2.2,3.02,2.2c1.18,0,1.55-0.7,2.9-0.7c1.35,0,1.68,0.7,2.9,0.7c1.2,0,2.14-1.18,3.02-2.2c1.8-2.08,4.1-5.11,4.1-8.31C24.04,3.24,22.84,2.08,20.82,2.08C18.8,2.08,17.64,3.34,16.51,3.34C15.38,3.34,14.08,2.08,12.01,2.08z M16.2,17.69c-0.82,0.88-1.7,1.8-2.88,1.8c-1.2,0-1.76-0.86-2.96-0.86c-1.2,0-1.78,0.86-2.96,0.86c-1.18,0-2.06-0.92-2.88-1.8c-2.1-2.24-3.66-5.3-3.66-8.12c0-1.24,0.72-2.08,1.64-2.08c1.02,0,1.84,1.14,2.94,1.14c1.1,0,1.98-1.14,3.04-1.14c1.06,0,1.94,1.14,3.04,1.14c1.1,0,1.92-1.14,2.94-1.14c0.92,0,1.64,0.84,1.64,2.08C19.86,12.39,18.3,15.45,16.2,17.69z"/>
-                    </svg>
-                    Continue with Apple
-                </button>
-            </div>
-            <a href="#" onclick="restart(event)" class="text-sm text-gray-500 mt-6 inline-block">Recalculate my plan</a>
-        </div>
-
     </div>
 
     <script src="onboarding.js"></script>
 </body>
 </html>
+
