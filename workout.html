@@ -3,61 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workout Log - Food Tracker</title>
+    <title>Workout Log</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-        }
-        .bg-primary-gradient {
-            background-image: linear-gradient(to right, #ec4899, #d946ef);
-        }
-        .form-input-custom {
-            background-color: rgba(229, 231, 235, 0.6);
-            border: 1px solid rgba(209, 213, 219, 0.7);
-            transition: box-shadow 0.2s;
-        }
-        .form-input-custom:focus {
-            box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.5);
-            outline: none;
-            border-color: transparent;
-        }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Kalender Styles */
-        .datepicker-cell { position: relative; }
-        .workout-dots {
-            position: absolute; bottom: 4px; left: 50%;
-            transform: translateX(-50%); display: flex; gap: 2px;
-        }
-        .workout-dot { width: 4px; height: 4px; border-radius: 50%; }
-        .datepicker { font-family: 'Inter', sans-serif; width: 100%; }
-        .datepicker-picker { background-color: transparent; border-radius: 0.5rem; }
-        .datepicker-header { padding: 0.5rem 0; }
-        .datepicker-title, .datepicker-controls .button { font-weight: 600; color: #1f2937; }
-        .datepicker-controls .button { border-radius: 9999px; }
-        .datepicker-controls .button:hover { background-color: rgba(229, 231, 235, 0.7); }
-        .datepicker-main { padding: 0; }
-        .dow { font-size: 0.75rem; font-weight: 500; color: #6b7280; }
-        .datepicker-cell .day {
-            border-radius: 9999px; color: #374151; font-weight: 500;
-            height: 36px; width: 36px;
-        }
-        .datepicker-cell .day:hover { background-color: rgba(229, 231, 235, 0.7); }
-        .datepicker-cell .day.today:not(.selected) { color: #ec4899; }
-        .datepicker-cell .day.selected, .datepicker-cell .day.selected:hover {
-            background-color: #ec4899; color: white; font-weight: 700;
-        }
-        .datepicker-cell .day.disabled { color: #d1d5db; }
+    body { font-family: 'Inter', sans-serif; }
+.bg-primary-gradient {
+    background-image: linear-gradient(to right, #ec4899, #d946ef);
+}
+/* Definisi .form-input-custom yang lama dihapus agar tidak duplikat */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* === DESAIN MODAL KALENDER FINAL === */
+#calendar-modal {
+    background-color: rgba(255, 245, 250, 0.85); 
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 255, 255, 0.5); 
+    padding: 1.5rem;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15), 0 6px 15px rgba(0,0,0,0.08); 
+}
+.flatpickr-calendar {
+    background: transparent;
+    box-shadow: none;
+    width: 100% !important;
+}
+
+/* === HEADER KALENDER FINAL === */
+.flatpickr-months {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+.flatpickr-month {
+    flex-grow: 1;
+    text-align: center;
+}
+.flatpickr-current-month {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1f2937;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0;
+}
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    appearance: none; -moz-appearance: none; -webkit-appearance: none;
+    background: transparent;
+    border: none;
+    font-size: inherit; font-weight: inherit; color: inherit;
+    cursor: pointer;
+    padding-right: 0.25rem;
+    border-radius: 0.375rem;
+    transition: background-color 0.2s;
+}
+.flatpickr-current-month .flatpickr-monthDropdown-months:hover {
+    background-color: rgba(255, 245, 250, 0.85); 
+    color: #ec4899;
+}
+.numInputWrapper {
+    display: inline-block;
+    position: relative;
+}
+/* === INPUT TAHUN (FINAL DENGAN :focus) === */
+.flatpickr-current-month .numInput.cur-year {
+    background: transparent;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1f2937;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 0.375rem;
+    width: 5ch;
+    transition: color 0.2s, box-shadow 0.2s;
+    -moz-appearance: textfield !important;
+}
+
+.flatpickr-current-month .numInput.cur-year:hover {
+    color: #ec4899;
+    background: transparent;
+}
+
+/* === INPUT TAHUN (VERSI LEBIH ELEGAN) === */
+.flatpickr-current-month .numInput.cur-year:focus {
+    outline: none;
+    color: #be185d; /* Warna pink lebih gelap agar kontras */
+    background-color: rgba(252, 231, 243, 0.7); /* Latar belakang pink lembut */
+    box-shadow: none; /* Hapus box-shadow yang kaku */
+}
+
+.flatpickr-current-month .numInput.cur-year::-webkit-outer-spin-button,
+.flatpickr-current-month .numInput.cur-year::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+}
+.numInputWrapper span.arrowUp,
+.numInputWrapper span.arrowDown {
+    display: none !important;
+}
+.flatpickr-prev-month, .flatpickr-next-month {
+    width: 2.25rem; height: 2.25rem;
+    border-radius: 9999px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background-color 0.2s;
+    flex-shrink: 0;
+    padding: 0;
+}
+.flatpickr-prev-month:hover, .flatpickr-next-month:hover {
+    background-color: transparent;
+}
+.flatpickr-prev-month svg, .flatpickr-next-month svg {
+    color: #4b5563;
+}
+
+/* === GRID TANGGAL FINAL === */
+.flatpickr-weekdays { margin-top: 0; }
+span.flatpickr-weekday {
+    color: #9ca3af;
+    font-weight: 500;
+    font-size: 0.75rem;
+}
+.flatpickr-days { margin-top: 0.5rem; }
+.dayContainer { padding: 0; }
+.flatpickr-day {
+    color: #374151;
+    border: none;
+    width: 38px; height: 38px; line-height: 38px;
+    border-radius: 50%;
+    font-weight: 500;
+    transition: all 0.2s;
+    position: relative;
+    margin: 0;
+}
+.flatpickr-day:hover {
+    background: rgba(252, 231, 243, 0.7);
+    color: #be185d;
+}
+.flatpickr-day.today {
+    border: 2px solid #ec4899;
+    color: #ec4899;
+    background: transparent;
+}
+.flatpickr-day.selected, .flatpickr-day.selected:hover {
+    background: linear-gradient(to right, #ec4899, #d946ef);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 15px -2px rgba(236, 72, 153, 0.4);
+}
+.flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay, .flatpickr-day.disabled {
+    color: #d1d5db;
+    opacity: 0.8;
+}
+
+/* === WORKOUT DOT FINAL === */
+.workout-dot-marker {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background-color: #ec4899;
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+}
+.flatpickr-day.selected .workout-dot-marker {
+    background-color: white;
+}
+
+/* === DESAIN DROPDOWN BULAN (LEBIH BAIK) === */
+.flatpickr-monthDropdown-months .flatpickr-monthDropdown-month {
+    background: transparent;
+    color: #4b5563; /* Warna teks abu-abu netral */
+    transition: all 0.2s ease-in-out;
+}
+
+.flatpickr-monthDropdown-months .flatpickr-monthDropdown-month:hover {
+    background: rgba(252, 231, 243, 0.8); /* Latar pink lembut */
+    color: #be185d; /* Warna pink lebih gelap */
+}
+
+.flatpickr-monthDropdown-months .flatpickr-monthDropdown-month:checked,
+.flatpickr-monthDropdown-months .flatpickr-monthDropdown-month.selected {
+    background: transparent;
+    color: #ec4899; /* Teks warna pink utama */
+    font-weight: 600; /* Beri sedikit penekanan */
+}
+
+/* === DESAIN BARU UNTUK WORKOUT CARD === */
+#workout-list .workout-card + .workout-card {
+    margin-top: 1rem;
+}
+
+.set-number-badge {
+    width: 28px;
+    height: 28px;
+    background-color: #f3f4f6; /* bg-gray-100 */
+    border-radius: 9999px; /* rounded-full */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #4b5563; /* text-gray-600 */
+    font-size: 0.875rem; /* text-sm */
+}
+
+.add-set-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 0; /* 10px */
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #ec4899; /* text-pink-500 */
+    background-color: #fce7f3; /* bg-pink-100 */
+    border-radius: 0.75rem; /* rounded-xl */
+    transition: all 0.2s ease-in-out;
+}
+.add-set-btn:hover {
+    background-color: #fbcfe8; /* bg-pink-200 */
+    color: #be185d; /* text-pink-700 */
+}
+
+.delete-set-btn {
+    padding: 0.25rem; /* p-1 */
+    color: #d1d5db; /* text-gray-300 */
+    border-radius: 9999px; /* rounded-full */
+    transition: all 0.2s ease-in-out;
+}
+.delete-set-btn:hover {
+    color: #ef4444; /* text-red-500 */
+    background-color: #fee2e2; /* bg-red-100 */
+}
+
+/* === Perbaikan Input Field yang Lebih Modern === */
+.form-input-custom {
+    background-color: #f9fafb; /* bg-gray-50 */
+    border: 2px solid #f3f4f6; /* border-gray-100 */
+    transition: all 0.2s;
+}
+.form-input-custom:focus {
+    border-color: #ec4899; /* border-pink-500 */
+    background-color: white;
+    box-shadow: none; /* Hapus shadow lama yang mengganggu */
+    outline: none;
+}
+
+
+
+
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
@@ -70,7 +275,7 @@
         <div class="relative z-10 h-full flex flex-col">
             <header class="flex-shrink-0 p-6 pt-8 space-y-4">
                 <div class="relative flex items-center justify-center h-10">
-                    <a href="diary.html" class="absolute left-0 p-2 text-gray-500 hover:text-gray-900 rounded-full transition-colors">
+                    <a href="#" class="absolute left-0 p-2 text-gray-500 hover:text-gray-900 rounded-full transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                     </a>
                     <h1 class="text-xl font-bold text-gray-900">Workout Log</h1>
@@ -84,12 +289,13 @@
                         </button>
                     </div>
                     <div id="date-timeline-container" class="flex items-center justify-between overflow-x-auto no-scrollbar py-2">
-                        </div>
+                    </div>
                 </div>
             </header>
             
             <main class="flex-grow overflow-y-auto px-6 pb-6">
-                <div id="workout-list" class="h-full space-y-4"></div>
+                <div id="workout-list" class="h-full">
+                    </div>
             </main>
 
             <button id="open-add-exercise-modal-btn" class="absolute bottom-6 right-6 z-20 w-16 h-16 bg-primary-gradient text-white rounded-full shadow-lg flex items-center justify-center transform hover:scale-110 transition-transform">
@@ -144,19 +350,15 @@
             </div>
         </div>
         
-        <div id="calendar-modal-overlay" class="hidden absolute inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6 transition-opacity duration-300">
-            <div id="calendar-modal" class="glass-card rounded-2xl p-4 w-full max-w-sm">
+        <div id="calendar-modal-overlay" class="hidden absolute inset-0 z-50 bg-white/20 backdrop-blur-sm flex items-center justify-center p-6 transition-opacity duration-300">
+            <div id="calendar-modal" class="rounded-2xl shadow-xl w-full max-w-sm">
                 <div id="calendar-container"></div>
-                <div class="border-t border-white/20 mt-3 pt-3">
-                    <p class="font-semibold text-sm mb-2 text-gray-800">Muscle Group Legend</p>
-                    <div id="calendar-legend" class="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-gray-700"></div>
-                </div>
             </div>
         </div>
 
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="workout.js"></script>
 </body>
