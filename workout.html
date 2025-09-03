@@ -118,12 +118,6 @@
                         <div class="flex justify-between items-center px-2">
                             <h2 id="month-year-display" class="font-bold text-gray-800 cursor-pointer">September 2025</h2>
                             
-                            <button id="open-my-programs-btn" class="flex items-center gap-2 bg-pink-50 text-pink-600 text-sm font-semibold rounded-full px-4 py-2 hover:bg-pink-100 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.5 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
-                                </svg>
-                                <span>My Programs</span>
-                            </button>
                             
                             <button id="open-calendar-btn" class="flex-shrink-0 p-2 text-gray-500 hover:text-pink-500 rounded-full hover:bg-white/50 transition-colors">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -213,6 +207,13 @@
         </div>
 
         <div id="fab-container" class="absolute bottom-6 right-6 z-50 flex flex-col items-center gap-4">
+            <div id="library-fab-action" class="fab-action hidden">
+        <span class="fab-label">My Library</span>
+        <button id="fab-library-btn" class="fab-mini-btn bg-sky-500">
+            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
+        </button>
+    </div>
+            
             <div id="recap-fab-action" class="fab-action hidden">
                 <span class="fab-label">Workout Analytics</span>
                 <button id="fab-recap-btn" class="fab-mini-btn bg-purple-500">
@@ -228,7 +229,61 @@
             <button id="main-fab-btn" class="w-16 h-16 bg-primary-gradient text-white rounded-full shadow-lg flex items-center justify-center transform transition-transform duration-300">
                 <svg id="fab-plus-icon" class="w-8 h-8 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
             </button>
+</div>
+             <div id="library-modal-overlay" class="hidden absolute inset-0 z-50 bg-gray-900/40 backdrop-blur-sm flex items-center justify-center p-6 transition-opacity duration-300">
+        <div class="bg-gray-50 rounded-2xl shadow-xl w-full max-w-sm flex flex-col max-h-[90%] h-full">
+            <header class="flex-shrink-0 p-5 border-b border-gray-200 flex items-center justify-between">
+                <h2 class="text-lg font-bold text-gray-800">My Workout Library</h2>
+                <button id="close-library-btn" class="p-2 text-gray-500 rounded-full hover:bg-gray-200/50">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </header>
+            <main class="flex-grow overflow-y-auto p-5 space-y-4">
+                <button id="create-new-template-btn" class="w-full bg-primary-gradient text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>Create New Template</span>
+                </button>
+                <div id="library-list" class="space-y-3">
+                    <p class="text-center text-gray-400 py-8">Your saved programs and templates will appear here.</p>
+                </div>
+            </main>
         </div>
+    </div>
+
+    <div id="template-editor-modal-overlay" class="hidden absolute inset-0 z-50 bg-gray-50">
+        <div class="w-full h-full flex flex-col">
+             <header class="flex-shrink-0 p-6 pt-8 flex items-center">
+                <button id="close-editor-btn" class="p-2 text-gray-500 rounded-full hover:bg-gray-200/50 mr-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <h2 class="text-xl font-bold text-gray-900 flex-grow">Create Template</h2>
+            </header>
+            <form id="template-editor-form" class="flex-grow flex flex-col px-6 space-y-4 overflow-y-auto">
+                <div>
+                    <label for="template-name-input" class="block text-sm font-medium text-gray-700 mb-1">Template Name</label>
+                    <input type="text" id="template-name-input" placeholder="e.g., Push Day" class="w-full form-input-custom p-3 rounded-lg text-sm" required>
+                </div>
+                <div class="flex-grow">
+                    <h3 class="text-sm font-medium text-gray-700 mb-2">Exercises</h3>
+                    <div id="template-exercise-list" class="space-y-2">
+                         <p class="text-center text-gray-400 py-4">No exercises added yet.</p>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 sticky bottom-0 bg-gray-50 py-4 space-y-2">
+                     <button type="button" id="add-exercise-to-template-btn" class="w-full add-set-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        <span>Add Exercise</span>
+                    </button>
+                    <button type="submit" class="w-full bg-primary-gradient text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 transition-opacity">
+                        Save Template
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+        
 
         <div id="add-exercise-modal" class="hidden absolute inset-0 z-50 bg-gray-50 flex flex-col">
             <div class="absolute top-0 -left-16 w-72 h-72 bg-pink-300 rounded-full opacity-30 filter blur-3xl"></div>
@@ -320,21 +375,7 @@
     
     </div>
 
-    <div id="my-programs-modal-overlay" class="hidden absolute inset-0 z-50 bg-gray-900/40 backdrop-blur-sm flex items-center justify-center p-6 transition-opacity duration-300">
-        <div id="my-programs-modal" class="bg-gray-50 rounded-2xl shadow-xl w-full max-w-sm flex flex-col max-h-[80%]">
-            <header class="flex-shrink-0 p-5 border-b border-gray-200 flex items-center justify-between">
-                <h2 class="text-lg font-bold text-gray-800">Load a Program Workout</h2>
-                <button id="close-my-programs-btn" class="p-2 text-gray-500 rounded-full hover:bg-gray-200/50">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </header>
-            <main class="flex-grow overflow-y-auto p-5">
-                <div id="my-programs-list" class="space-y-3">
-                    <p class="text-center text-gray-400 py-8">You don't have any programs yet. Go to the Marketplace to get one!</p>
-                </div>
-            </main>
-        </div>
-    </div>
+    
     
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
