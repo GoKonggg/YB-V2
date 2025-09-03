@@ -5,223 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Food Tracker - Explore</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"> 
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-        }
-        .bg-primary-gradient {
-            background-image: linear-gradient(to right, #ec4899, #d946ef);
-        }
-        .toggle-active {
-            background-color: white;
-            color: #ec4899;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .filter-option-active {
-            background-color: #fce7f3; /* pink-100 */
-            border-color: #ec4899; /* pink-500 */
-            color: #be185d; /* pink-700 */
-            font-weight: 600;
-        }
+        /* Custom styles moved from the old style.css to be self-contained */
+        body { font-family: 'Inter', sans-serif; background-color: #FFFBFB; }
+        .aurora-bg-1 { position: absolute; top: -80px; left: -100px; width: 320px; height: 320px; background-image: linear-gradient(to bottom right, #ffe4e6, #fce7f3); border-radius: 9999px; opacity: 0.8; filter: blur(90px); z-index: 1; }
+        .aurora-bg-2 { position: absolute; bottom: -100px; right: -120px; width: 320px; height: 320px; background-image: linear-gradient(to top left, #fbcfe8, #f472b6); border-radius: 9999px; opacity: 0.7; filter: blur(90px); z-index: 1; }
+        .aurora-gradient { background-image: linear-gradient(to right, #f472b6, #d946ef); }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 1.25rem; border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .toggle-active { background-color: white; color: #c026d3; box-shadow: 0 4px 15px rgba(0,0,0,0.08); font-weight: 700; }
+        .filter-option-active { background-color: #fce7f3; border-color: #f472b6; color: #be185d; font-weight: 600; }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen p-4">
+<body class="flex items-center justify-center min-h-screen p-4">
 
-    <div id="app-container" class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden relative h-[800px]">
+    <div id="app-container" class="w-full max-w-md mx-auto bg-white/70 rounded-3xl shadow-xl overflow-hidden relative h-[800px] md:h-[850px]">
         
-        <div class="relative flex flex-col h-full bg-gray-50">
-            <div class="absolute top-0 -left-16 w-72 h-72 bg-pink-300 rounded-full opacity-30 filter blur-3xl"></div>
-            <div class="absolute bottom-0 -right-16 w-72 h-72 bg-purple-300 rounded-full opacity-30 filter blur-3xl"></div>
+        <div class="relative flex flex-col h-full bg-transparent">
+            <div class="aurora-bg-1"></div>
+            <div class="aurora-bg-2"></div>
             
-            <div class="relative z-10 flex-grow overflow-y-auto pb-28 px-6 pt-8">
-                
-                <div class="text-center mb-6">
-                    <h2 class="font-bold text-xl text-gray-900">Explore</h2>
-                </div>
-
-                <div class="relative mb-6">
-                    <input id="search-input" type="text" placeholder="Search for programs..." class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400 transition">
-                    <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </div>
-
-                <div class="flex items-center space-x-2 mb-4">
-                    <div class="flex-grow p-1 bg-gray-200 rounded-xl flex justify-between items-center text-sm font-semibold text-gray-600">
-                        <button id="programs-toggle" class="w-1/2 p-2 rounded-lg transition-all duration-300 toggle-active">Programs</button>
-                        <button id="coaches-toggle" class="w-1/2 p-2 rounded-lg transition-all duration-300">Coaches</button>
+            <div class="relative z-10 flex flex-col h-full">
+                <!-- Header & Search Area -->
+                <div class="px-5 pt-6 pb-4 flex-shrink-0">
+                    <h2 class="text-center font-bold text-xl text-slate-800 mb-6">Explore Programs & Coaches</h2>
+                    <div class="relative"><input id="search-input" type="text" placeholder="Search for programs..." class="w-full pl-11 pr-4 py-3.5 bg-white/80 border border-slate-200 rounded-xl placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-400 transition duration-300"><svg class="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></div>
+                    <div class="flex items-center space-x-3 mt-4">
+                        <div class="flex-grow p-1 bg-pink-100/40 rounded-xl flex justify-between items-center text-sm font-semibold text-slate-600"><button id="programs-toggle" class="w-1/2 py-2 rounded-lg transition-all duration-300 toggle-active">Programs</button><button id="coaches-toggle" class="w-1/2 py-2 rounded-lg transition-all duration-300">Coaches</button></div>
+                        <button id="filter-button" class="p-3 bg-white rounded-xl shadow-sm border border-slate-200"><svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L12 14.414V19a1 1 0 01-1.447.894l-4-2A1 1 0 016 17V14.414L3.293 6.707A1 1 0 013 6V4z"></path></svg></button>
                     </div>
-                    <button id="filter-button" class="p-3 bg-white rounded-xl shadow-sm border border-gray-200">
-                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L12 14.414V19a1 1 0 01-1.447.894l-4-2A1 1 0 016 17V14.414L3.293 6.707A1 1 0 013 6V4z"></path></svg>
-                    </button>
                 </div>
 
-                <div id="filter-panel" class="hidden glass-card rounded-xl p-4 mb-4">
-    <div id="program-filters-content" class="space-y-4">
-        <div>
-            <h4 class="font-semibold mb-3 text-sm">Equipment</h4>
-            <div class="flex flex-wrap gap-2 text-sm">
-                <button class="filter-option border rounded-lg px-3 py-2">Full Gym</button>
-                <button class="filter-option border rounded-lg px-3 py-2">Minimal Equipment</button>
-            </div>
-        </div>
-        <div>
-            <h4 class="font-semibold mb-3 text-sm">Price</h4>
-            <div class="flex flex-wrap gap-2 text-sm">
-                <button class="filter-option border rounded-lg px-3 py-2">Under $10</button>
-                <button class="filter-option border rounded-lg px-3 py-2">$10 - $20</button>
-                <button class="filter-option border rounded-lg px-3 py-2">Over $20</button>
-            </div>
-        </div>
-    </div>
+                <!-- Main Content Scroll Area -->
+                <div class="flex-grow overflow-y-auto px-5 pb-28">
+                    <div id="filter-panel" class="hidden glass-card rounded-2xl p-5 mb-5">
+                        <div id="program-filters-content" class="space-y-4">
+                            <div><h4 class="font-semibold mb-3 text-slate-700">Equipment</h4><div class="flex flex-wrap gap-2 text-sm"><button class="filter-option bg-white/80 border rounded-lg px-3 py-1.5" data-filter-type="equipment" data-filter-value="full_gym">Full Gym</button><button class="filter-option bg-white/80 border rounded-lg px-3 py-1.5" data-filter-type="equipment" data-filter-value="minimal">Minimal</button></div></div>
+                            <div><h4 class="font-semibold mb-3 text-slate-700">Price</h4><div class="flex flex-wrap gap-2 text-sm"><button class="filter-option bg-white/80 border rounded-lg px-3 py-1.5" data-filter-type="price" data-filter-value="under-10">Under $10</button><button class="filter-option bg-white/80 border rounded-lg px-3 py-1.5" data-filter-type="price" data-filter-value="10-20">$10 - $20</button><button class="filter-option bg-white/80 border rounded-lg px-3 py-1.5" data-filter-type="price" data-filter-value="over-20">Over $20</button></div></div>
+                        </div>
+                        <div id="coach-filters-content" class="hidden space-y-4">
+                            <div><h4 class="font-semibold mb-3 text-slate-700">Specialty</h4><div class="flex flex-wrap gap-2 text-sm"><button class="filter-option bg-white/80 border rounded-lg px-3 py-1.5" data-filter-type="specialty" data-filter-value="nutritionist">Nutrition</button><button class="filter-option bg-white/80 border rounded-lg px-3 py-1.5" data-filter-type="specialty" data-filter-value="strength">Strength</button><button class="filter-option bg-white/80 border rounded-lg px-3 py-1.5" data-filter-type="specialty" data-filter-value="yoga">Yoga</button></div></div>
+                            <div><h4 class="font-semibold mb-3 text-slate-700">Price per Session</h4><div class="flex flex-wrap gap-2 text-sm"><button class="filter-option bg-white/80 border rounded-lg px-3 py-1.5" data-filter-type="price" data-filter-value="under-15">Under $15</button><button class="filter-option bg-white/80 border rounded-lg px-3 py-1.5" data-filter-type="price" data-filter-value="15-30">$15 - $30</button><button class="filter-option bg-white/80 border rounded-lg px-3 py-1.5" data-filter-type="price" data-filter-value="over-30">Over $30</button></div></div>
+                            <div><h4 class="font-semibold mb-3 text-slate-700">Rating</h4><div class="flex flex-wrap gap-2 text-sm"><button class="filter-option bg-white/80 border rounded-lg px-3 py-1.5" data-filter-type="rating" data-filter-value="4.0">⭐ 4+</button><button class="filter-option bg-white/80 border rounded-lg px-3 py-1.5" data-filter-type="rating" data-filter-value="4.5">⭐ 4.5+</button></div></div>
+                        </div>
+                        <div class="mt-5 flex space-x-3"><button id="reset-filter-button" class="w-1/2 bg-white border-slate-300 border rounded-lg py-2.5 text-sm font-semibold hover:bg-slate-50 transition">Reset</button><button id="apply-filter-button" class="w-1/2 aurora-gradient text-white rounded-lg py-2.5 text-sm font-semibold hover:opacity-90 transition">Apply Filters</button></div>
+                    </div>
+                    <div id="programs-view" class="space-y-4">
+                        <div class="program-card glass-card overflow-hidden" data-equipment="minimal" data-price="9"><img src="https://placehold.co/400x200/fce7f3/be185d?text=Booty+Builder" alt="Booty Program" class="w-full h-40 object-cover"><div class="p-4"><p class="card-title font-bold text-lg text-slate-900">Booty Builder 101</p><p class="text-sm text-slate-600 mb-4">By Jen Selter</p><div class="flex justify-between items-center"><p class="text-pink-600 font-bold text-lg">$9</p><span class="text-xs font-semibold bg-pink-100 text-pink-700 px-2.5 py-1 rounded-full">4 Weeks</span></div></div></div>
+                        <div class="program-card glass-card overflow-hidden" data-equipment="full_gym" data-price="15"><img src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Program" class="w-full h-40 object-cover"><div class="p-4"><p class="card-title font-bold text-lg text-slate-900">Functional Full Body</p><p class="text-sm text-slate-600 mb-4">By Dave Spitz</p><div class="flex justify-between items-center"><p class="text-pink-600 font-bold text-lg">$15</p><span class="text-xs font-semibold bg-pink-100 text-pink-700 px-2.5 py-1 rounded-full">6 Weeks</span></div></div></div>
+                        <div class="program-card glass-card overflow-hidden" data-equipment="minimal" data-price="18"><img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Yoga Program" class="w-full h-40 object-cover"><div class="p-4"><p class="card-title font-bold text-lg text-slate-900">Morning Yoga Flow</p><p class="text-sm text-slate-600 mb-4">By Chloe Chen</p><div class="flex justify-between items-center"><p class="text-pink-600 font-bold text-lg">$18</p><span class="text-xs font-semibold bg-fuchsia-100 text-fuchsia-700 px-2.5 py-1 rounded-full">Subscription</span></div></div></div>
+                        
+                    </div>
+                    <div id="coaches-view" class="space-y-4 hidden">
+                        <a href="coach-profile.html" class="coach-card block glass-card p-4 flex items-center space-x-4" data-specialty="strength" data-price="25" data-rating="4.7"><img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="w-20 h-20 rounded-full object-cover border-4 border-white shadow-md"><div><p class="card-title font-bold text-lg text-slate-900">Alex Johnson</p><p class="text-sm text-slate-600">Strength & Conditioning</p><p class="text-xs font-semibold text-slate-500 mt-2">from $25/session</p></div></a>
+                        <a href="#" class="coach-card block glass-card p-4 flex items-center space-x-4" data-specialty="yoga" data-price="22" data-rating="4.8"><img src="https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="w-20 h-20 rounded-full object-cover border-4 border-white shadow-md"><div><p class="card-title font-bold text-lg text-slate-900">Chloe Chen</p><p class="text-sm text-slate-600">Yoga & Mindfulness</p><p class="text-xs font-semibold text-slate-500 mt-2">from $22/session</p></div></a>
+                        <a href="maria-profile.html" class="coach-card block glass-card p-4 flex items-center space-x-4" data-specialty="nutritionist" data-price="20" data-rating="4.9"><img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="w-20 h-20 rounded-full object-cover border-4 border-white shadow-md"><div><p class="card-title font-bold text-lg text-slate-900">Maria Garcia</p><p class="text-sm text-slate-600">Certified Nutritionist</p><p class="text-xs font-semibold text-slate-500 mt-2">from $20/session</p></div></a>
+                    </div>
+                </div>
 
-    <div id="coach-filters-content" class="hidden space-y-4">
-        <div>
-            <h4 class="font-semibold mb-3 text-sm">Specialty</h4>
-            <div class="flex flex-wrap gap-2 text-sm">
-                <button class="filter-option border rounded-lg px-3 py-2">Nutritionist</button>
-                <button class="filter-option border rounded-lg px-3 py-2">Strength</button>
-                <button class="filter-option border rounded-lg px-3 py-2">Calisthenics</button>
-                <button class="filter-option border rounded-lg px-3 py-2">Yoga</button>
-            </div>
-        </div>
-        <div>
-            <h4 class="font-semibold mb-3 text-sm">Price per Session</h4>
-             <div class="flex flex-wrap gap-2 text-sm">
-                <button class="filter-option border rounded-lg px-3 py-2">Under $15</button>
-                <button class="filter-option border rounded-lg px-3 py-2">$15 - $30</button>
-                <button class="filter-option border rounded-lg px-3 py-2">Over $30</button>
-            </div>
-        </div>
-        <div>
-            <h4 class="font-semibold mb-3 text-sm">Rating</h4>
-            <div class="flex flex-wrap gap-2 text-sm">
-                <button class="filter-option border rounded-lg px-3 py-2">⭐ 4 & Up</button>
-                <button class="filter-option border rounded-lg px-3 py-2">⭐ 4.5 & Up</button>
+                <!-- Bottom Navigation & Pop-up Menu -->
+                <div id="menu-overlay" class="hidden"></div>
+                <div id="emblem-menu" class="hidden">
+                    <a href="add-food.html" class="emblem-item"> <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg> <span>Add Food</span> </a>
+                    <a href="progress.html" class="emblem-item"> <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg> <span>Progress</span> </a>
+                    <a href="create.html" class="emblem-item"> <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg> <span>Create Post</span> </a>
+                    <a href="workout.html" class="emblem-item"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 3.03v.568c0 .334.148.65.405.864l1.068.89c.442.369.535 1.024.217 1.464l-.657.98c-.318.476-.945.642-1.464.325l-1.068-.89a.993.993 0 00-1.218 0l-1.068.89c-.519.317-1.146.15-1.464-.325l-.657-.98c-.318-.44-.225-1.095.217-1.464l1.068-.89a.993.993 0 00.405-.864v-.568a3 3 0 013-3c.954 0 1.84.464 2.404 1.224a2.998 2.998 0 01.596 2.776zM21 12a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg> <span>Workout</span> </a>
+                    <a href="challenge.html" class="emblem-item"> <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l1.8-2.4c.4-.5 1-.8 1.7-.8h.9c.7 0 1.3.3 1.7.8L17 6v13m-2-4h-4m-6-4h16"></path></svg> <span>Challenge</span> </a>
+                </div>
+                <nav class="absolute bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-sm z-20 glass-card grid grid-cols-5 items-center p-2 rounded-2xl">
+                    <a href="community.html" class="flex flex-col items-center text-slate-500 py-1 hover:text-pink-600 transition-colors"><svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg><span class="text-xs font-medium">Community</span></a>
+                    <a href="diary.html" class="flex flex-col items-center text-slate-500 py-1 hover:text-pink-600 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mb-1 rotate-180" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M5 3h4"></path><path d="M7 3v12"></path><path d="M4 15h6v3a3 3 0 0 1 -6 0v-3z"></path><path d="M14 21v-3a3 3 0 0 1 6 0v3"></path><path d="M17 21v-18"></path></svg><span class="text-xs font-medium">Diary</span></a>
+                    <button id="plus-button" class="aurora-gradient text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg shadow-pink-500/40 -mt-8 transform hover:scale-110 transition-transform"><svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg></button>
+                    <a href="marketplace.html" class="flex flex-col items-center text-pink-600 py-1"><svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg><span class="text-xs font-bold">Marketplace</span></a>
+                    <a href="profile.html" class="flex flex-col items-center text-slate-500 py-1 hover:text-pink-600 transition-colors"><svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg><span class="text-xs font-medium">Profile</span></a>
+                </nav>
             </div>
         </div>
     </div>
     
-    <div class="mt-4 flex space-x-3">
-        <button id="reset-filter-button" class="w-1/2 bg-white border rounded-lg py-2 text-sm font-semibold">Reset</button>
-        <button id="apply-filter-button" class="w-1/2 bg-primary-gradient text-white rounded-lg py-2 text-sm font-semibold">Apply</button>
-    </div>
-</div>
-
-                <div id="programs-view" class="space-y-4">
-                    <div class="program-card glass-card rounded-xl overflow-hidden shadow-sm">
-                        <img src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Program" class="w-full h-32 object-cover">
-                        <div class="p-4">
-                            <p class="card-title font-bold text-gray-900">Functional Full Body</p>
-                            <p class="text-sm text-gray-600 mb-3">By Dave Spitz</p>
-                            <div class="flex justify-between items-center">
-                                <p class="text-pink-500 font-bold">$15</p>
-                                <span class="text-xs font-semibold bg-gray-200 text-gray-700 px-2 py-1 rounded-full">6 Weeks</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="program-card glass-card rounded-xl overflow-hidden shadow-sm">
-                        <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Program" class="w-full h-32 object-cover">
-                        <div class="p-4">
-                            <p class="card-title font-bold text-gray-900">The Barbell WOD</p>
-                            <p class="text-sm text-gray-600 mb-3">By Sarah Williams</p>
-                             <div class="flex justify-between items-center">
-                                <p class="text-pink-500 font-bold">$12/mo</p>
-                                <span class="text-xs font-semibold bg-pink-100 text-pink-700 px-2 py-1 rounded-full">Subscription</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="coaches-view" class="space-y-4 hidden">
-                    <a href="coach-profile.html" class="coach-card block glass-card rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow duration-200">
-                        <div class="flex items-center space-x-4">
-                           <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="w-16 h-16 rounded-full object-cover">
-                            <div>
-                                <p class="card-title font-bold text-gray-900">Alex Johnson</p>
-                                <p class="text-sm text-gray-600">Strength & Conditioning</p>
-                                <p class="text-xs font-semibold text-gray-500 mt-1">Starts from $25/session</p>
-                            </div>
-                        </div>
-                        <div class="text-pink-500">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </div>
-                    </a>
-                    <a href="maria-profile.html" class="coach-card block glass-card rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow duration-200">
-                        <div class="flex items-center space-x-4">
-                            <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="w-16 h-16 rounded-full object-cover">
-                             <div>
-                                <p class="card-title font-bold text-gray-900">Maria Garcia</p>
-                                <p class="text-sm text-gray-600">Certified Nutritionist</p>
-                                <p class="text-xs font-semibold text-gray-500 mt-1">Starts from $20/session</p>
-                            </div>
-                        </div>
-                        <div class="text-pink-500">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </div>
-                    </a>
-                </div>
-
-            </div>
-        </div>
-        
-        <div id="menu-overlay" class="hidden"></div>
-
-        <!-- Pop-up Emblem Menu -->
-        <div id="emblem-menu" class="hidden">
-            <a href="add-food.html" class="emblem-item">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                <span>Add Food</span>
-            </a>
-            <a href="progress.html" class="emblem-item">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-                <span>Progress</span>
-            </a>
-            <a href="create.html" class="emblem-item">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                <span>Create Post</span>
-            </a>
-             <a href="workout.html" class="emblem-item">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 3.03v.568c0 .334.148.65.405.864l1.068.89c.442.369.535 1.024.217 1.464l-.657.98c-.318.476-.945.642-1.464.325l-1.068-.89a.993.993 0 00-1.218 0l-1.068.89c-.519.317-1.146.15-1.464-.325l-.657-.98c-.318-.44-.225-1.095.217-1.464l1.068-.89a.993.993 0 00.405-.864v-.568a3 3 0 013-3c.954 0 1.84.464 2.404 1.224a2.998 2.998 0 01.596 2.776zM21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>Workout</span>
-            </a>
-             <a href="challenge.html" class="emblem-item">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l1.8-2.4c.4-.5 1-.8 1.7-.8h.9c.7 0 1.3.3 1.7.8L17 6v13m-2-4h-4m-6-4h16"></path></svg>
-                <span>Challenge</span>
-            </a>
-        </div>
-        
-        <nav class="absolute bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-sm z-20 glass-card grid grid-cols-5 items-center p-2 rounded-2xl">
-            <a href="community.html" class="flex flex-col items-center text-gray-600 py-1 hover:text-pink-500">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                <span class="text-xs">Community</span>
-            </a>
-            <a href="diary.html" class="flex flex-col items-center text-pink-500 py-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mb-1 rotate-180" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M5 3h4"></path><path d="M7 3v12"></path><path d="M4 15h6v3a3 3 0 0 1 -6 0v-3z"></path><path d="M14 21v-3a3 3 0 0 1 6 0v3"></path><path d="M17 21v-18"></path></svg>
-                <span class="text-xs">Diary</span>
-            </a>
-            <button id="plus-button" class="bg-primary-gradient text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg -mt-6 transform hover:scale-110 transition-transform">
-                <svg class="w-8 h-8 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-            </button>
-            <a href="marketplace.html" class="flex flex-col items-center text-gray-600 py-1 hover:text-pink-500">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                <span class="text-xs font-bold">Marketplace</span>
-            </a>
-            <a href="profile.html" class="flex flex-col items-center text-gray-600 py-1 hover:text-pink-500">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                <span class="text-xs">Profile</span>
-            </a>
-        </nav>
-    </div>
-
     <script src="main.js"></script>
     <script src="marketplace.js"></script>
+    
 </body>
 </html>
+
