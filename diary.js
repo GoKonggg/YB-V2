@@ -1,15 +1,60 @@
 // File: diary.js
-// Fungsi: Menampilkan dan mengelola makanan yang ditambahkan, dengan fitur swipe-to-delete langsung.
+// Fungsi: Menampilkan dan mengelola makanan, dengan navigasi tanggal tanpa batas untuk meal planning.
 
 document.addEventListener('DOMContentLoaded', () => {
-    const caloriesConsumedElement = document.getElementById('calories-consumed');
-    if (!caloriesConsumedElement) return;
+    const dateDisplay = document.querySelector('h2.font-bold');
+    const prevDayButton = dateDisplay.previousElementSibling;
+    const nextDayButton = dateDisplay.nextElementSibling;
 
-    // [DIUBAH] Ambil target kalori dari localStorage, atau gunakan nilai default
+    let currentDate = new Date();
+
+    const formatDateKey = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    // [DIUBAH] Fungsi update tampilan tanggal sekarang mendukung hari esok dan masa depan
+    const updateDateDisplay = () => {
+        const today = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+        const tomorrow = new Date();
+        tomorrow.setDate(today.getDate() + 1);
+
+        if (formatDateKey(currentDate) === formatDateKey(today)) {
+            dateDisplay.textContent = 'Today';
+        } else if (formatDateKey(currentDate) === formatDateKey(yesterday)) {
+            dateDisplay.textContent = 'Yesterday';
+        } else if (formatDateKey(currentDate) === formatDateKey(tomorrow)) {
+            dateDisplay.textContent = 'Tomorrow'; // Tampilan khusus untuk "Besok"
+        } else {
+            dateDisplay.textContent = currentDate.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+        
+        // [DIHAPUS] Logika yang menonaktifkan tombol 'next' telah dihapus
+        // untuk mengizinkan perencanaan di masa depan.
+    };
+    
+    const getFoodForDate = (dateKey) => {
+        const allFoodData = JSON.parse(localStorage.getItem('allFoodData')) || {};
+        return allFoodData[dateKey] || { breakfast: [], lunch: [], dinner: [], snack: [] };
+    };
+
+    const saveFoodForDate = (dateKey, dailyFood) => {
+        const allFoodData = JSON.parse(localStorage.getItem('allFoodData')) || {};
+        allFoodData[dateKey] = dailyFood;
+        localStorage.setItem('allFoodData', JSON.stringify(allFoodData));
+    };
+
+    const caloriesConsumedElement = document.getElementById('calories-consumed');
     const savedGoal = localStorage.getItem('calorieGoal');
     const totalCaloriesGoal = savedGoal ? parseInt(savedGoal, 10) : 1836;
-
-    // [BARU] Perbarui tampilan target kalori di UI
     const caloriesGoalElement = document.getElementById('calories-goal');
     if (caloriesGoalElement) {
         caloriesGoalElement.textContent = `/ ${totalCaloriesGoal}`;
@@ -30,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const wrapper = document.createElement('div');
         wrapper.className = 'food-item-wrapper';
         wrapper.dataset.calories = foodData.calories;
+        wrapper.dataset.id = foodData.id;
 
         wrapper.innerHTML = `
             <div class="delete-action">
@@ -50,7 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return wrapper;
     };
     
-    // Logika Swipe-to-Delete Langsung
     const addSwipeToDelete = (element) => {
         let startX = 0;
         let currentX = 0;
@@ -86,7 +131,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const diff = currentX - startX;
             
             if (diff < deleteThreshold) {
-                deleteItem(element);
+                const mealType = element.parentElement.id.split('-')[0];
+                const foodId = element.dataset.id;
+                deleteItem(element, mealType, foodId);
             } else {
                 content.style.transform = 'translateX(0)';
                 deleteAction.style.opacity = '0';
@@ -94,8 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // Fungsi untuk menghapus item dengan animasi
-    const deleteItem = (element) => {
+    const deleteItem = (element, mealType, foodId) => {
         const cardBody = element.parentElement;
         
         element.style.maxHeight = '0px';
@@ -103,11 +149,16 @@ document.addEventListener('DOMContentLoaded', () => {
         
         setTimeout(() => {
             element.remove();
+            
+            const dateKey = formatDateKey(currentDate);
+            let dailyFood = getFoodForDate(dateKey);
+            dailyFood[mealType] = dailyFood[mealType].filter(food => food.id !== foodId);
+            saveFoodForDate(dateKey, dailyFood);
+
             updateTotalCalories();
 
             if (cardBody.children.length === 0) {
-                 const mealType = cardBody.id.split('-')[0];
-                 cardBody.innerHTML = `<div class="text-center text-gray-500 py-6 bg-white/20 rounded-lg"><p class="text-sm">No ${mealType} logged yet.</p></div>`;
+                cardBody.innerHTML = `<div class="text-center text-gray-500 py-6 bg-white/20 rounded-lg"><p class="text-sm">No ${mealType} logged yet.</p></div>`;
             }
         }, 400);
     };
@@ -116,22 +167,56 @@ document.addEventListener('DOMContentLoaded', () => {
         const newFoodJSON = sessionStorage.getItem('newlyAddedFood');
         if (newFoodJSON) {
             const newFood = JSON.parse(newFoodJSON);
-            const cardBody = document.getElementById(`${newFood.meal}-card-body`);
             
-            if (cardBody) {
-                const placeholder = cardBody.querySelector('.text-center');
-                if (placeholder) placeholder.remove();
-
-                const foodElement = createFoodElement(newFood);
-                cardBody.appendChild(foodElement);
-                
-                updateTotalCalories();
-                sessionStorage.removeItem('newlyAddedFood');
-            }
+            newFood.id = `food-${Date.now()}`;
+            const dateKey = formatDateKey(currentDate); // Simpan makanan pada tanggal yg sedang aktif
+            let dailyFood = getFoodForDate(dateKey);
+            dailyFood[newFood.meal].push(newFood);
+            saveFoodForDate(dateKey, dailyFood);
+            
+            sessionStorage.removeItem('newlyAddedFood');
+            loadAndDisplayFoodForDate(currentDate);
         }
     };
+    
+    const loadAndDisplayFoodForDate = (date) => {
+        const dateKey = formatDateKey(date);
+        const dailyFood = getFoodForDate(dateKey);
+        
+        const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
+        
+        mealTypes.forEach(meal => {
+            const cardBody = document.getElementById(`${meal}-card-body`);
+            cardBody.innerHTML = '';
+            
+            const foodList = dailyFood[meal];
+            if (foodList && foodList.length > 0) {
+                foodList.forEach(foodData => {
+                    const foodElement = createFoodElement(foodData);
+                    cardBody.appendChild(foodElement);
+                });
+            } else {
+                cardBody.innerHTML = `<div class="text-center text-gray-500 py-6 bg-white/20 rounded-lg"><p class="text-sm">No ${meal} logged yet.</p></div>`;
+            }
+        });
+        
+        updateTotalCalories();
+        updateDateDisplay();
+    };
 
+    prevDayButton.addEventListener('click', () => {
+        currentDate.setDate(currentDate.getDate() - 1);
+        loadAndDisplayFoodForDate(currentDate);
+    });
+
+    // [DIUBAH] Event listener untuk tombol 'next' sekarang lebih simpel
+    nextDayButton.addEventListener('click', () => {
+        // Pengecekan 'disabled' dihapus, tombol bisa selalu diklik
+        currentDate.setDate(currentDate.getDate() + 1);
+        loadAndDisplayFoodForDate(currentDate);
+    });
+
+    // --- Inisialisasi Aplikasi ---
     processNewFood();
-    updateTotalCalories();
+    loadAndDisplayFoodForDate(currentDate);
 });
-
