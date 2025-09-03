@@ -6,9 +6,7 @@
     <title>Food Tracker - Explore</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css"> 
     <style>
-        /* Custom styles moved from the old style.css to be self-contained */
         body { font-family: 'Inter', sans-serif; background-color: #FFFBFB; }
         .aurora-bg-1 { position: absolute; top: -80px; left: -100px; width: 320px; height: 320px; background-image: linear-gradient(to bottom right, #ffe4e6, #fce7f3); border-radius: 9999px; opacity: 0.8; filter: blur(90px); z-index: 1; }
         .aurora-bg-2 { position: absolute; bottom: -100px; right: -120px; width: 320px; height: 320px; background-image: linear-gradient(to top left, #fbcfe8, #f472b6); border-radius: 9999px; opacity: 0.7; filter: blur(90px); z-index: 1; }
@@ -27,7 +25,6 @@
             <div class="aurora-bg-2"></div>
             
             <div class="relative z-10 flex flex-col h-full">
-                <!-- Header & Search Area -->
                 <div class="px-5 pt-6 pb-4 flex-shrink-0">
                     <h2 class="text-center font-bold text-xl text-slate-800 mb-6">Explore Programs & Coaches</h2>
                     <div class="relative"><input id="search-input" type="text" placeholder="Search for programs..." class="w-full pl-11 pr-4 py-3.5 bg-white/80 border border-slate-200 rounded-xl placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-400 transition duration-300"><svg class="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></div>
@@ -37,7 +34,6 @@
                     </div>
                 </div>
 
-                <!-- Main Content Scroll Area -->
                 <div class="flex-grow overflow-y-auto px-5 pb-28">
                     <div id="filter-panel" class="hidden glass-card rounded-2xl p-5 mb-5">
                         <div id="program-filters-content" class="space-y-4">
@@ -51,28 +47,113 @@
                         </div>
                         <div class="mt-5 flex space-x-3"><button id="reset-filter-button" class="w-1/2 bg-white border-slate-300 border rounded-lg py-2.5 text-sm font-semibold hover:bg-slate-50 transition">Reset</button><button id="apply-filter-button" class="w-1/2 aurora-gradient text-white rounded-lg py-2.5 text-sm font-semibold hover:opacity-90 transition">Apply Filters</button></div>
                     </div>
+                    
                     <div id="programs-view" class="space-y-4">
-                        <div class="program-card glass-card overflow-hidden" data-equipment="minimal" data-price="9"><img src="https://placehold.co/400x200/fce7f3/be185d?text=Booty+Builder" alt="Booty Program" class="w-full h-40 object-cover"><div class="p-4"><p class="card-title font-bold text-lg text-slate-900">Booty Builder 101</p><p class="text-sm text-slate-600 mb-4">By Jen Selter</p><div class="flex justify-between items-center"><p class="text-pink-600 font-bold text-lg">$9</p><span class="text-xs font-semibold bg-pink-100 text-pink-700 px-2.5 py-1 rounded-full">4 Weeks</span></div></div></div>
-                        <div class="program-card glass-card overflow-hidden" data-equipment="full_gym" data-price="15"><img src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Program" class="w-full h-40 object-cover"><div class="p-4"><p class="card-title font-bold text-lg text-slate-900">Functional Full Body</p><p class="text-sm text-slate-600 mb-4">By Dave Spitz</p><div class="flex justify-between items-center"><p class="text-pink-600 font-bold text-lg">$15</p><span class="text-xs font-semibold bg-pink-100 text-pink-700 px-2.5 py-1 rounded-full">6 Weeks</span></div></div></div>
-                        <div class="program-card glass-card overflow-hidden" data-equipment="minimal" data-price="18"><img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Yoga Program" class="w-full h-40 object-cover"><div class="p-4"><p class="card-title font-bold text-lg text-slate-900">Morning Yoga Flow</p><p class="text-sm text-slate-600 mb-4">By Chloe Chen</p><div class="flex justify-between items-center"><p class="text-pink-600 font-bold text-lg">$18</p><span class="text-xs font-semibold bg-fuchsia-100 text-fuchsia-700 px-2.5 py-1 rounded-full">Subscription</span></div></div></div>
-                        
+                        <div class="program-card glass-card overflow-hidden cursor-pointer" data-id="p001" data-equipment="minimal" data-price="9">
+                            <img src="https://placehold.co/400x200/fce7f3/be185d?text=Booty+Builder" alt="Booty Program" class="w-full h-40 object-cover pointer-events-none">
+                            <div class="p-4 pointer-events-none">
+                                <p class="card-title font-bold text-lg text-slate-900">Booty Builder 101</p>
+                                <p class="text-sm text-slate-600 mb-4">By Jen Selter</p>
+                                <div class="flex justify-between items-center">
+                                    <p class="text-pink-600 font-bold text-lg">$9</p>
+                                    <span class="text-xs font-semibold bg-pink-100 text-pink-700 px-2.5 py-1 rounded-full">4 Weeks</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="program-card glass-card overflow-hidden cursor-pointer" data-id="p002" data-equipment="full_gym" data-price="15">
+                            <img src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Program" class="w-full h-40 object-cover pointer-events-none">
+                            <div class="p-4 pointer-events-none">
+                                <p class="card-title font-bold text-lg text-slate-900">Functional Full Body</p>
+                                <p class="text-sm text-slate-600 mb-4">By Dave Spitz</p>
+                                <div class="flex justify-between items-center">
+                                    <p class="text-pink-600 font-bold text-lg">$15</p>
+                                    <span class="text-xs font-semibold bg-pink-100 text-pink-700 px-2.5 py-1 rounded-full">6 Weeks</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="program-card glass-card overflow-hidden cursor-pointer" data-id="p003" data-equipment="minimal" data-price="18">
+                            <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Yoga Program" class="w-full h-40 object-cover pointer-events-none">
+                            <div class="p-4 pointer-events-none">
+                                <p class="card-title font-bold text-lg text-slate-900">Morning Yoga Flow</p>
+                                <p class="text-sm text-slate-600 mb-4">By Chloe Chen</p>
+                                <div class="flex justify-between items-center">
+                                    <p class="text-pink-600 font-bold text-lg">$18</p>
+                                    <span class="text-xs font-semibold bg-fuchsia-100 text-fuchsia-700 px-2.5 py-1 rounded-full">Subscription</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    
                     <div id="coaches-view" class="space-y-4 hidden">
-                        <a href="coach-profile.html" class="coach-card block glass-card p-4 flex items-center space-x-4" data-specialty="strength" data-price="25" data-rating="4.7"><img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="w-20 h-20 rounded-full object-cover border-4 border-white shadow-md"><div><p class="card-title font-bold text-lg text-slate-900">Alex Johnson</p><p class="text-sm text-slate-600">Strength & Conditioning</p><p class="text-xs font-semibold text-slate-500 mt-2">from $25/session</p></div></a>
-                        <a href="#" class="coach-card block glass-card p-4 flex items-center space-x-4" data-specialty="yoga" data-price="22" data-rating="4.8"><img src="https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="w-20 h-20 rounded-full object-cover border-4 border-white shadow-md"><div><p class="card-title font-bold text-lg text-slate-900">Chloe Chen</p><p class="text-sm text-slate-600">Yoga & Mindfulness</p><p class="text-xs font-semibold text-slate-500 mt-2">from $22/session</p></div></a>
-                        <a href="maria-profile.html" class="coach-card block glass-card p-4 flex items-center space-x-4" data-specialty="nutritionist" data-price="20" data-rating="4.9"><img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="w-20 h-20 rounded-full object-cover border-4 border-white shadow-md"><div><p class="card-title font-bold text-lg text-slate-900">Maria Garcia</p><p class="text-sm text-slate-600">Certified Nutritionist</p><p class="text-xs font-semibold text-slate-500 mt-2">from $20/session</p></div></a>
+    <a href="coach-profile.html" class="coach-card block glass-card p-4 flex items-center space-x-4" data-specialty="strength" data-price="25" data-rating="4.7">
+        <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="w-20 h-20 rounded-full object-cover border-4 border-white shadow-md flex-shrink-0">
+        <div class="flex-grow">
+            <p class="card-title font-bold text-lg text-slate-900">Alex Johnson</p>
+            <p class="text-sm text-slate-600">Strength & Conditioning</p>
+            <p class="text-xs font-semibold text-slate-500 mt-2">from $25/session</p>
+        </div>
+        <div class="flex items-center ml-auto pl-2 flex-shrink-0">
+            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+            <p class="text-slate-800 text-lg font-bold ml-1">4.7</p>
+        </div>
+    </a>
+    <a href="#" class="coach-card block glass-card p-4 flex items-center space-x-4" data-specialty="yoga" data-price="22" data-rating="4.8">
+        <img src="https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="w-20 h-20 rounded-full object-cover border-4 border-white shadow-md flex-shrink-0">
+        <div class="flex-grow">
+            <p class="card-title font-bold text-lg text-slate-900">Chloe Chen</p>
+            <p class="text-sm text-slate-600">Yoga & Mindfulness</p>
+            <p class="text-xs font-semibold text-slate-500 mt-2">from $22/session</p>
+        </div>
+        <div class="flex items-center ml-auto pl-2 flex-shrink-0">
+            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+            <p class="text-slate-800 text-lg font-bold ml-1">4.8</p>
+        </div>
+    </a>
+    <a href="maria-profile.html" class="coach-card block glass-card p-4 flex items-center space-x-4" data-specialty="nutritionist" data-price="20" data-rating="4.9">
+        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="w-20 h-20 rounded-full object-cover border-4 border-white shadow-md flex-shrink-0">
+        <div class="flex-grow">
+            <p class="card-title font-bold text-lg text-slate-900">Maria Garcia</p>
+            <p class="text-sm text-slate-600">Certified Nutritionist</p>
+            <p class="text-xs font-semibold text-slate-500 mt-2">from $20/session</p>
+        </div>
+        <div class="flex items-center ml-auto pl-2 flex-shrink-0">
+            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+            <p class="text-slate-800 text-lg font-bold ml-1">4.9</p>
+        </div>
+    </a>
+</div>
+
+                    <div id="program-detail-view" class="hidden flex-grow overflow-y-auto px-5 pb-28">
+                        <div class="py-4">
+                            <button id="back-to-market-btn" class="flex items-center space-x-2 text-slate-600 font-semibold hover:text-pink-600 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                <span>Back to Explore</span>
+                            </button>
+                        </div>
+                        <div class="space-y-4">
+                            <img id="detail-img" src="" alt="Program Image" class="w-full h-48 object-cover rounded-2xl shadow-lg">
+                            <div class="px-2">
+                                <h2 id="detail-title" class="font-bold text-2xl text-slate-900"></h2>
+                                <p id="detail-author" class="text-md text-slate-600 mb-4"></p>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3 text-center">
+                                <div class="glass-card p-3 rounded-xl"><p class="text-xs text-slate-500">Duration</p><p id="detail-duration" class="font-bold text-slate-800"></p></div>
+                                <div class="glass-card p-3 rounded-xl"><p class="text-xs text-slate-500">Equipment</p><p id="detail-equipment" class="font-bold text-slate-800 capitalize"></p></div>
+                                <div class="glass-card p-3 rounded-xl"><p class="text-xs text-slate-500">Price</p><p id="detail-price" class="font-bold text-slate-800"></p></div>
+                            </div>
+                            <div class="px-2 pt-2">
+                                <h4 class="font-semibold text-slate-800 mb-2">About this program</h4>
+                                <p id="detail-description" class="text-slate-600 text-sm leading-relaxed"></p>
+                            </div>
+                        </div>
+                        <div class="mt-8">
+                            <button id="get-program-btn" class="w-full aurora-gradient text-white rounded-xl py-4 text-md font-bold hover:opacity-90 transition-opacity shadow-lg shadow-pink-500/30">
+                                Get this Program
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Bottom Navigation & Pop-up Menu -->
-                <div id="menu-overlay" class="hidden"></div>
-                <div id="emblem-menu" class="hidden">
-                    <a href="add-food.html" class="emblem-item"> <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg> <span>Add Food</span> </a>
-                    <a href="progress.html" class="emblem-item"> <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg> <span>Progress</span> </a>
-                    <a href="create.html" class="emblem-item"> <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg> <span>Create Post</span> </a>
-                    <a href="workout.html" class="emblem-item"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 3.03v.568c0 .334.148.65.405.864l1.068.89c.442.369.535 1.024.217 1.464l-.657.98c-.318.476-.945.642-1.464.325l-1.068-.89a.993.993 0 00-1.218 0l-1.068.89c-.519.317-1.146.15-1.464-.325l-.657-.98c-.318-.44-.225-1.095.217-1.464l1.068-.89a.993.993 0 00.405-.864v-.568a3 3 0 013-3c.954 0 1.84.464 2.404 1.224a2.998 2.998 0 01.596 2.776zM21 12a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg> <span>Workout</span> </a>
-                    <a href="challenge.html" class="emblem-item"> <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l1.8-2.4c.4-.5 1-.8 1.7-.8h.9c.7 0 1.3.3 1.7.8L17 6v13m-2-4h-4m-6-4h16"></path></svg> <span>Challenge</span> </a>
-                </div>
                 <nav class="absolute bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-sm z-20 glass-card grid grid-cols-5 items-center p-2 rounded-2xl">
                     <a href="community.html" class="flex flex-col items-center text-slate-500 py-1 hover:text-pink-600 transition-colors"><svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg><span class="text-xs font-medium">Community</span></a>
                     <a href="diary.html" class="flex flex-col items-center text-slate-500 py-1 hover:text-pink-600 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mb-1 rotate-180" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M5 3h4"></path><path d="M7 3v12"></path><path d="M4 15h6v3a3 3 0 0 1 -6 0v-3z"></path><path d="M14 21v-3a3 3 0 0 1 6 0v3"></path><path d="M17 21v-18"></path></svg><span class="text-xs font-medium">Diary</span></a>
@@ -89,4 +170,3 @@
     
 </body>
 </html>
-
