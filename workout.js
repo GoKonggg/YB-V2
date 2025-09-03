@@ -328,15 +328,174 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===================================================================
     // == RENDER & LOGIC FUNCTIONS (MAIN VIEW) ==
     // ===================================================================
-    function renderWorkoutLog(){const dateKey=toDateKey(currentDate),allWorkouts=getWorkouts(),dailyWorkouts=allWorkouts[dateKey]||[];if(workoutListEl.innerHTML="",0===dailyWorkouts.length)return void(workoutListEl.innerHTML='<div class="flex flex-col items-center justify-center text-center text-gray-500 py-16 px-6 h-full"><svg class="w-16 h-16 text-pink-200 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12.75 3.03v.568c0 .334.148.65.405.864l1.068.89c.442.369.535 1.024.217 1.464l-.657.98c-.318.476-.945.642-1.464.325l-1.068-.89a.993.993 0 00-1.218 0l-1.068.89c-.519.317-1.146.15-1.464-.325l-.657-.98c-.318-.44-.225-1.095.217-1.464l1.068-.89a.993.993 0 00.405-.864v-.568a3 3 0 013-3c.954 0 1.84.464 2.404 1.224a2.998 2.998 0 01.596 2.776zM21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><h3 class="font-semibold text-lg text-gray-700">No workout logged</h3><p class="text-sm mt-2 max-w-xs">Tap the <span class="font-bold text-pink-500">+</span> button to add exercises or load one from <span class="font-bold text-pink-500">My Library</span>.</p></div>');dailyWorkouts.forEach((exercise,exerciseIndex)=>{if(!exercise)return;const isCardio=exercise.categories&&exercise.categories.includes("Cardio"),setsHtml=exercise.sets.map((set,setIndex)=>isCardio?`<div class="set-row flex items-center space-x-3 text-sm"><span class="set-number-badge">${setIndex+1}</span><input type="number" value="${set.time||""}" class="w-full form-input-custom p-2 rounded-lg text-center font-medium" placeholder="minutes" data-type="time" data-ex-index="${exerciseIndex}" data-set-index="${setIndex}"><div class="w-[20px] h-[20px] flex-shrink-0"></div></div>`:`<div class="set-row flex items-center space-x-3 text-sm"><span class="set-number-badge">${setIndex+1}</span><input type="number" value="${set.weight||""}" class="w-full form-input-custom p-2 rounded-lg text-center font-medium" placeholder="kg" data-type="weight" data-ex-index="${exerciseIndex}" data-set-index="${setIndex}"><span class="text-gray-400 font-sans">×</span><input type="number" value="${set.reps||""}" class="w-full form-input-custom p-2 rounded-lg text-center font-medium" placeholder="reps" data-type="reps" data-ex-index="${exerciseIndex}" data-set-index="${setIndex}"><button class="delete-set-btn" data-action="delete-set" data-ex-index="${exerciseIndex}" data-set-index="${setIndex}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>`).join(""),card=document.createElement("div");card.className="workout-card bg-white rounded-2xl p-5 shadow-lg shadow-pink-500/5 space-y-4",card.innerHTML=`<div class="flex justify-between items-center pb-4 border-b border-gray-100"><h3 class="font-bold text-gray-800 text-lg">${exercise.name}</h3><button class="text-xs font-bold text-red-500 hover:text-red-700 tracking-wider" data-action="delete-exercise" data-ex-index="${exerciseIndex}">DELETE</button></div><div class="space-y-3">${setsHtml}</div><div class="pt-2"><button class="add-set-btn" data-action="add-set" data-ex-index="${exerciseIndex}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg><span>Add Set</span></button></div>`,workoutListEl.appendChild(card)}),initializeDragAndDrop()}
-    function renderDateTimeline(){timelineContainer.innerHTML="",monthYearDisplay.textContent=currentDate.toLocaleDateString("en-US",{month:"long",year:"numeric"});let startPoint=new Date(currentDate);startPoint.setDate(startPoint.getDate()-3);for(let i=0;i<7;i++){let day=new Date(startPoint);day.setDate(day.getDate()+i);const isActive=day.toDateString()===currentDate.toDateString(),dayEl=document.createElement("button");dayEl.className="flex-shrink-0 flex flex-col items-center justify-center space-y-2 p-2 w-14 transition-colors relative",dayEl.innerHTML=`<span class="text-xs font-medium ${isActive?"text-gray-900":"text-gray-400"}">${day.toLocaleDateString("en-US",{weekday:"short"}).slice(0,2)}</span><span class="font-semibold text-lg ${isActive?"text-pink-500":"text-gray-500"}">${day.getDate()}</span><div class="workout-dots flex space-x-1 absolute bottom-0"></div>`,dayEl.addEventListener("click",()=>{currentDate=day,renderAll()}),timelineContainer.appendChild(dayEl)}updateTimelineDots()}
+    function renderWorkoutLog() {
+    const dateKey = toDateKey(currentDate);
+    const allWorkouts = getWorkouts();
+    const dailyWorkouts = allWorkouts[dateKey] || [];
+
+    workoutListEl.innerHTML = "";
+    if (dailyWorkouts.length === 0) {
+        workoutListEl.innerHTML = `<div class="flex flex-col items-center justify-center text-center text-gray-500 py-16 px-6 h-full"><svg class="w-16 h-16 text-pink-200 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12.75 3.03v.568c0 .334.148.65.405.864l1.068.89c.442.369.535 1.024.217 1.464l-.657.98c-.318.476-.945.642-1.464.325l-1.068-.89a.993.993 0 00-1.218 0l-1.068.89c-.519.317-1.146.15-1.464-.325l-.657-.98c-.318-.44-.225-1.095.217-1.464l1.068-.89a.993.993 0 00.405-.864v-.568a3 3 0 013-3c.954 0 1.84.464 2.404 1.224a2.998 2.998 0 01.596 2.776zM21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><h3 class="font-semibold text-lg text-gray-700">No workout logged</h3><p class="text-sm mt-2 max-w-xs">Tap the <span class="font-bold text-pink-500">+</span> button to add exercises or load one from <span class="font-bold text-pink-500">My Library</span>.</p></div>`;
+        return;
+    }
+
+    // [BARU] Tambahkan event listener ini
+    workoutListEl.addEventListener('blur', (e) => {
+        // Cek jika yang kehilangan fokus adalah textarea catatan
+        if (e.target.tagName === 'TEXTAREA' && e.target.dataset.type === 'note') {
+            renderAll(); // Cukup render ulang, data sudah tersimpan otomatis
+        }
+    }, true); // Gunakan 'true' untuk event capturing
+
+    dailyWorkouts.forEach((exercise, exerciseIndex) => {
+        if (!exercise) return;
+        const isCardio = exercise.categories && exercise.categories.includes("Cardio");
+        
+        const setsHtml = exercise.sets.map((set, setIndex) => {
+            if (isCardio) {
+                return `<div class="set-row flex items-center space-x-3 text-sm"><span class="set-number-badge">${setIndex + 1}</span><input type="number" value="${set.time || ""}" class="w-full form-input-custom p-2 rounded-lg text-center font-medium" placeholder="minutes" data-type="time" data-ex-index="${exerciseIndex}" data-set-index="${setIndex}"><div class="w-[20px] h-[20px] flex-shrink-0"></div></div>`;
+            } else {
+                return `<div class="set-row flex items-center space-x-3 text-sm"><span class="set-number-badge">${setIndex + 1}</span><input type="number" value="${set.weight || ""}" class="w-full form-input-custom p-2 rounded-lg text-center font-medium" placeholder="kg" data-type="weight" data-ex-index="${exerciseIndex}" data-set-index="${setIndex}"><span class="text-gray-400 font-sans">×</span><input type="number" value="${set.reps || ""}" class="w-full form-input-custom p-2 rounded-lg text-center font-medium" placeholder="reps" data-type="reps" data-ex-index="${exerciseIndex}" data-set-index="${setIndex}"><button class="delete-set-btn" data-action="delete-set" data-ex-index="${exerciseIndex}" data-set-index="${setIndex}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>`;
+            }
+        }).join("");
+
+        const card = document.createElement("div");
+        card.className = "workout-card bg-white rounded-2xl p-5 shadow-lg shadow-pink-500/5 space-y-4";
+        
+        // ▼▼▼ BAGIAN INI YANG BERUBAH ▼▼▼
+        // [MODIFIKASI] Ganti innerHTML untuk card
+        card.innerHTML = `
+            <div class="flex justify-between items-center pb-4 border-b border-gray-100">
+                <h3 class="font-bold text-gray-800 text-lg">${exercise.name}</h3>
+                <button class="text-xs font-bold text-red-500 hover:text-red-700 tracking-wider" data-action="delete-exercise" data-ex-index="${exerciseIndex}">DELETE</button>
+            </div>
+            <div class="space-y-3">${setsHtml}</div>
+            <div class="pt-2">
+                <button class="add-set-btn" data-action="add-set" data-ex-index="${exerciseIndex}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span>Add Set</span>
+                </button>
+            </div>
+            
+            <div class="pt-2 border-t border-gray-100 note-section">
+                <div class="note-display ${exercise.note ? '' : 'hidden'}">
+                    <p class="text-sm text-gray-700 whitespace-pre-wrap">${exercise.note || ''}</p>
+                    <button class="edit-note-btn text-xs font-bold text-pink-500 hover:text-pink-700 mt-2" data-ex-index="${exerciseIndex}">EDIT</button>
+                </div>
+
+                <button class="show-note-editor-btn add-set-btn !bg-gray-100 !text-gray-600 !font-medium ${exercise.note ? 'hidden' : ''}" data-ex-index="${exerciseIndex}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M11 13H5v-2h6V5h2v6h6v2h-6v6h-2z"/></svg>
+                    <span>Add Note</span>
+                </button>
+                
+                <textarea class="note-editor hidden w-full form-input-custom p-2 rounded-lg text-sm" 
+                          data-type="note" 
+                          data-ex-index="${exerciseIndex}"
+                          placeholder="e.g., focus on form...">${exercise.note || ''}</textarea>
+            </div>
+        `;
+
+        workoutListEl.appendChild(card);
+    });
+    
+    initializeDragAndDrop();
+}
+   function renderDateTimeline() {
+    timelineContainer.innerHTML = "";
+    monthYearDisplay.textContent = currentDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+    
+    let startPoint = new Date(currentDate);
+    startPoint.setDate(startPoint.getDate() - 3);
+
+    const today = new Date();
+
+    for (let i = 0; i < 7; i++) {
+        let day = new Date(startPoint);
+        day.setDate(day.getDate() + i);
+
+        const isSelected = day.toDateString() === currentDate.toDateString();
+        const isToday = day.toDateString() === today.toDateString();
+
+        const dayEl = document.createElement("button");
+        dayEl.className = "flex-shrink-0 flex flex-col items-center justify-center space-y-2 p-2 w-14 transition-colors relative rounded-full";
+        
+        // [INI PERBAIKANNYA] 'font-black' untuk menebalkan tanggal hari ini
+        dayEl.innerHTML = `
+            <span class="text-xs font-medium ${isSelected ? "text-gray-900" : "text-gray-400"}">${day.toLocaleDateString("en-US", { weekday: "short" }).slice(0, 2)}</span>
+            <span class="${isToday ? 'font-black' : 'font-semibold'} text-lg ${isSelected ? "text-pink-500" : "text-gray-500"}">${day.getDate()}</span>
+            <div class="workout-dots flex space-x-1 absolute bottom-0"></div>
+        `;
+        
+        dayEl.addEventListener("click", () => {
+            currentDate = day;
+            renderAll();
+        });
+        
+        timelineContainer.appendChild(dayEl);
+    }
+    updateTimelineDots();
+}
     function updateTimelineDots(){const allWorkouts=getWorkouts(),timelineButtons=timelineContainer.querySelectorAll("button");let startPoint=new Date(currentDate);startPoint.setDate(startPoint.getDate()-3),timelineButtons.forEach((btn,i)=>{let day=new Date(startPoint);day.setDate(day.getDate()+i);const dateKey=toDateKey(day),dotsContainer=btn.querySelector(".workout-dots");dotsContainer.innerHTML="",allWorkouts[dateKey]&&allWorkouts[dateKey].length>0&&(dotsContainer.innerHTML='<div class="w-1.5 h-1.5 rounded-full bg-pink-500"></div>')})}
     function renderCategories(){if(!categoryContainer) return; const allDbCategories=exerciseDatabase.flatMap(ex=>ex.categories),uniqueCategories=[...new Set(allDbCategories)].sort(),customExercises=getCustomExercises(),allCustomCategories=customExercises.flatMap(ex=>ex.categories),uniqueCustomCategories=[...new Set(allCustomCategories)],categories=["All",...uniqueCategories,...uniqueCustomCategories],finalCategories=[...new Set(categories)];categoryContainer.innerHTML="",finalCategories.forEach(category=>{const btn=document.createElement("button");btn.textContent=category,btn.className="category-btn text-sm font-medium px-4 py-2 rounded-full transition-colors whitespace-nowrap bg-gray-200 text-gray-700",btn.addEventListener("click",e=>{document.querySelectorAll(".category-btn").forEach(b=>b.classList.remove("bg-pink-500","text-white")),e.currentTarget.classList.add("bg-pink-500","text-white"),renderExerciseList(category,searchInput.value)}),categoryContainer.appendChild(btn)}),categoryContainer.querySelector(".category-btn").classList.add("bg-pink-500","text-white")}
     function renderExerciseList(category="All",searchTerm=""){if(!exerciseListContainer) return; exerciseListContainer.innerHTML="";const lowerCaseSearchTerm=searchTerm.toLowerCase(),allExercises=[...exerciseDatabase,...getCustomExercises()];let filteredExercises=allExercises;if("All"!==category&&(filteredExercises=filteredExercises.filter(ex=>ex.categories.includes(category))),searchTerm&&(filteredExercises=filteredExercises.filter(ex=>ex.name.toLowerCase().includes(lowerCaseSearchTerm))),0===filteredExercises.length)return void(exerciseListContainer.innerHTML='<p class="text-center text-gray-500 mt-8">No exercises found.</p>');filteredExercises.sort((a,b)=>a.name.localeCompare(b.name)).forEach(exercise=>{const item=document.createElement("div");item.className="flex items-center p-3 rounded-lg hover:bg-gray-100 cursor-pointer",item.innerHTML=`<div><p class="font-semibold text-gray-800">${exercise.name}</p><p class="text-xs text-gray-500">${exercise.categories.join(", ")}</p></div>`,item.addEventListener("click",()=> isEditingTemplate ? addExerciseToTemplate(exercise.name, exercise.categories) : addExerciseToDailyLog(exercise.name, exercise.categories)),exerciseListContainer.appendChild(item)})}
     function populateCategorySelect(){if(customExerciseForm){customExerciseCategorySelect.innerHTML="";const allDbCategories=exerciseDatabase.flatMap(ex=>ex.categories),uniqueCategories=[...new Set(allDbCategories)].sort();uniqueCategories.forEach(cat=>{const option=document.createElement("option");option.value=cat,option.textContent=cat,customExerciseCategorySelect.appendChild(option)})}}
     function handleAddCustomExercise(e){e.preventDefault();const name=customExerciseNameInput.value.trim(),category=customExerciseCategorySelect.value;if(!name||!category)return alert("Please fill out both fields.");{const customExercises=getCustomExercises(),allExercises=[...exerciseDatabase,...customExercises];if(allExercises.some(ex=>ex.name.toLowerCase()===name.toLowerCase()))return alert("An exercise with this name already exists.");customExercises.push({name:name,categories:[category]}),saveCustomExercises(customExercises),customExerciseForm.reset(),mainExerciseSelectionView.classList.remove("hidden"),addCustomExerciseView.classList.add("hidden"),renderCategories(),renderExerciseList(category,""),document.querySelectorAll(".category-btn").forEach(b=>{b.textContent===category&&b.click()})}}
-    function handleWorkoutListClick(e){const target=e.target,allWorkouts=getWorkouts(),dateKey=toDateKey(currentDate);if("INPUT"===target.tagName&&target.dataset.type){const exIndex=parseInt(target.dataset.exIndex),setIndex=parseInt(target.dataset.setIndex),type=target.dataset.type;return allWorkouts[dateKey][exIndex].sets[setIndex][type]=target.value,void saveWorkouts(allWorkouts)}const button=target.closest("button[data-action]");if(button){const action=button.dataset.action,exIndex=parseInt(button.dataset.exIndex);"add-set"===action?allWorkouts[dateKey][exIndex].sets.push(allWorkouts[dateKey][exIndex].categories.includes("Cardio")?{time:""}:{weight:"",reps:""}):"delete-set"===action?allWorkouts[dateKey][exIndex].sets.splice(parseInt(button.dataset.setIndex),1):"delete-exercise"===action&&allWorkouts[dateKey].splice(exIndex,1),saveWorkouts(allWorkouts),renderAll()}}
+   function handleWorkoutListClick(e) {
+    const target = e.target;
+    const allWorkouts = getWorkouts();
+    const dateKey = toDateKey(currentDate);
 
+    if ((target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') && target.dataset.type) {
+        const exIndex = parseInt(target.dataset.exIndex);
+        const type = target.dataset.type;
+        if (type === 'note') {
+            allWorkouts[dateKey][exIndex].note = target.value;
+        } else {
+            const setIndex = parseInt(target.dataset.setIndex);
+            allWorkouts[dateKey][exIndex].sets[setIndex][type] = target.value;
+        }
+        saveWorkouts(allWorkouts);
+        return;
+    }
+
+    const card = target.closest('.workout-card');
+    if (card) {
+        const showNoteBtn = target.closest('.show-note-editor-btn');
+        const editNoteBtn = target.closest('.edit-note-btn');
+
+        if (showNoteBtn || editNoteBtn) {
+            card.querySelector('.note-display').classList.add('hidden');
+            card.querySelector('.show-note-editor-btn').classList.add('hidden');
+            const editor = card.querySelector('.note-editor');
+            editor.classList.remove('hidden');
+            editor.focus();
+            return;
+        }
+    }
+
+    const button = target.closest("button[data-action]");
+    if (button) {
+        const action = button.dataset.action;
+        const exIndex = parseInt(button.dataset.exIndex);
+
+        if (action === "add-set") {
+            const isCardio = allWorkouts[dateKey][exIndex].categories.includes("Cardio");
+            allWorkouts[dateKey][exIndex].sets.push(isCardio ? { time: "" } : { weight: "", reps: "" });
+        } else if (action === "delete-set") {
+            const setIndex = parseInt(button.dataset.setIndex);
+            allWorkouts[dateKey][exIndex].sets.splice(setIndex, 1);
+        } else if (action === "delete-exercise") {
+            allWorkouts[dateKey].splice(exIndex, 1);
+            
+            if (allWorkouts[dateKey].length === 0) {
+                delete allWorkouts[dateKey];
+            }
+        }
+        
+        saveWorkouts(allWorkouts);
+        renderAll();
+    }
+}
     // ===================================================================
     // == ANALYTICS & PROGRESS CHART FUNCTIONS ==
     // ===================================================================
@@ -355,7 +514,27 @@ document.addEventListener('DOMContentLoaded', () => {
     function getRecapDateRange(date, filter) { const d = new Date(date); if (filter === 'day') { return { start: d, end: d }; } if (filter === 'month') { const start = new Date(d.getFullYear(), d.getMonth(), 1); const end = new Date(d.getFullYear(), d.getMonth() + 1, 0); return { start, end }; } const day = d.getDay(); const diff = d.getDate() - day + (day === 0 ? -6 : 1); const start = new Date(d.setDate(diff)); const end = new Date(new Date(start).setDate(start.getDate() + 6)); return { start, end }; }
     function animateCountUp(el, endValue, suffix = '') { if(!el) return; let startValue = 0; const duration = 1200; const startTime = performance.now(); function update(currentTime) { const elapsedTime = currentTime - startTime; if (elapsedTime >= duration) { el.textContent = endValue.toLocaleString() + suffix; return; } const progress = elapsedTime / duration; const easedProgress = 1 - Math.pow(1 - progress, 3); const currentValue = Math.round(easedProgress * endValue); el.textContent = currentValue.toLocaleString() + suffix; requestAnimationFrame(update); } requestAnimationFrame(update); }
     function initializeDragAndDrop() { if(!workoutListEl) return; if (sortableInstance) sortableInstance.destroy(); sortableInstance = new Sortable(workoutListEl, { animation: 150, onEnd: function (evt) { const allWorkouts = getWorkouts(); const dateKey = toDateKey(currentDate); const [movedItem] = allWorkouts[dateKey].splice(evt.oldIndex, 1); allWorkouts[dateKey].splice(evt.newIndex, 0, movedItem); saveWorkouts(allWorkouts); renderAll(); } }); }
-    function initializeCalendar() { if(!calendarContainer) return; if (calendarInstance) return; calendarInstance = flatpickr(calendarContainer, { inline: true, defaultDate: currentDate, onChange: (selectedDates) => { currentDate = selectedDates[0]; renderAll(); calendarModalOverlay.classList.add('hidden'); }, onDayCreate: (dObj, dStr, fp, dayElem) => { const dateKey = toDateKey(dayElem.dateObj); const allWorkouts = getWorkouts(); if (allWorkouts[dateKey] && allWorkouts[dateKey].length > 0) { dayElem.innerHTML += '<span class="workout-dot-marker"></span>'; } }, }); }
+    // GANTI SELURUH FUNGSI INI
+function initializeCalendar() {
+    if (calendarInstance) return;
+    calendarInstance = flatpickr(calendarContainer, {
+        inline: true,
+        defaultDate: currentDate,
+        onChange: (selectedDates) => {
+            // [INI PERBAIKANNYA] Buat salinan tanggal untuk mencegah bug
+            currentDate = new Date(selectedDates[0]); 
+            renderAll();
+            calendarModalOverlay.classList.add('hidden');
+        },
+        onDayCreate: (dObj, dStr, fp, dayElem) => {
+            const dateKey = toDateKey(dayElem.dateObj);
+            const allWorkouts = getWorkouts();
+            if (allWorkouts[dateKey] && allWorkouts[dateKey].some(exercise => exercise)) {
+                dayElem.innerHTML += '<span class="workout-dot-marker"></span>';
+            }
+        },
+    });
+}
     function openCalendarModal() { if (calendarInstance) { calendarInstance.setDate(currentDate, false); } if(calendarModalOverlay) calendarModalOverlay.classList.remove('hidden'); }
     function renderAll() { renderWorkoutLog(); renderDateTimeline(); if (calendarInstance) { calendarInstance.setDate(currentDate, false); } }
     function initializePage() { renderAll(); renderCategories(); renderExerciseList(); populateCategorySelect(); initializeCalendar(); }
@@ -363,6 +542,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===================================================================
     // == EVENT LISTENERS ==
     // ===================================================================
+
+
     if(closeModalBtn) closeModalBtn.addEventListener('click', () => { addExerciseModal.classList.add('hidden'); isEditingTemplate = false; });
     if(customExerciseForm) customExerciseForm.addEventListener('submit', handleAddCustomExercise);
     if(workoutListEl) {
