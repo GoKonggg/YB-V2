@@ -167,7 +167,7 @@ function generatePaceScreen() {
                     <h3 class="font-semibold">Ambitious: ~${pace3} kg / week</h3>
                 </div>
             </div>
-            <button onclick="nextScreen()" id="btn-screen-4" class="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg mt-8 hover:opacity-90 transition-opacity disabled:opacity-50" disabled>Continue</button>
+            <button onclick="nextScreen()" id="btn-screen-4" class="w-full bg-primary-gradient text-white font-bold py-3 px-4 rounded-lg mt-8 hover:opacity-90 transition-opacity disabled:opacity-50" disabled>Continue</button>
         `;
     } else if (goal === 'muscle_gain') {
         content = `
@@ -186,7 +186,7 @@ function generatePaceScreen() {
                     <h3 class="font-semibold">Steady Gain: +0.4 kg / week</h3>
                 </div>
             </div>
-            <button onclick="nextScreen()" id="btn-screen-4" class="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg mt-8 hover:opacity-90 transition-opacity disabled:opacity-50" disabled>Continue</button>
+            <button onclick="nextScreen()" id="btn-screen-4" class="w-full bg-primary-gradient text-white font-bold py-3 px-4 rounded-lg mt-8 hover:opacity-90 transition-opacity disabled:opacity-50" disabled>Continue</button>
         `;
     }
     screen4.innerHTML = content;
