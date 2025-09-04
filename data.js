@@ -1,3 +1,104 @@
+const coachesData = [
+    {
+        id: 'c001',
+        name: 'Alex Johnson',
+        avatarUrl: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
+        specialty: 'Strength & Conditioning',
+        rating: '4.7 (82 reviews)',
+        bio: 'Certified strength coach with over 10 years of experience helping athletes reach their peak performance. My philosophy combines traditional strength training with functional movements for real-world results.',
+        offerings: [
+            { type: 'One-Time', title: 'Single Session Consultation', price: 25, description: 'A 60-minute one-on-one session to review your form, discuss your goals, or create a mini-plan.' },
+            { type: 'Subscription', title: 'Monthly Coaching', price: 80, duration: 'month', description: 'Weekly check-ins, personalized plan adjustments, and priority support via chat.', isPopular: true },
+            { type: 'Subscription', title: '3-Month Transformation', price: 220, duration: '3 months', description: 'A complete package with bi-weekly video calls and a fully customized nutrition and workout plan.' }
+        ],
+        sellsPrograms: ['p002'],
+        stats: {
+            experience: '10+',
+            clients: '250+',
+            certifications: 5
+        },
+        testimonials: [
+            {
+                quote: "Lost 20lbs and gained so much confidence. Alex's programming is top-notch!",
+                name: 'Sarah L.',
+                beforeImageUrl: 'https://placehold.co/200x200/cccccc/999999?text=Before',
+                afterImageUrl: 'https://placehold.co/200x200/ec4899/ffffff?text=After'
+            }
+        ],
+        certifications: [
+            'NASM Certified Personal Trainer',
+            'Strength & Conditioning Specialist (CSCS)',
+            'Precision Nutrition Level 1',
+            'Functional Movement Screen (FMS)',
+            'Kettlebell Athletics Level 2'
+        ]
+    },
+    {
+        id: 'c002',
+        name: 'Chloe Chen',
+        avatarUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80',
+        specialty: 'Yoga & Mindfulness',
+        rating: '4.8 (112 reviews)',
+        bio: 'Yoga Alliance certified instructor focusing on Vinyasa flows and mindfulness. My goal is to help you connect your mind and body, building strength and flexibility both on and off the mat.',
+        offerings: [
+            { type: 'One-Time', title: 'Private Yoga Session', price: 22, description: 'A 75-minute personalized yoga session tailored to your skill level and goals.' },
+            { type: 'Subscription', title: 'Monthly Yoga Pass', price: 75, duration: 'month', description: 'Access to all live-streamed classes and a weekly guided meditation.', isPopular: true }
+        ],
+        sellsPrograms: ['p003'],
+        stats: {
+            experience: '6+',
+            clients: '500+',
+            certifications: 3
+        },
+        testimonials: [
+            {
+                quote: "Her classes are my weekly reset button. I've never felt more flexible and calm.",
+                name: 'Emily R.',
+                beforeImageUrl: 'https://placehold.co/200x200/cccccc/999999?text=Before',
+                afterImageUrl: 'https://placehold.co/200x200/d946ef/ffffff?text=After'
+            }
+        ],
+        certifications: [
+            'E-RYT 500 Yoga Alliance',
+            'Certified Yin Yoga Instructor',
+            'Prenatal Yoga Certified'
+        ]
+    },
+    {
+        id: 'c003',
+        name: 'Maria Garcia',
+        avatarUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80',
+        specialty: 'Certified Nutritionist',
+        rating: '4.9 (150 reviews)',
+        bio: 'A certified nutritionist dedicated to creating sustainable, science-based eating plans. No fad diets, just a healthy relationship with food to fuel your life and your workouts.',
+        offerings: [
+            { type: 'One-Time', title: 'Dietary Analysis', price: 30, description: 'A complete analysis of your current diet with actionable recommendations.' },
+            { type: 'Subscription', title: 'Monthly Nutrition Plan', price: 90, duration: 'month', description: 'A personalized meal plan, updated weekly, with full support.', isPopular: true }
+        ],
+        sellsPrograms: [],
+        stats: {
+            experience: '8+',
+            clients: '400+',
+            certifications: 4
+        },
+        testimonials: [
+            {
+                quote: "Maria completely changed my relationship with food for the better. I have more energy than ever!",
+                name: 'David K.',
+                beforeImageUrl: 'https://placehold.co/200x200/cccccc/999999?text=Before',
+                afterImageUrl: 'https://placehold.co/200x200/f472b6/ffffff?text=After'
+            }
+        ],
+        certifications: [
+            'Registered Dietitian Nutritionist (RDN)',
+            'Certified Nutrition Specialist (CNS)',
+            'Sports Nutritionist Certification',
+            'Holistic Nutrition Certified'
+        ]
+    }
+];
+
+
 const programsData = [
     {
         id: 'p001',
