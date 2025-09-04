@@ -2,38 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // --- [BARU] DATABASE PROGRAM ---
     // Menyimpan data di sini lebih baik karena bisa menampung info lebih detail (deskripsi, dll)
-    const programsData = [
-        {
-            id: 'p001',
-            title: 'Booty Builder 101',
-            author: 'By Jen Selter',
-            price: 9,
-            equipment: 'minimal',
-            image: 'https://placehold.co/400x200/fce7f3/be185d?text=Booty+Builder',
-            duration: '4 Weeks',
-            description: 'A comprehensive 4-week program designed to build and strengthen your glutes with minimal equipment. Perfect for home workouts.'
-        },
-        {
-            id: 'p002',
-            title: 'Functional Full Body',
-            author: 'By Dave Spitz',
-            price: 15,
-            equipment: 'full_gym',
-            image: 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-            duration: '6 Weeks',
-            description: 'This 6-week program focuses on functional strength, improving your performance in and out of the gym. Requires full gym access.'
-        },
-        {
-            id: 'p003',
-            title: 'Morning Yoga Flow',
-            author: 'By Chloe Chen',
-            price: 18,
-            equipment: 'minimal',
-            image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-            duration: 'Subscription',
-            description: 'Start your day with a revitalizing yoga flow. This subscription gives you access to a new session every morning to build flexibility and mindfulness.'
-        }
-    ];
+    // Ganti programsData lama dengan yang ini
+
 
     // --- ELEMENT SELECTORS (YANG SUDAH ADA) ---
     const programsToggle = document.getElementById('programs-toggle');
@@ -54,39 +24,95 @@ document.addEventListener('DOMContentLoaded', () => {
     const programCards = document.querySelectorAll('.program-card');
     const backToMarketBtn = document.getElementById('back-to-market-btn');
     const getProgramBtn = document.getElementById('get-program-btn');
-    const detailImg = document.getElementById('detail-img');
+    // = document.getElementById('detail-img');
     const detailTitle = document.getElementById('detail-title');
     const detailAuthor = document.getElementById('detail-author');
     const detailDuration = document.getElementById('detail-duration');
     const detailEquipment = document.getElementById('detail-equipment');
     const detailPrice = document.getElementById('detail-price');
     const detailDescription = document.getElementById('detail-description');
+
+    // Tambahkan ini ke bagian ELEMENT SELECTORS UNTUK DETAIL VIEW
+    const detailVideo = document.getElementById('detail-video');
+    const detailFrequency = document.getElementById('detail-frequency');
+    const detailGoals = document.getElementById('detail-goals');
+    const detailSuitableFor = document.getElementById('detail-suitable-for');
+    const detailPurchaseCount = document.getElementById('detail-purchase-count');
     
+    
+    const ownedProgramActions = document.getElementById('owned-program-actions');
+
     // State untuk melacak view yang sedang aktif
     let activeView = 'programs';
 
     // --- [BARU] FUNGSI UNTUK MENAMPILKAN & MENYEMBUNYIKAN DETAIL ---
-    const showProgramDetail = (programId) => {
-        const program = programsData.find(p => p.id === programId);
-        if (!program) return;
+    // Ganti fungsi lama dengan yang ini
+const showProgramDetail = (programId) => {
+    const program = programsData.find(p => p.id === programId);
+    if (!program) return;
 
-        // Populate data
-        detailImg.src = program.image;
-        detailTitle.textContent = program.title;
-        detailAuthor.textContent = program.author;
-        detailDuration.textContent = program.duration;
-        detailEquipment.textContent = program.equipment.replace('_', ' ');
-        detailPrice.textContent = `$${program.price}`;
-        detailDescription.textContent = program.description;
-        getProgramBtn.dataset.programId = program.id;
+    // --- Mengisi semua data detail program ---
+    detailTitle.textContent = program.title;
+    detailAuthor.textContent = program.author;
+    detailDuration.textContent = program.duration;
+    detailEquipment.textContent = program.equipment.replace('_', ' ');
+    detailPrice.textContent = `$${program.price}`;
+    detailDescription.textContent = program.description;
+    getProgramBtn.dataset.programId = program.id; // Set ID untuk tombol Get
+    
+    // Mengisi data baru
+    detailVideo.src = program.videoUrl;
+    detailFrequency.textContent = program.frequency;
+    detailGoals.textContent = program.goals;
+    detailSuitableFor.textContent = program.suitableFor;
+    detailPurchaseCount.textContent = program.purchaseCount;
 
-        // Sembunyikan semua view utama dan tampilkan detail
-        mainHeaderArea.classList.add('hidden');
-        programsView.classList.add('hidden');
-        coachesView.classList.add('hidden');
-        filterPanel.classList.add('hidden');
-        programDetailView.classList.remove('hidden');
+    // --- Mengisi daftar "What You'll Get" secara dinamis ---
+    const includesList = document.getElementById('detail-includes-list');
+    includesList.innerHTML = ''; // Kosongkan daftar sebelum mengisi ulang
+
+    const iconMap = {
+        'Workout Program': '<svg class="w-5 h-5 text-fuchsia-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>',
+        'Video Guides': '<svg class="w-5 h-5 text-fuchsia-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>',
+        'Community Group': '<svg class="w-5 h-5 text-fuchsia-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>'
     };
+
+    if (program.includes && program.includes.length > 0) {
+        program.includes.forEach(item => {
+            const listItem = document.createElement('div');
+            listItem.className = 'flex items-center space-x-3';
+            listItem.innerHTML = `
+                <div class="bg-fuchsia-100 p-2 rounded-full">
+                    ${iconMap[item] || ''}
+                </div>
+                <span class="text-slate-700 font-medium">${item}</span>
+            `;
+            includesList.appendChild(listItem);
+        });
+    }
+    
+    // --- Memeriksa status kepemilikan dan menampilkan tombol yang sesuai ---
+    const savedProgramsRaw = localStorage.getItem('userPrograms') || '[]';
+    const savedPrograms = JSON.parse(savedProgramsRaw);
+
+    if (savedPrograms.includes(programId)) {
+        // Jika SUDAH punya program
+        getProgramBtn.classList.add('hidden');
+        ownedProgramActions.classList.remove('hidden');
+        document.getElementById('start-workout-btn').href = `program-view.html?id=${programId}`;
+    } else {
+        // Jika BELUM punya program
+        getProgramBtn.classList.remove('hidden');
+        ownedProgramActions.classList.add('hidden');
+    }
+
+    // --- Menampilkan halaman detail dan menyembunyikan yang lain ---
+    mainHeaderArea.classList.add('hidden');
+    programsView.classList.add('hidden');
+    coachesView.classList.add('hidden');
+    filterPanel.classList.add('hidden');
+    programDetailView.classList.remove('hidden');
+};
     
     const showMarketplace = () => {
         // Sembunyikan detail
@@ -231,35 +257,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     backToMarketBtn.addEventListener('click', showMarketplace);
     
-    // GANTI BLOK KODE LAMA INI...
-/*
-getProgramBtn.addEventListener('click', (e) => {
-    const programId = e.currentTarget.dataset.programId;
-    alert(`Program ${programId} has been added! (Functionality for Fase 2)`);
-});
-*/
 
-// ...DENGAN KODE BARU DI BAWAH INI:
-getProgramBtn.addEventListener('click', (e) => {
-    const programId = e.currentTarget.dataset.programId;
+// Ganti event listener lama dengan yang ini
+getProgramBtn.addEventListener('click', () => {
+    const programId = getProgramBtn.dataset.programId; // Ambil ID dari tombol itu sendiri
     
-    // 1. Ambil data program yang sudah ada dari localStorage
-    // Gunakan '[]' sebagai default jika belum ada data sama sekali
     const savedProgramsRaw = localStorage.getItem('userPrograms') || '[]';
     const savedPrograms = JSON.parse(savedProgramsRaw);
 
-    // 2. Cek apakah program ini sudah pernah disimpan
-    if (savedPrograms.includes(programId)) {
-        alert('You already have this program!');
-    } else {
-        // 3. Jika belum, tambahkan ID program baru ke dalam array
+    if (!savedPrograms.includes(programId)) {
         savedPrograms.push(programId);
-        
-        // 4. Simpan kembali array yang sudah diupdate ke localStorage
         localStorage.setItem('userPrograms', JSON.stringify(savedPrograms));
+        alert('Program has been added to "My Programs"!');
         
-        // Beri notifikasi ke pengguna
-        alert(`Program has been added to "My Programs"!`);
+        // [BARU] Panggil ulang fungsi untuk refresh UI secara instan
+        showProgramDetail(programId);
+    } else {
+        alert('You already have this program!');
     }
 });
     // --- INITIALIZATION ---

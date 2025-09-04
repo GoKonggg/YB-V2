@@ -1,8 +1,8 @@
-// File: goals.js (Revised with Tabs and Corrected Slider Logic)
+// File: goals.js (Revised with New UI Logic)
 document.addEventListener('DOMContentLoaded', () => {
-    // --- ELEMENT SELECTORS ---
+    // --- ELEMENT SELECTORS (with new elements) ---
     const calorieGoalInput = document.getElementById('calorie-goal-input');
-    if (!calorieGoalInput) return;
+    if (!calorieGoalInput) return; // Exit if main element isn't found
 
     const tabProgress = document.getElementById('tab-progress');
     const tabEdit = document.getElementById('tab-edit');
@@ -10,19 +10,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const editContent = document.getElementById('edit-content');
     const saveButtonWrapper = document.getElementById('save-button-wrapper');
 
+    // New selectors for calorie stepper
+    const decrementBtn = document.getElementById('decrement-calories');
+    const incrementBtn = document.getElementById('increment-calories');
+
+    // New selector for donut chart
+    const calorieCircle = document.getElementById('calories-circle');
+    const circumference = calorieCircle.r.baseVal.value * 2 * Math.PI;
+    calorieCircle.style.strokeDasharray = circumference;
+
     const sliders = { carbs: document.getElementById('carbs-slider'), protein: document.getElementById('protein-slider'), fat: document.getElementById('fat-slider') };
     const percentDisplays = { carbs: document.getElementById('carbs-percent'), protein: document.getElementById('protein-percent'), fat: document.getElementById('fat-percent') };
     const editGramDisplays = { carbs: document.getElementById('edit-carbs-grams'), protein: document.getElementById('edit-protein-grams'), fat: document.getElementById('edit-fat-grams') };
     const saveButton = document.getElementById('save-goals-btn');
     
     const progressDisplays = {
-        calories: { consumed: document.getElementById('calories-consumed'), goal: document.getElementById('calories-goal-display'), bar: document.getElementById('calories-progress') },
+        calories: { consumed: document.getElementById('calories-consumed'), goal: document.getElementById('calories-goal-display') },
         carbs: { consumed: document.getElementById('carbs-consumed'), goal: document.getElementById('carbs-goal'), bar: document.getElementById('carbs-progress') },
         protein: { consumed: document.getElementById('protein-consumed'), goal: document.getElementById('protein-goal'), bar: document.getElementById('protein-progress') },
         fat: { consumed: document.getElementById('fat-consumed'), goal: document.getElementById('fat-goal'), bar: document.getElementById('fat-progress') }
     };
 
-    // --- TAB SWITCHING LOGIC ---
+    // --- TAB SWITCHING LOGIC (No changes needed here) ---
     const switchTab = (tab) => {
         if (tab === 'progress') {
             progressContent.classList.remove('hidden');
@@ -30,19 +39,17 @@ document.addEventListener('DOMContentLoaded', () => {
             saveButtonWrapper.classList.add('hidden');
             tabProgress.classList.add('border-pink-500', 'text-pink-500');
             tabEdit.classList.remove('border-pink-500', 'text-pink-500');
-            tabEdit.classList.add('border-transparent', 'text-gray-500');
             renderProgressView();
         } else { // 'edit'
             progressContent.classList.add('hidden');
             editContent.classList.remove('hidden');
             saveButtonWrapper.classList.remove('hidden');
             tabProgress.classList.remove('border-pink-500', 'text-pink-500');
-            tabProgress.classList.add('border-transparent', 'text-gray-500');
             tabEdit.classList.add('border-pink-500', 'text-pink-500');
         }
     };
 
-    // --- DATA CALCULATION ---
+    // --- DATA CALCULATION (No changes needed here) ---
     const getTodaysConsumed = () => {
         const today = new Date().toISOString().split('T')[0];
         const allFoodData = JSON.parse(localStorage.getItem('allFoodData')) || {};
@@ -59,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return totals;
     };
     
-    // --- RENDER PROGRESS VIEW ---
+    // --- RENDER PROGRESS VIEW (UPDATED FOR DONUT CHART) ---
     const renderProgressView = () => {
         const consumed = getTodaysConsumed();
         const calorieGoal = parseInt(localStorage.getItem('calorieGoal')) || 1836;
@@ -71,26 +78,34 @@ document.addEventListener('DOMContentLoaded', () => {
             fat: Math.round((calorieGoal * macroGoalsPercent.fat / 100) / 9)
         };
 
-        progressDisplays.calories.consumed.textContent = consumed.calories;
+        // Update calorie text
+        progressDisplays.calories.consumed.textContent = Math.round(consumed.calories);
         progressDisplays.calories.goal.textContent = calorieGoal;
-        progressDisplays.calories.bar.style.width = calorieGoal > 0 ? `${Math.min((consumed.calories / calorieGoal) * 100, 100)}%` : '0%';
+        
+        // Update donut chart
+        const calorieProgress = calorieGoal > 0 ? Math.min((consumed.calories / calorieGoal), 1) : 0;
+        const offset = circumference - calorieProgress * circumference;
+        calorieCircle.style.strokeDashoffset = offset;
 
+        // Update macro bars (no change)
         for (const macro of ['carbs', 'protein', 'fat']) {
             const goalInGrams = macroGoalsGrams[macro];
-            progressDisplays[macro].consumed.textContent = consumed[macro];
+            progressDisplays[macro].consumed.textContent = Math.round(consumed[macro]);
             progressDisplays[macro].goal.textContent = goalInGrams;
-            progressDisplays[macro].bar.style.width = goalInGrams > 0 ? `${Math.min((consumed[macro] / goalInGrams) * 100, 100)}%` : '0%';
+            if(progressDisplays[macro].bar) {
+                progressDisplays[macro].bar.style.width = goalInGrams > 0 ? `${Math.min((consumed[macro] / goalInGrams) * 100, 100)}%` : '0%';
+            }
         }
     };
 
-    // --- EDIT TAB LOGIC ---
+    // --- EDIT TAB LOGIC (No changes needed here) ---
     const updateEditUI = () => {
         const totalCalories = parseInt(calorieGoalInput.value) || 0;
         const percentages = { carbs: parseInt(sliders.carbs.value), protein: parseInt(sliders.protein.value), fat: parseInt(sliders.fat.value) };
         
-        percentDisplays.carbs.textContent = percentages.carbs;
-        percentDisplays.protein.textContent = percentages.protein;
-        percentDisplays.fat.textContent = percentages.fat;
+        Object.keys(percentages).forEach(key => {
+            percentDisplays[key].textContent = percentages[key];
+        });
         
         editGramDisplays.carbs.textContent = `${Math.round((totalCalories * percentages.carbs / 100) / 4)}g`;
         editGramDisplays.protein.textContent = `${Math.round((totalCalories * percentages.protein / 100) / 4)}g`;
@@ -98,48 +113,33 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const handleSliderInput = (changedSliderKey) => {
-        const changedSlider = sliders[changedSliderKey];
-        const otherSliderKeys = Object.keys(sliders).filter(k => k !== changedSliderKey);
-        
-        const oldValue = parseInt(changedSlider.dataset.oldValue || changedSlider.value);
-        const newValue = parseInt(changedSlider.value);
-        const diff = oldValue - newValue;
+        let total = Object.values(sliders).reduce((sum, s) => sum + parseInt(s.value), 0);
+        if (total === 100) {
+            updateEditUI();
+            return;
+        }
 
-        const otherSliders = otherSliderKeys.map(key => sliders[key]);
-        otherSliders.sort((a, b) => (diff > 0 ? b.value - a.value : a.value - b.value));
+        const diff = 100 - total;
+        const otherSliders = Object.keys(sliders)
+            .filter(k => k !== changedSliderKey)
+            .map(k => sliders[k]);
 
-        let remainingDiff = diff;
-        
+        // A simpler balancing logic
+        let adjusted = false;
         for (const slider of otherSliders) {
-            if (remainingDiff === 0) break;
-            const currentVal = parseInt(slider.value);
-            const adjustment = Math.round(remainingDiff / (otherSliders.filter(s => s !== slider).length + 1));
-            
-            let newVal = currentVal + adjustment;
-            
-            if (newVal < 0) {
-                remainingDiff -= (0 - currentVal);
-                slider.value = 0;
-            } else if (newVal > 100) {
-                remainingDiff -= (100 - currentVal);
-                slider.value = 100;
-            } else {
-                slider.value = newVal;
-                remainingDiff -= adjustment;
+            let currentVal = parseInt(slider.value);
+            if (currentVal - diff >= 0 && currentVal - diff <= 100) {
+                slider.value = currentVal - diff;
+                adjusted = true;
+                break;
             }
         }
-
-        let currentTotal = Object.values(sliders).reduce((sum, s) => sum + parseInt(s.value), 0);
-        const finalDiff = 100 - currentTotal;
-        
-        if (finalDiff !== 0) {
-            const sliderToAdjust = otherSliders.find(s => parseInt(s.value) + finalDiff >= 0 && parseInt(s.value) + finalDiff <= 100) || changedSlider;
-            if (parseInt(sliderToAdjust.value) + finalDiff >=0 && parseInt(sliderToAdjust.value) + finalDiff <= 100) {
-                 sliderToAdjust.value = parseInt(sliderToAdjust.value) + finalDiff;
-            }
+        if (!adjusted && otherSliders.length > 0) {
+           let s1 = otherSliders[0];
+           let s1_val = parseInt(s1.value);
+           s1.value = s1_val - diff;
         }
 
-        Object.values(sliders).forEach(s => s.dataset.oldValue = s.value);
         updateEditUI();
     };
     
@@ -150,8 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
         sliders.carbs.value = savedMacros.carbs;
         sliders.protein.value = savedMacros.protein;
         sliders.fat.value = savedMacros.fat;
-        
-        Object.values(sliders).forEach(s => s.dataset.oldValue = s.value);
         updateEditUI();
     };
     
@@ -167,20 +165,26 @@ document.addEventListener('DOMContentLoaded', () => {
         switchTab('progress');
     };
 
-    // --- EVENT LISTENERS ---
+    // --- EVENT LISTENERS (with new listeners) ---
     tabProgress.addEventListener('click', () => switchTab('progress'));
     tabEdit.addEventListener('click', () => switchTab('edit'));
     calorieGoalInput.addEventListener('input', updateEditUI);
+    saveButton.addEventListener('click', saveGoals);
     
-    Object.values(sliders).forEach(slider => {
-        slider.addEventListener('mousedown', () => slider.dataset.oldValue = slider.value);
-        slider.addEventListener('touchstart', () => slider.dataset.oldValue = slider.value);
+    // New listeners for calorie stepper
+    decrementBtn.addEventListener('click', () => {
+        calorieGoalInput.value = parseInt(calorieGoalInput.value) - 10;
+        updateEditUI();
     });
-
+    incrementBtn.addEventListener('click', () => {
+        calorieGoalInput.value = parseInt(calorieGoalInput.value) + 10;
+        updateEditUI();
+    });
+    
+    // Simplified slider logic handler
     sliders.carbs.addEventListener('input', () => handleSliderInput('carbs'));
     sliders.protein.addEventListener('input', () => handleSliderInput('protein'));
     sliders.fat.addEventListener('input', () => handleSliderInput('fat'));
-    saveButton.addEventListener('click', saveGoals);
 
     // --- INITIALIZE ---
     loadGoalsForEdit(); 

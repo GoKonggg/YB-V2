@@ -141,45 +141,67 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===================================================================
 
     function renderLibraryList() {
-        const programIds = getUserPrograms();
-        const templates = getUserTemplates();
-        libraryList.innerHTML = '';
+    const programIds = getUserPrograms();
+    const templates = getUserTemplates();
+    libraryList.innerHTML = '';
 
-        if (programIds.length === 0 && templates.length === 0) {
-            libraryList.innerHTML = `<p class="text-center text-gray-400 py-8">Your saved programs and templates will appear here.</p>`;
-            return;
-        }
+    if (programIds.length === 0 && templates.length === 0) {
+        libraryList.innerHTML = `<p class="text-center text-gray-400 py-8">Your saved programs and templates will appear here.</p>`;
+        return;
+    }
 
-        // KODE BARU YANG DISAMAKAN
-        programIds.forEach(id => {
-            const programData = programBlueprints[id];
-            if (programData) {
-                const el = document.createElement('div');
-                el.className = 'bg-white p-4 rounded-xl border';
-                let workoutOptionsHTML = programData.workouts.map((workout, index) =>
-                    `<button class="load-program-btn w-full text-left text-sm font-semibold text-pink-600 bg-pink-50 p-3 rounded-lg hover:bg-pink-100 mt-2" data-program-id="${id}" data-workout-index="${index}">
-                        Load ${workout.day}
-                    </button>`
-                ).join('');
-                el.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h4 class="font-bold text-gray-800">${programData.name}</h4>
-                            <span class="text-xs font-semibold bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">Program</span>
-                        </div>
-                        <div class="flex space-x-1">
-                            <button class="p-1 text-gray-300 cursor-not-allowed" disabled title="Programs from the marketplace cannot be edited.">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L14.732 3.732z"></path></svg>
+    // Render program yang dibeli dari data.js
+    programIds.forEach(id => {
+        const program = programsData.find(p => p.id === id);
+        if (program) {
+            const programCard = document.createElement('div');
+            programCard.className = 'bg-white p-4 rounded-xl border';
+
+            // [BARU] Buat elemen accordion untuk setiap minggu
+            let weeksAccordionHTML = '';
+            if (program.plan) {
+                weeksAccordionHTML = program.plan.map(week => {
+                    // Buat tombol "Load" untuk setiap hari latihan di dalam minggu ini
+                    const workoutButtonsHTML = week.days
+                        .filter(day => day.exercises && day.exercises.length > 0) // Hanya tampilkan hari yang ada latihan
+                        .map(day => `
+                            <button class="load-program-btn w-full text-left text-sm font-semibold text-pink-600 bg-pink-50 p-3 rounded-lg hover:bg-pink-100 mt-2" 
+                                    data-program-id="${id}" 
+                                    data-week="${week.week}" 
+                                    data-day="${day.day}">
+                                Load: ${day.title}
                             </button>
-                            <button class="remove-program-btn p-1 text-gray-400 hover:text-red-500" data-program-id="${id}">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="mt-2 space-y-2">${workoutOptionsHTML}</div>`;
-                libraryList.appendChild(el);
+                        `).join('');
+
+                    // Bungkus semuanya dalam tag <details>
+                    return `
+                        <details class="group">
+                            <summary class="flex justify-between items-center cursor-pointer list-none py-2 font-semibold text-gray-700 hover:text-pink-600">
+                                Week ${week.week}
+                                <svg class="w-4 h-4 transition-transform duration-300 group-open:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+                            </summary>
+                            <div class="pl-2 pt-2 border-l-2 border-pink-100">
+                                ${workoutButtonsHTML}
+                            </div>
+                        </details>
+                    `;
+                }).join('');
             }
-        });
+            
+            programCard.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h4 class="font-bold text-gray-800">${program.title}</h4>
+                        <span class="text-xs font-semibold bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">Program</span>
+                    </div>
+                    <button class="remove-program-btn p-1 text-gray-400 hover:text-red-500" data-program-id="${id}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                </div>
+                <div class="mt-3 space-y-1">${weeksAccordionHTML}</div>`;
+            libraryList.appendChild(programCard);
+        }
+    });
 
         templates.forEach(template => {
             const el = document.createElement('div');
@@ -300,17 +322,41 @@ document.addEventListener('DOMContentLoaded', () => {
         isEditingTemplate = false;
     }
     
-    function loadProgramWorkout(programId, workoutIndex) {
-        const program = programBlueprints[programId];
-        if (!program || !program.workouts[workoutIndex]) return;
-        const workoutToLoad = program.workouts[workoutIndex].exercises;
-        const allWorkouts = getWorkouts();
-        const dateKey = toDateKey(currentDate);
-        allWorkouts[dateKey] = [...(allWorkouts[dateKey] || []), ...JSON.parse(JSON.stringify(workoutToLoad))];
-        saveWorkouts(allWorkouts);
-        renderAll();
-        libraryModalOverlay.classList.add('hidden');
+    // GANTI FUNGSI LAMA DENGAN VERSI BARU INI
+function loadProgramWorkout(programId, weekNum, dayNum) {
+    const program = programsData.find(p => p.id === programId);
+    if (!program) return;
+
+    const week = program.plan.find(w => w.week == weekNum);
+    if (!week) return;
+
+    const day = week.days.find(d => d.day == dayNum);
+    if (!day || !day.exercises || day.exercises.length === 0) return;
+
+    const workoutToLoad = day.exercises.map(ex => {
+        return {
+            name: ex.name,
+            categories: exerciseDatabase.find(dbEx => dbEx.name === ex.name)?.categories || [],
+            sets: ex.setsReps.startsWith('Follow along') 
+                ? [{ time: '' }] 
+                : Array(parseInt(ex.setsReps.split(' ')[0])).fill(null).map(() => ({ weight: '', reps: '' }))
+        };
+    });
+
+    const allWorkouts = getWorkouts();
+    const dateKey = toDateKey(currentDate);
+
+    if (allWorkouts[dateKey] && allWorkouts[dateKey].length > 0) {
+        if (!confirm('You already have a workout logged for today. Do you want to add these exercises?')) {
+            return;
+        }
     }
+    
+    allWorkouts[dateKey] = [...(allWorkouts[dateKey] || []), ...JSON.parse(JSON.stringify(workoutToLoad))];
+    saveWorkouts(allWorkouts);
+    renderAll();
+    libraryModalOverlay.classList.add('hidden');
+}
 
     function loadTemplateWorkout(templateId) {
         const templates = getUserTemplates();
@@ -324,6 +370,56 @@ document.addEventListener('DOMContentLoaded', () => {
         renderAll();
         libraryModalOverlay.classList.add('hidden');
     }
+
+    // Tambahkan fungsi baru ini di workout.js
+
+function autoLoadWorkoutFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const programId = urlParams.get('programId');
+    const weekNum = parseInt(urlParams.get('week'));
+    const dayNum = parseInt(urlParams.get('day'));
+
+    if (!programId || !weekNum || !dayNum) {
+        return; // Tidak ada data program di URL, keluar dari fungsi
+    }
+
+    // Cari program di 'programsData' (dari data.js)
+    const program = programsData.find(p => p.id === programId);
+    if (!program) return;
+
+    // Cari minggu yang sesuai
+    const week = program.plan.find(w => w.week === weekNum);
+    if (!week) return;
+
+    // Cari hari yang sesuai
+    const day = week.days.find(d => d.day === dayNum);
+    if (!day || day.exercises.length === 0) return;
+
+    // Kita punya data latihannya! Sekarang muat ke log hari ini.
+    const workoutToLoad = day.exercises.map(ex => ({
+        name: ex.name,
+        categories: exerciseDatabase.find(dbEx => dbEx.name === ex.name)?.categories || [],
+        sets: ex.setsReps.startsWith('Follow along') 
+            ? [{ time: '' }] 
+            : Array(parseInt(ex.setsReps.split(' ')[0])).fill(null).map(() => ({ weight: '', reps: '' }))
+    }));
+
+    const allWorkouts = getWorkouts();
+    const dateKey = toDateKey(new Date()); // Selalu muat untuk hari ini
+    
+    // Cek jika hari ini sudah ada latihan, tanyakan pengguna
+    if (allWorkouts[dateKey] && allWorkouts[dateKey].length > 0) {
+        if (!confirm('You already have a workout logged for today. Do you want to add exercises from the program?')) {
+            return;
+        }
+    }
+
+    allWorkouts[dateKey] = [...(allWorkouts[dateKey] || []), ...JSON.parse(JSON.stringify(workoutToLoad))];
+    saveWorkouts(allWorkouts);
+
+    // Hapus parameter dari URL agar tidak ter-load lagi saat refresh
+    window.history.replaceState({}, document.title, window.location.pathname);
+}
 
     // ===================================================================
     // == RENDER & LOGIC FUNCTIONS (MAIN VIEW) ==
@@ -537,7 +633,7 @@ function initializeCalendar() {
 }
     function openCalendarModal() { if (calendarInstance) { calendarInstance.setDate(currentDate, false); } if(calendarModalOverlay) calendarModalOverlay.classList.remove('hidden'); }
     function renderAll() { renderWorkoutLog(); renderDateTimeline(); if (calendarInstance) { calendarInstance.setDate(currentDate, false); } }
-    function initializePage() { renderAll(); renderCategories(); renderExerciseList(); populateCategorySelect(); initializeCalendar(); }
+    function initializePage() {autoLoadWorkoutFromURL(); renderAll(); renderCategories(); renderExerciseList(); populateCategorySelect(); initializeCalendar(); }
 
     // ===================================================================
     // == EVENT LISTENERS ==
@@ -580,39 +676,41 @@ function initializeCalendar() {
         }
     });
 
-    if(libraryList) libraryList.addEventListener('click', (e) => {
-        const loadProgramBtn = e.target.closest('.load-program-btn');
-        const loadTemplateBtn = e.target.closest('.load-template-btn');
-        const editTemplateBtn = e.target.closest('.edit-template-btn');
-        const deleteTemplateBtn = e.target.closest('.delete-template-btn');
-        const removeProgramBtn = e.target.closest('.remove-program-btn'); // <-- TAMBAHKAN INI
+    // GANTI BLOK EVENT LISTENER LAMA DENGAN VERSI BARU INI
+if(libraryList) libraryList.addEventListener('click', (e) => {
+    const loadProgramBtn = e.target.closest('.load-program-btn');
+    const loadTemplateBtn = e.target.closest('.load-template-btn');
+    const editTemplateBtn = e.target.closest('.edit-template-btn');
+    const deleteTemplateBtn = e.target.closest('.delete-template-btn');
+    const removeProgramBtn = e.target.closest('.remove-program-btn');
 
-        if (loadProgramBtn) {
-            const programId = loadProgramBtn.dataset.programId;
-            const workoutIndex = parseInt(loadProgramBtn.dataset.workoutIndex);
-            loadProgramWorkout(programId, workoutIndex);
-        } else if (loadTemplateBtn) {
-            loadTemplateWorkout(loadTemplateBtn.dataset.templateId);
-        } else if (editTemplateBtn) {
-            libraryModalOverlay.classList.add('hidden');
-            openTemplateEditor(editTemplateBtn.dataset.templateId);
-        } else if (deleteTemplateBtn) {
-            if (confirm('Are you sure you want to delete this template?')) {
-                const templates = getUserTemplates();
-                const updatedTemplates = templates.filter(t => t.id !== deleteTemplateBtn.dataset.templateId);
-                saveUserTemplates(updatedTemplates);
-                renderLibraryList();
-            }
-        } else if (removeProgramBtn) { // <-- TAMBAHKAN BLOK "ELSE IF" INI
-            if (confirm('Are you sure you want to remove this program from your library?')) {
-                const programIdToRemove = removeProgramBtn.dataset.programId;
-                let savedPrograms = getUserPrograms();
-                savedPrograms = savedPrograms.filter(id => id !== programIdToRemove);
-                localStorage.setItem('userPrograms', JSON.stringify(savedPrograms)); // Simpan kembali
-                renderLibraryList(); // Muat ulang daftar
-            }
+    if (loadProgramBtn) {
+        const programId = loadProgramBtn.dataset.programId;
+        const week = loadProgramBtn.dataset.week;
+        const day = loadProgramBtn.dataset.day;
+        loadProgramWorkout(programId, week, day); // Panggil fungsi baru dengan data lengkap
+    } else if (loadTemplateBtn) {
+        loadTemplateWorkout(loadTemplateBtn.dataset.templateId);
+    } else if (editTemplateBtn) {
+        libraryModalOverlay.classList.add('hidden');
+        openTemplateEditor(editTemplateBtn.dataset.templateId);
+    } else if (deleteTemplateBtn) {
+        if (confirm('Are you sure you want to delete this template?')) {
+            const templates = getUserTemplates();
+            const updatedTemplates = templates.filter(t => t.id !== deleteTemplateBtn.dataset.templateId);
+            saveUserTemplates(updatedTemplates);
+            renderLibraryList();
         }
-    });
+    } else if (removeProgramBtn) { 
+        if (confirm('Are you sure you want to remove this program from your library?')) {
+            const programIdToRemove = removeProgramBtn.dataset.programId;
+            let savedPrograms = getUserPrograms();
+            savedPrograms = savedPrograms.filter(id => id !== programIdToRemove);
+            localStorage.setItem('userPrograms', JSON.stringify(savedPrograms)); 
+            renderLibraryList();
+        }
+    }
+});
 
     if(toggleFilterBtn) toggleFilterBtn.addEventListener('click', () => {
         const isExpanded = collapsibleFilterArea.classList.toggle('expanded');
