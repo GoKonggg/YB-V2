@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmPaymentBtn = document.getElementById('confirm-payment-btn');
     const bookingDoneBtn = document.getElementById('booking-done-btn');
 
+    // Tambahkan ini di bagian ELEMENT SELECTORS
+    const backLink = document.getElementById('back-link');
     // State untuk menyimpan pilihan dan data coach
     let selectedOffering = null;
     let currentCoach = null; 
@@ -174,6 +176,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- MAIN LOGIC ---
     const urlParams = new URLSearchParams(window.location.search);
     const coachId = urlParams.get('id');
+
+    const fromPage = urlParams.get('from');
+if (backLink) { // Pastikan elemen backLink ada
+    if (fromPage === 'editor') {
+        backLink.href = 'coach-profile-editor.html';
+    } else {
+        // Defaultnya adalah kembali ke marketplace
+        backLink.href = 'marketplace.html';
+    }
+}
     const coach = coachesData.find(c => c.id === coachId);
     currentCoach = coach; 
 

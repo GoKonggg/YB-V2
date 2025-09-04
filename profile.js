@@ -1,30 +1,25 @@
 // File: profile.js
-// This script handles the interactive elements on the Profile page.
+// Di dalam event DOMContentLoaded
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- PLUS BUTTON MENU LOGIC ---
-    // This ensures the main navigation's plus button and its menu
-    // work consistently across all pages of the application.
-    const plusButton = document.getElementById('plus-button');
-    const plusMenu = document.getElementById('plus-menu');
 
-    if (plusButton && plusMenu) {
-        // When the plus button is clicked, toggle the menu's visibility
-        plusButton.addEventListener('click', (event) => {
-            // Stop the event from propagating to the window, which would close the menu
-            event.stopPropagation();
-            plusMenu.classList.toggle('hidden');
-        });
-
-        // Add a global click listener to the window
-        window.addEventListener('click', () => {
-            // If the menu is visible and the user clicks anywhere else, hide it
-            if (!plusMenu.classList.contains('hidden')) {
-                plusMenu.classList.add('hidden');
+    const logoutButton = document.getElementById('logout-button');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', (event) => {
+            event.preventDefault(); // Mencegah link default
+            
+            // Konfirmasi sebelum logout
+            if (confirm('Are you sure you want to log out?')) {
+                // Hapus data pengguna dari penyimpanan
+                localStorage.clear(); 
+                
+                // Arahkan kembali ke halaman login atau halaman awal
+                window.location.href = 'index.html';
             }
         });
     }
 
+    // Anda perlu menambahkan ID pada tombol logout di HTML:
+    // <a id="logout-button" href="#" class="flex items-center ...">
 });
-
