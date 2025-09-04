@@ -149,17 +149,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handlePaymentConfirmation() {
-        confirmPaymentBtn.textContent = 'Processing...';
-        confirmPaymentBtn.disabled = true;
+    confirmPaymentBtn.textContent = 'Processing...';
+    confirmPaymentBtn.disabled = true;
 
-        setTimeout(() => {
-            bookingConfirmationView.classList.add('hidden');
-            bookingSuccessView.classList.remove('hidden');
-            
-            confirmPaymentBtn.textContent = 'Confirm & Pay';
-            confirmPaymentBtn.disabled = false;
-        }, 1500);
-    }
+    // [DIUBAH] Simpan data booking dengan status yang benar
+    const newBooking = {
+        bookingId: `booking_${Date.now()}`,
+        coachId: currentCoach.id,
+        offeringTitle: selectedOffering.title,
+        status: 'pending_approval', // Status awal adalah pending
+        scheduledTime: null // Jadwal masih kosong
+    };
+    localStorage.setItem('userBooking', JSON.stringify(newBooking));
+
+    setTimeout(() => {
+        bookingConfirmationView.classList.add('hidden');
+        bookingSuccessView.classList.remove('hidden');
+        
+        confirmPaymentBtn.textContent = 'Confirm & Pay';
+        confirmPaymentBtn.disabled = false;
+    }, 1500);
+}
 
     // --- MAIN LOGIC ---
     const urlParams = new URLSearchParams(window.location.search);
@@ -200,6 +210,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     bookButton.addEventListener('click', openBookingModal);
     cancelBookingBtn.addEventListener('click', closeBookingModal);
-    bookingDoneBtn.addEventListener('click', closeBookingModal);
+    // Di coach-profile.js
+bookingDoneBtn.addEventListener('click', () => {
+    closeBookingModal();
+    // Arahkan ke halaman baru sambil membawa ID coach
+    window.location.href = `my-coach.html?coachId=${currentCoach.id}`;
+});
     confirmPaymentBtn.addEventListener('click', handlePaymentConfirmation);
 });

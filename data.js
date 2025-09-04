@@ -73,7 +73,7 @@ const coachesData = [
         bio: 'A certified nutritionist dedicated to creating sustainable, science-based eating plans. No fad diets, just a healthy relationship with food to fuel your life and your workouts.',
         offerings: [
             { type: 'One-Time', title: 'Dietary Analysis', price: 30, description: 'A complete analysis of your current diet with actionable recommendations.' },
-            { type: 'Subscription', title: 'Monthly Nutrition Plan', price: 90, duration: 'month', description: 'A personalized meal plan, updated weekly, with full support.', isPopular: true }
+            { type: 'Subscription', title: 'Monthly Nutrition Plan', price: 90, duration: 'month', description: 'A personalized meal plan, updated weekly, with full support.', isPopular: true, includeMeetings: false }
         ],
         sellsPrograms: [],
         stats: {
