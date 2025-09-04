@@ -27,13 +27,15 @@
                     <div class="w-10"></div>
                 </div>
 
-                <div class="flex items-center justify-center space-x-2 mb-4 text-sm">
-                    <span class="font-medium text-gray-600">Free User</span>
-                    <label for="user-status-toggle" class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" value="" id="user-status-toggle" class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-500"></div>
-                    </label>
-                    <span class="font-medium text-pink-500">Premium User</span>
+                <div id="user-status-container" class="hidden">
+                    <div class="flex items-center justify-center space-x-2 mb-4 text-sm">
+                        <span class="font-medium text-gray-600">Free User</span>
+                        <label for="user-status-toggle" class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" value="" id="user-status-toggle" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-500"></div>
+                        </label>
+                        <span class="font-medium text-pink-500">Premium User</span>
+                    </div>
                 </div>
 
                 <div class="flex justify-center space-x-2 mb-4 flex-shrink-0">
@@ -80,5 +82,59 @@
     </div>
     
     <script src="add-food.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ambil semua elemen yang dibutuhkan
+            const allTab = document.getElementById('subtab-all');
+            const myTab = document.getElementById('subtab-my');
+            const quickTab = document.getElementById('subtab-quick');
+            const tabs = [allTab, myTab, quickTab];
+
+            const allContent = document.getElementById('content-all');
+            const myContent = document.getElementById('content-my');
+            const quickContent = document.getElementById('content-quick');
+            const contents = [allContent, myContent, quickContent];
+            
+            const userStatusContainer = document.getElementById('user-status-container');
+            const createFoodButton = document.getElementById('create-food-button-wrapper');
+
+            // Fungsi untuk menangani klik tab
+            function handleTabClick(activeTab) {
+                // Sembunyikan semua konten dan hapus style aktif dari semua tab
+                tabs.forEach(tab => {
+                    tab.classList.remove('border-pink-500', 'text-pink-500');
+                    tab.classList.add('border-transparent', 'text-gray-500');
+                });
+                contents.forEach(content => content.classList.add('hidden'));
+
+                // Tampilkan konten dan style untuk tab yang aktif
+                activeTab.classList.add('border-pink-500', 'text-pink-500');
+                activeTab.classList.remove('border-transparent', 'text-gray-500');
+
+                if (activeTab === allTab) {
+                    allContent.classList.remove('hidden');
+                    userStatusContainer.classList.add('hidden'); // Sembunyikan toggle
+                    createFoodButton.classList.add('hidden'); 
+                } else if (activeTab === myTab) {
+                    myContent.classList.remove('hidden');
+                    userStatusContainer.classList.add('hidden'); // Sembunyikan toggle
+                    createFoodButton.classList.remove('hidden');
+                } else if (activeTab === quickTab) {
+                    quickContent.classList.remove('hidden');
+                    userStatusContainer.classList.remove('hidden'); // Tampilkan toggle
+                    createFoodButton.classList.add('hidden');
+                }
+            }
+
+            // Tambahkan event listener untuk setiap tab
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => handleTabClick(tab));
+            });
+
+            // Set state awal saat halaman dimuat (All Food aktif)
+            handleTabClick(allTab);
+        });
+    </script>
 </body>
 </html>
