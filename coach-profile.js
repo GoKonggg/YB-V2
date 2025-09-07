@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const fromPage = urlParams.get('from');
 if (backLink) { // Pastikan elemen backLink ada
     if (fromPage === 'editor') {
-        backLink.href = 'coach-profile-editor.html';
+        backLink.href = './coach-stuff/coach-profile-editor.html';
     } else {
         // Defaultnya adalah kembali ke marketplace
         backLink.href = 'marketplace.html';

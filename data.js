@@ -98,6 +98,57 @@ const coachesData = [
     }
 ];
 
+const exerciseLibraryData = [
+    {
+        id: 'exl001',
+        name: 'Goblet Squat',
+        muscleGroup: 'Legs',
+        equipment: 'Dumbbell',
+        videoUrl: 'https://www.youtube.com/watch?v=k9FW5y8_sA4',
+        thumbnailUrl: 'https://i.ytimg.com/vi/k9FW5y8_sA4/hqdefault.jpg'
+    },
+    {
+        id: 'exl002',
+        name: 'Dumbbell Bench Press',
+        muscleGroup: 'Chest',
+        equipment: 'Dumbbell',
+        videoUrl: 'https://www.youtube.com/watch?v=gRVjAtPip0Y',
+        thumbnailUrl: 'https://i.ytimg.com/vi/gRVjAtPip0Y/hqdefault.jpg'
+    },
+    {
+        id: 'exl003',
+        name: 'Pull Up',
+        muscleGroup: 'Back',
+        equipment: 'Bodyweight',
+        videoUrl: 'https://www.youtube.com/watch?v=eGo4IYlbE5g',
+        thumbnailUrl: 'https://i.ytimg.com/vi/eGo4IYlbE5g/hqdefault.jpg'
+    },
+    {
+        id: 'exl004',
+        name: 'Plank',
+        muscleGroup: 'Core',
+        equipment: 'Bodyweight',
+        videoUrl: 'https://www.youtube.com/watch?v=ASdvN_XEl_c',
+        thumbnailUrl: 'https://i.ytimg.com/vi/ASdvN_XEl_c/hqdefault.jpg'
+    },
+    {
+        id: 'exl005',
+        name: 'Barbell Deadlift',
+        muscleGroup: 'Back',
+        equipment: 'Barbell',
+        videoUrl: 'https://www.youtube.com/watch?v=ytGaGIn3SjE',
+        thumbnailUrl: 'https://i.ytimg.com/vi/ytGaGIn3SjE/hqdefault.jpg'
+    },
+    {
+        id: 'exl006',
+        name: 'Dumbbell Lunges',
+        muscleGroup: 'Legs',
+        equipment: 'Dumbbell',
+        videoUrl: 'https://www.youtube.com/watch?v=D7Ka_0Vn1sg',
+        thumbnailUrl: 'https://i.ytimg.com/vi/D7Ka_0Vn1sg/hqdefault.jpg'
+    }
+];
+
 
 const programsData = [
     {

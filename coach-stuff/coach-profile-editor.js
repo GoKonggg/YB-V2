@@ -170,7 +170,7 @@ previewProfileBtn.addEventListener('click', () => {
     const coachId = LOGGED_IN_COACH_ID; 
 
     // Buat URL untuk halaman pratinjau dengan menyertakan ID coach
-    const previewUrl = `coach-profile.html?id=${coachId}&from=editor`;
+    const previewUrl = `../coach-profile.html?id=${coachId}&from=editor`;
 
     // Buka pratinjau di tab baru agar tidak menutup halaman editor
     window.open(previewUrl, '_blank');
