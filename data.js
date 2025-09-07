@@ -311,3 +311,7 @@ const programsData = [
         ]
     }
 ];
+
+const programTemplatesData = [
+    // Awalnya kosong, akan diisi oleh JavaScript saat Anda menyimpan template
+];
