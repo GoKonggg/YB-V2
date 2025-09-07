@@ -33,6 +33,57 @@
         .stepper-item.active .stepper-circle { background-color: #ec4899; color: white; border-color: #ec4899; }
         .stepper-item.active .stepper-label { color: #ec4899; font-weight: 600; }
         .stepper-line { background-color: #e5e7eb; }
+
+        /* Tambahkan ini ke dalam tag <style> Anda */
+
+.form-group {
+    position: relative;
+    padding-top: 1.5rem; /* Beri ruang untuk label mengambang */
+}
+
+.form-field {
+    width: 100%;
+    border: 0;
+    border-bottom: 2px solid #d1d5db; /* Garis bawah abu-abu */
+    outline: 0;
+    font-size: 1rem;
+    color: #111827;
+    padding: 7px 0;
+    background: transparent;
+    transition: border-color 0.2s;
+}
+
+.form-field::placeholder {
+    color: transparent; /* Sembunyikan placeholder asli */
+}
+
+.form-label {
+    position: absolute;
+    top: 2.2rem;
+    display: block;
+    transition: 0.2s;
+    font-size: 1rem;
+    color: #6b7280;
+    pointer-events: none;
+}
+
+/* Animasi saat input di-fokus atau diisi */
+.form-field:focus {
+    border-bottom: 2px solid #ec4899; /* Garis bawah menjadi pink */
+}
+
+.form-field:focus + .form-label,
+.form-field:not(:placeholder-shown) + .form-label {
+    top: 0.5rem;
+    font-size: 0.8rem;
+    color: #ec4899;
+}
+
+/* Styling khusus untuk textarea */
+.form-field.textarea {
+    resize: none;
+    min-height: 80px;
+}
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
@@ -42,18 +93,31 @@
             <div class="absolute top-0 -left-16 w-72 h-72 bg-pink-300 rounded-full opacity-20 filter blur-3xl"></div>
             <div class="absolute bottom-0 -right-16 w-72 h-72 bg-purple-300 rounded-full opacity-20 filter blur-3xl"></div>
             
-            <div id="start-screen" class="relative z-10 flex flex-col h-full p-6 pt-8">
-                <h1 class="text-2xl font-bold text-gray-900 mb-6">Program Builder</h1>
-                <button id="create-new-btn" type="button" class="w-full bg-primary-gradient text-white font-bold py-4 rounded-xl shadow-lg mb-6">⊕ Create New Program</button>
+            <div id="start-screen" class="relative z-10 flex flex-col h-full">
+            <header class="p-6 pt-8 flex-shrink-0 flex items-center">
+                <a href="#" onclick="event.preventDefault(); history.back();" class="p-2 text-gray-500 rounded-full mr-3 hover:bg-gray-200/50">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </a>
+                <h1 class="text-2xl font-bold text-gray-900">Program Builder</h1>
+            </header>
+            <div class="p-6 pt-0 flex-grow flex flex-col">
+                <button id="create-new-btn" type="button" class="w-full bg-primary-gradient text-white font-bold py-4 rounded-xl shadow-lg mb-6">
+                    ⊕ Create New Program
+                </button>
                 <h2 class="text-base font-semibold text-gray-700 mb-3">Or load from a template</h2>
-                <div id="template-list-container" class="flex-grow overflow-y-auto space-y-2"></div>
+                <div id="template-list-container" class="flex-grow overflow-y-auto space-y-2">
+                    </div>
             </div>
+        </div>
 
             <div id="wizard-container" class="hidden relative z-10 flex flex-col h-full">
                 <form id="program-builder-form" class="flex flex-col h-full">
                     <header class="p-6 pt-8 flex-shrink-0 flex items-center">
-                        <h1 class="text-2xl font-bold text-gray-900">Program Builder</h1>
-                    </header>
+                    <a href="#" id="back-to-start-screen-btn" class="p-2 text-gray-500 rounded-full mr-3 hover:bg-gray-200/50">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </a>
+                    <h1 class="text-2xl font-bold text-gray-900">Program Builder</h1>
+                </header>
                     <nav class="px-6 pb-4 flex items-center">
                         <div class="stepper-item flex items-center" id="stepper-1"><div class="stepper-circle w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border-2 border-gray-300 text-gray-500">1</div><span class="stepper-label ml-2 text-sm text-gray-500">Type</span></div>
                         <div class="stepper-line h-0.5 w-full mx-2"></div>
@@ -62,79 +126,122 @@
                         <div class="stepper-item flex items-center" id="stepper-3"><div class="stepper-circle w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border-2 border-gray-300 text-gray-500">3</div><span class="stepper-label ml-2 text-sm text-gray-500">Plan</span></div>
                     </nav>
                     <main class="flex-grow overflow-y-auto px-6">
-                        <div id="step-1" class="wizard-step">
-                            <div class="glass-card p-4 rounded-xl space-y-4">
-                                <p class="text-base font-semibold text-gray-800">Select Program Type</p>
-                                <div id="program-type-selector" class="space-y-3">
-                                    <div class="type-selector-card p-4 rounded-lg cursor-pointer" data-type="general"><h3 class="font-bold">🏪 General Program</h3><p class="text-sm text-gray-500">For the marketplace.</p></div>
-                                    <div class="type-selector-card p-4 rounded-lg cursor-pointer" data-type="personalized"><h3 class="font-bold">👤 Personalized Program</h3><p class="text-sm text-gray-500">For a specific client.</p></div>
-                                </div>
-                                <div id="client-selector-container" class="hidden">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Select Client</label>
-                                    <select id="client-select" class="form-input text-sm"><option>John Doe</option></select>
-                                </div>
-                            </div>
-                            <button type="button" id="step-1-next-btn" class="mt-4 w-full bg-primary-gradient text-white font-bold py-3 rounded-lg opacity-50 cursor-not-allowed" disabled>Next</button>
-                        </div>
-                        <div id="step-2" class="wizard-step hidden">
-    <div class="glass-card p-4 rounded-xl space-y-4">
-        <h2 class="text-base font-semibold text-gray-800">Program Details</h2>
+                        
+    <div id="step-1" class="wizard-step">
+        <div class="glass-card p-4 rounded-xl space-y-4">
+            <p class="text-base font-semibold text-gray-800">Select Program Type</p>
+            <div id="program-type-selector" class="space-y-3">
+                <div class="type-selector-card p-4 rounded-lg cursor-pointer" data-type="general"><h3 class="font-bold">🏪 General Program</h3><p class="text-sm text-gray-500">For the marketplace.</p></div>
+                <div class="type-selector-card p-4 rounded-lg cursor-pointer" data-type="personalized"><h3 class="font-bold">👤 Personalized Program</h3><p class="text-sm text-gray-500">For a specific client.</p></div>
+            </div>
+            <div id="client-selector-container" class="hidden">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Select Client</label>
+                <select id="client-select" class="form-input text-sm"><option>John Doe</option></select>
+            </div>
+        </div>
+        <button type="button" id="step-1-next-btn" class="mt-4 w-full bg-primary-gradient text-white font-bold py-3 rounded-lg opacity-50 cursor-not-allowed" disabled>Next</button>
+    </div>
 
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Cover Photo</label>
-            <label for="program-image-upload" class="flex justify-center w-full h-32 px-4 transition bg-white/50 border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-pink-400 focus:outline-none">
-                <span class="flex items-center space-x-2">
-                    <svg class="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-4-4V7a4 4 0 014-4h2a4 4 0 014 4v1m-4 4h12a2 2 0 002-2V7a2 2 0 00-2-2h-2m-4 7l4 4m0 0l4-4m-4 4v-7" /></svg>
-                    <span class="font-medium text-gray-600">Drop files or <span class="text-pink-600 underline">browse</span></span>
-                </span>
+    <div id="step-2-general" class="wizard-step hidden">
+     <div class="glass-card p-6 rounded-xl space-y-6">
+        <h2 class="text-xl font-bold text-gray-800">Program Details (Marketplace)</h2>
+        
+        <div id="image-upload-wrapper">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Cover Photo</label>
+            <label for="program-image-upload" class="flex justify-center w-full h-32 px-4 transition bg-gray-100 border-2 border-gray-300 border-dashed rounded-md cursor-pointer hover:border-pink-400">
+                <span class="flex items-center space-x-2"><svg class="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-4-4V7a4 4 0 014-4h2a4 4 0 014 4v1m-4 4h12a2 2 0 002-2V7a2 2 0 00-2-2h-2m-4 7l4 4m0 0l4-4m-4 4v-7" /></svg><span class="font-medium text-gray-600">Drop files or <span class="text-pink-600 underline">browse</span></span></span>
                 <input type="file" id="program-image-upload" name="program-image-upload" accept="image/png, image/jpeg" class="hidden">
             </label>
             <img id="image-preview" src="" alt="Image Preview" class="hidden w-full h-32 object-cover rounded-md mt-2">
         </div>
-
-        <div>
-    <label class="block text-sm font-medium text-gray-700 mb-1">Intro Video URL (Optional)</label>
-    
-    <div id="video-input-container">
-        <input type="text" id="program-video-intro" class="form-input text-sm" placeholder="Paste a YouTube URL">
-    </div>
-
-    <div id="video-preview-container" class="hidden relative mt-2">
-        <img id="video-thumbnail-preview" src="" alt="Video Thumbnail" class="w-full h-auto object-cover rounded-md">
-        <button id="remove-video-btn" type="button" class="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md text-red-500 hover:bg-red-50">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-        </button>
-    </div>
-</div>
-        
-        <input type="text" id="program-title" class="form-input text-sm" placeholder="Program Title" required>
-        
-        <div class="grid grid-cols-2 gap-3">
-            <div id="price-container">
-                <input type="number" id="program-price" class="form-input text-sm" placeholder="Price ($)" required>
+        <div id="video-intro-wrapper">
+            <div id="video-input-container">
+                <div class="form-group">
+                    <input type="text" id="program-video-intro" class="form-field" placeholder=" ">
+                    <label for="program-video-intro" class="form-label">Intro Video URL (Optional)</label>
+                </div>
             </div>
-            <input type="text" id="program-duration" class="form-input text-sm" placeholder="e.g., 4 Weeks" required>
+            <div id="video-preview-container" class="hidden relative mt-2"><img id="video-thumbnail-preview" src="" alt="Video Thumbnail" class="w-full h-auto object-cover rounded-md"><button id="remove-video-btn" type="button" class="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md text-red-500 hover:bg-red-50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div>
         </div>
 
-        <textarea id="program-description" class="form-input text-sm" rows="3" placeholder="Description..." required></textarea>
+        <div class="form-group">
+            <input type="text" id="program-title" class="form-field font-semibold" placeholder=" " required>
+            <label for="program-title" class="form-label">Program Title</label>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+            <div class="form-group" id="price-container">
+                <input type="number" id="program-price" class="form-field" placeholder=" " required>
+                <label for="program-price" class="form-label">Price ($)</label>
+            </div>
+            <div class="form-group">
+                <input type="text" id="program-duration" class="form-field" placeholder=" " required>
+                <label for="program-duration" class="form-label">Duration (e.g., 4 Weeks)</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <textarea id="program-description" class="form-field textarea" placeholder=" " required></textarea>
+            <label for="program-description" class="form-label">Description</label>
+        </div>
     </div>
-    
     <div class="mt-4 grid grid-cols-2 gap-3">
-        <button type="button" id="step-2-back-btn" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-lg">Back</button>
-        <button type="button" id="step-2-next-btn" class="w-full bg-primary-gradient text-white font-bold py-3 rounded-lg">Next</button>
+        <button type="button" id="step-2-general-back-btn" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-lg">Back</button>
+        <button type="button" id="step-2-general-next-btn" class="w-full bg-primary-gradient text-white font-bold py-3 rounded-lg">Next</button>
     </div>
 </div>
-                        <div id="step-3" class="wizard-step hidden">
-                            <div class="glass-card p-4 rounded-xl">
-                                <h2 class="text-base font-semibold text-gray-800 mb-3">Workout Plan</h2>
-                                <div id="plan-builder-container" class="space-y-4"></div>
-                                <button type="button" id="add-week-btn" class="mt-4 w-full text-center bg-white/50 text-pink-600 font-semibold p-2.5 rounded-lg"> + Add Week</button>
-                            </div>
-                             <div class="mt-4">
-                                <button type="button" id="step-3-back-btn" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-lg">Back</button>
-                            </div>
-                        </div>
-                    </main>
+
+<div id="step-2-personalized" class="wizard-step hidden">
+     <div class="glass-card p-6 rounded-xl space-y-6">
+        <h2 class="text-xl font-bold text-gray-800">Program Details (Personalized)</h2>
+        
+        <div id="video-intro-wrapper-personalized">
+            <div id="video-input-container-personalized">
+                <div class="form-group">
+                    <input type="text" id="program-video-intro-personalized" class="form-field" placeholder=" ">
+                    <label for="program-video-intro-personalized" class="form-label">Intro Video URL (Optional)</label>
+                </div>
+            </div>
+            <div id="video-preview-container-personalized" class="hidden relative mt-2">
+                <img id="video-thumbnail-preview-personalized" src="" alt="Video Thumbnail" class="w-full h-auto object-cover rounded-md">
+                <button id="remove-video-btn-personalized" type="button" class="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md text-red-500 hover:bg-red-50">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <input type="text" id="program-title-personalized" class="form-field font-semibold" placeholder=" " required>
+            <label for="program-title-personalized" class="form-label">Program Title (e.g., John's Strength Plan)</label>
+        </div>
+        
+        <div class="form-group">
+            <input type="text" id="program-duration-personalized" class="form-field" placeholder=" " required>
+            <label for="program-duration-personalized" class="form-label">Duration (e.g., 4 Weeks)</label>
+        </div>
+
+        <div class="form-group">
+            <textarea id="program-description-personalized" class="form-field textarea" placeholder=" " required></textarea>
+            <label for="program-description-personalized" class="form-label">Program notes for the client</label>
+        </div>
+    </div>
+    <div class="mt-4 grid grid-cols-2 gap-3">
+        <button type="button" id="step-2-personalized-back-btn" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-lg">Back</button>
+        <button type="button" id="step-2-personalized-next-btn" class="w-full bg-primary-gradient text-white font-bold py-3 rounded-lg">Next</button>
+    </div>
+</div>
+
+    <div id="step-3" class="wizard-step hidden">
+        <div class="glass-card p-4 rounded-xl">
+            <h2 class="text-base font-semibold text-gray-800 mb-3">Workout Plan</h2>
+            <div id="plan-builder-container" class="space-y-4"></div>
+            <button type="button" id="add-week-btn" class="mt-4 w-full text-center bg-white/50 text-pink-600 font-semibold p-2.5 rounded-lg"> + Add Week</button>
+        </div>
+         <div class="mt-4">
+            <button type="button" id="step-3-back-btn" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-lg">Back</button>
+        </div>
+    </div>
+</main>
                     <footer class="flex-shrink-0 bg-white/60 backdrop-blur-sm border-t border-gray-200/80 p-4 hidden">
                         <button type="submit" id="save-program-btn" class="w-full bg-primary-gradient text-white font-bold py-3.5 rounded-xl">Save Program</button>
                     </footer>
