@@ -1,6 +1,4 @@
-// File: main-coach.js
-// Fungsi: Mengelola semua interaksi navigasi, menu pop-up dengan animasi,
-// dan penanda link aktif secara efisien.
+// File: main-coach.js (Versi yang Benar)
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -10,8 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const plusMenuOverlay = document.getElementById('plus-menu-overlay');
 
     if (plusButton && plusMenu && plusMenuOverlay) {
-        // Atur state awal untuk animasi (tidak terlihat)
-        plusMenu.classList.add('opacity-0', 'transform', 'scale-95', 'pointer-events-none');
         
         const toggleMenu = (event) => {
             if (event) event.stopPropagation();
@@ -21,9 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
             plusMenu.classList.toggle('opacity-100');
             plusMenu.classList.toggle('scale-95');
             plusMenu.classList.toggle('scale-100');
-            plusMenu.classList.toggle('pointer-events-none'); // Mencegah klik saat tidak terlihat
+            plusMenu.classList.toggle('pointer-events-none');
             
-            // Toggle overlay
+            // Overlay tetap menggunakan hidden karena tidak perlu dianimasikan
             plusMenuOverlay.classList.toggle('hidden');
 
             // Animasi rotasi untuk ikon di dalam tombol plus
@@ -37,25 +33,21 @@ document.addEventListener('DOMContentLoaded', () => {
         plusMenuOverlay.addEventListener('click', toggleMenu);
     }
 
-    // --- FUNGSI 2: LOGIKA NAVIGASI AKTIF YANG LEBIH CERDAS ---
-    const navContainer = document.querySelector('nav');
+    // --- FUNGSI 2: LOGIKA NAVIGASI AKTIF ---
+    // ... (sisa kode navigasi tidak perlu diubah) ...
+    const navContainer = document.querySelector('nav.glass-card');
     if (navContainer) {
         const currentPagePath = window.location.pathname;
         const navLinks = navContainer.querySelectorAll('a');
 
         navLinks.forEach(link => {
-            const linkPath = new URL(link.href).pathname;
-
-            // Hapus kelas aktif dari semua link terlebih dahulu untuk reset
-            link.classList.remove('nav-active');
-            
-            // Logika untuk mendeteksi halaman utama (misal: '/' atau '/index.html')
-            const isDashboard = linkPath.endsWith('coach-dashboard.html') && (currentPagePath === '/' || currentPagePath.endsWith('/index.html'));
-            
-            // Cek jika link cocok dengan halaman saat ini
-            if (linkPath === currentPagePath || isDashboard) {
-                // Tambahkan satu kelas 'nav-active' saja
-                link.classList.add('nav-active'); 
+            if (link.href) {
+                const linkPath = new URL(link.href).pathname;
+                link.classList.remove('nav-active');
+                const isDashboard = linkPath.endsWith('coach-dashboard.html') && (currentPagePath === '/' || currentPagePath.endsWith('/index.html'));
+                if (linkPath === currentPagePath || isDashboard) {
+                    link.classList.add('nav-active'); 
+                }
             }
         });
     }
