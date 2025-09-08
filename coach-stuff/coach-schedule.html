@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coach Schedule</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(255, 255, 255, 0.25); 
+        }
+        .bg-primary-gradient { 
+            background-image: linear-gradient(to right, #ec4899, #d946ef); 
+        }
+        .nav-active { color: #ec4899; }
+        .nav-active span { font-weight: 700; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Style untuk Blob Background */
+        .bg-blob {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 9999px;
+            filter: blur(100px);
+            opacity: 0.2;
+        }
+        .blob-1 { top: -150px; left: -150px; background-color: #ec4899; }
+        .blob-2 { bottom: -150px; right: -150px; background-color: #a855f7; }
+
+        /* Style untuk Kalender */
+        .date-header.today { color: #db2777; }
+        .day-wrapper .today-dot { background-color: #ec4899; color: white; }
+        .day-wrapper.selected { background-color: #f3f4f6; }
+        .date-header { font-weight: 600; color: #374151; }
+        .event-card { display: flex; align-items: stretch; gap: 1rem; }
+        .event-time { flex-basis: 3.5rem; flex-shrink: 0; text-align: right; font-weight: 500; font-size: 0.875rem; color: #6b7280; padding-top: 1rem; }
+        .event-timeline { width: 3px; border-radius: 9999px; }
+        .event-details { flex-grow: 1; padding: 0.75rem 1rem; border-radius: 0.75rem; }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div id="app-container" class="w-full max-w-md mx-auto bg-gray-50 rounded-2xl shadow-xl h-[800px] relative overflow-hidden">
+        <div class="bg-blob blob-1"></div>
+        <div class="bg-blob blob-2"></div>
+        
+        <div class="relative z-10 flex flex-col h-full bg-gradient-to-b from-white via-gray-50/80 to-gray-50/50">
+            <header class="p-4 pt-8 flex-shrink-0 flex justify-between items-center backdrop-blur-sm border-b border-gray-200/80">
+                <div class="flex items-center">
+                    <a href="coach-dashboard.html" class="p-2 text-gray-600 rounded-full hover:bg-gray-200/50">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </a>
+                    <h1 id="month-year-display" class="text-xl font-bold text-gray-900 ml-2">September 2025</h1>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button id="prev-month-btn" class="p-2 rounded-full hover:bg-gray-200/50">
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <button id="next-month-btn" class="p-2 rounded-full hover:bg-gray-200/50">
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                    <button id="today-btn" class="text-sm font-semibold bg-gray-200/50 text-gray-700 px-3 py-1.5 rounded-lg hover:bg-gray-200">Today</button>
+                </div>
+            </header>
+            
+            <div id="mini-calendar-container" class="flex-shrink-0 px-2 pb-4 overflow-x-auto no-scrollbar border-b border-gray-200/80 backdrop-blur-sm">
+                <div id="mini-calendar-days" class="flex space-x-2">
+                    </div>
+            </div>
+
+            <main id="schedule-agenda-view" class="flex-grow overflow-y-auto px-4 py-4 space-y-5"></main>
+        </div>
+
+        <nav class="absolute bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-sm z-20 glass-card grid grid-cols-5 items-center p-2 rounded-2xl">
+            <a href="coach-dashboard.html" class="flex flex-col items-center text-gray-600 py-1 hover:text-pink-500">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                <span class="text-xs font-medium">Dashboard</span>
+            </a>
+            <a href="coach-messages.html" class="flex flex-col items-center text-gray-600 py-1 hover:text-pink-500">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <span class="text-xs font-medium">Messages</span>
+            </a>
+            <button id="plus-button" class="bg-primary-gradient text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg -mt-6">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+            </button>
+            <a href="coach-programs.html" class="flex flex-col items-center text-gray-600 py-1 hover:text-pink-500">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                <span class="text-xs font-medium">Programs</span>
+            </a>
+            <a href="coach-profile-editor.html" class="flex flex-col items-center text-gray-600 py-1 hover:text-pink-500">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                <span class="text-xs font-medium">Profile</span>
+            </a>
+        </nav>
+    </div>
+    
+    <div id="add-schedule-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div id="add-schedule-card" class="relative bg-gray-50 w-full max-w-md rounded-2xl shadow-xl flex flex-col h-[80vh] transform opacity-0 scale-95 transition-all duration-200">
+            <header class="p-4 flex-shrink-0 flex items-center justify-between border-b border-gray-200">
+                <h1 class="text-xl font-bold text-gray-900">Add New Schedule</h1>
+                <button id="close-modal-btn" class="p-2 text-gray-500 rounded-full hover:bg-gray-200/50">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </header>
+            
+            <main class="flex-grow overflow-y-auto p-6">
+                <form id="add-schedule-form" class="space-y-6">
+                    <div>
+                        <label for="client-select" class="text-sm font-semibold text-gray-600 mb-1 block">Client</label>
+                        <select id="client-select" class="w-full p-3 bg-white border-2 border-gray-200 rounded-lg focus:border-pink-500 outline-none transition" required>
+                            <option value="">Select an option...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="event-title" class="text-sm font-semibold text-gray-600 mb-1 block">Event Title</label>
+                        <input type="text" id="event-title" class="w-full p-3 bg-white border-2 border-gray-200 rounded-lg focus:border-pink-500 outline-none transition" placeholder="e.g., Check-in Call" required>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="event-date" class="text-sm font-semibold text-gray-600 mb-1 block">Date</label>
+                            <input type="date" id="event-date" class="w-full p-3 bg-white border-2 border-gray-200 rounded-lg focus:border-pink-500 outline-none transition" required>
+                        </div>
+                        <div>
+                            <label for="event-time" class="text-sm font-semibold text-gray-600 mb-1 block">Time</label>
+                            <input type="time" id="event-time" class="w-full p-3 bg-white border-2 border-gray-200 rounded-lg focus:border-pink-500 outline-none transition" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="event-notes" class="text-sm font-semibold text-gray-600 mb-1 block">Notes (Optional)</label>
+                        <textarea id="event-notes" rows="4" class="w-full p-3 bg-white border-2 border-gray-200 rounded-lg focus:border-pink-500 outline-none transition" placeholder="Add any notes for this event..."></textarea>
+                    </div>
+                    <div class="pt-4">
+                        <button type="submit" class="w-full bg-primary-gradient text-white font-bold py-4 rounded-xl shadow-lg hover:opacity-90 transition-opacity">
+                            Save Schedule
+                        </button>
+                    </div>
+                </form>
+            </main>
+        </div>
+    </div>
+    
+    <script src="../data.js"></script>
+    <script src="coach-schedule.js"></script>
+    <script src="main-coach.js"></script>
+</body>
+</html>
