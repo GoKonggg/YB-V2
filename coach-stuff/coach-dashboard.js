@@ -62,6 +62,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return yesterday;
     };
 
+    const toYYYYMMDD = (date) => {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
     // --- CORE LOGIC & STATUS CHECKING ---
     const getClientStatus = (clientId) => {
         const clientData = allClientData[clientId] || {};
@@ -179,27 +186,92 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderTodaysSchedule = () => {
-        if (!scheduleContainer) return;
-        const todayKey = new Date().toISOString().split('T')[0];
-        const todaysEvents = scheduleData.filter(event => event.date === todayKey);
-        scheduleContainer.innerHTML = '';
+    if (!scheduleContainer) return;
 
-        if (todaysEvents.length === 0) {
-            scheduleContainer.innerHTML = `<div class="text-center py-4 px-4 bg-white/60 rounded-xl"><p class="text-sm text-gray-500">No appointments scheduled for today. Enjoy your day! 🌴</p></div>`;
-            return;
-        }
+    // Helper function to safely get schedules from localStorage
+    const getSchedules = () => JSON.parse(localStorage.getItem('coachSchedules')) || [];
+    
+    const schedules = getSchedules();
+    const todayString = toYYYYMMDD(new Date());
+    
+    const todaySchedules = schedules
+        .filter(s => s.date === todayString)
+        .sort((a, b) => {
+            // Sorting logic improvement: Tasks (no time) always come first.
+            const aIsTask = !a.time;
+            const bIsTask = !b.time;
 
-        todaysEvents.forEach(event => {
-            const eventEl = document.createElement('a');
-            eventEl.href = '#';
-            eventEl.className = 'flex items-center space-x-4 p-3 bg-white/80 rounded-xl hover:bg-white transition-colors shadow-sm';
-            eventEl.innerHTML = `
-                <div class="bg-pink-100 text-pink-600 font-bold text-sm p-3 rounded-lg">${event.time}</div>
-                <div class="flex-grow"><p class="font-semibold text-gray-800">${event.title}</p></div>
-                <div class="text-gray-400"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></div>`;
-            scheduleContainer.appendChild(eventEl);
+            if (aIsTask && !bIsTask) return -1; // a (task) comes before b (event)
+            if (!aIsTask && bIsTask) return 1;  // b (task) comes before a (event)
+            
+            // If both are tasks, sort by title
+            if (aIsTask && bIsTask) return a.title.localeCompare(b.title);
+            
+            // If both are events, sort by time
+            return a.time.localeCompare(b.time);
         });
-    };
+
+    scheduleContainer.innerHTML = ''; // Clear previous entries
+
+    if (todaySchedules.length === 0) {
+        scheduleContainer.innerHTML = `<div class="text-center text-sm text-gray-500 py-4 bg-white/60 rounded-lg">
+            <p>No schedule for today. Relax!</p>
+        </div>`;
+        return;
+    }
+
+    const scheduleHtml = todaySchedules.map(entry => {
+        let icon = '';
+        let timeDisplay = '';
+        let titleClass = 'text-sm font-semibold text-gray-800 truncate';
+
+        if (entry.type === 'task') {
+            // Added `cursor-pointer` to the main div for tasks
+            // The icon now visually represents a checkbox
+            icon = `<div class="w-5 h-5 rounded border-2 ${entry.completed ? 'bg-pink-500 border-pink-500 flex items-center justify-center' : 'border-gray-300'} flex-shrink-0">
+                        ${entry.completed ? '<svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
+                    </div>`;
+            timeDisplay = `<span class="text-sm font-medium text-gray-500">Task</span>`;
+            if (entry.completed) {
+                titleClass += ' line-through text-gray-400';
+            }
+        } else { // Event or Meeting
+            icon = entry.type === 'meeting' 
+                ? `<svg class="w-5 h-5 text-pink-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor"><path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 001.553.832l3-2a1 1 0 000-1.664l-3-2z" /></svg>`
+                : `<svg class="w-5 h-5 text-pink-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" /></svg>`;
+            timeDisplay = `<span class="text-sm font-bold text-pink-600">${entry.time || 'All Day'}</span>`;
+        }
+        
+        // Added data-id and a conditional cursor-pointer for tasks
+        return `
+            <div class="bg-white/80 backdrop-blur-md p-3 rounded-lg shadow-sm flex items-center space-x-4 ${entry.type === 'task' ? 'cursor-pointer' : ''}" data-id="${entry.id}" data-type="${entry.type}">
+                ${icon}
+                <div class="flex-1 min-w-0">
+                    <p class="${titleClass}">${entry.title}</p>
+                </div>
+                <div class="flex-shrink-0">${timeDisplay}</div>
+            </div>
+        `;
+    }).join('');
+
+    scheduleContainer.innerHTML = scheduleHtml;
+};
+
+// --- TAMBAHKAN BLOK KODE INI TEPAT DI BAWAH FUNGSI renderTodaysSchedule ---
+scheduleContainer.addEventListener('click', (e) => {
+    const scheduleItem = e.target.closest('[data-type="task"]');
+    if (!scheduleItem) return; // Do nothing if it's not a task
+
+    const entryId = parseInt(scheduleItem.dataset.id, 10);
+    let schedules = JSON.parse(localStorage.getItem('coachSchedules')) || [];
+    const task = schedules.find(s => s.id === entryId);
+
+    if (task) {
+        task.completed = !task.completed; // Toggle the completed status
+        localStorage.setItem('coachSchedules', JSON.stringify(schedules)); // Save back to storage
+        renderTodaysSchedule(); // Re-render the list to show the change
+    }
+});
 
     // GANTI seluruh fungsi renderFullClientList dengan yang ini
 
