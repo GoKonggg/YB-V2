@@ -739,3 +739,73 @@ const allClientData = {
          }
     }
 };
+
+const bookingRequests = [
+  { clientId: 'client004', type: 'One-Time Consultation', status: 'pending', timestamp: new Date() },
+  { clientId: 'client002', type: 'Monthly Coaching', status: 'pending', timestamp: new Date(new Date().setDate(new Date().getDate() - 1)) } // Dari kemarin
+];
+
+
+
+const groups = [
+    { 
+        id: 'group001', 
+        name: 'General Program - Sept 2025', 
+        avatar: 'https://static.thenounproject.com/png/493922-200.png',
+        members: ['client001', 'client002', 'client003'] 
+    }
+];
+const conversations = [
+    { 
+        type: 'group', 
+        id: 'group001', 
+        lastMessage: "Hey everyone, welcome to the group!", 
+        lastSender: "Coach", 
+        timestamp: "11:05 AM", 
+        unread: true 
+    },
+    { 
+        type: 'dm', 
+        id: 'client001', 
+        lastMessage: "Okay, I'll try that for tomorrow's breakfast!", 
+        timestamp: "10:32 AM", 
+        unread: false 
+    },
+    { 
+        type: 'dm', 
+        id: 'client002', 
+        lastMessage: "I missed my workout yesterday, feeling a bit demotivated.", 
+        timestamp: "9:15 AM", 
+        unread: true 
+    },
+    { 
+        type: 'dm', 
+        id: 'client003', 
+        lastMessage: "Just hit a new PR on my squats! Thanks for the tip.", 
+        timestamp: "Yesterday", 
+        unread: false 
+    }
+];
+
+const todayStr = new Date().toISOString().split('T')[0]; // Gets today's date in YYYY-MM-DD format
+
+const scheduleData = [
+  {
+    date: todayStr, // This event is for today
+    clientId: 'client001',
+    time: '14:00',
+    title: 'Check-in call with Jane Doe'
+  },
+  {
+    date: todayStr, // This event is also for today
+    clientId: 'client004',
+    time: '16:30',
+    title: 'New Client Consultation with Michael B.'
+  },
+  {
+    date: '2025-09-09', // An event for tomorrow (it will be ignored by the logic)
+    clientId: 'client002',
+    time: '10:00',
+    title: 'Planning session with John Smith'
+  }
+];

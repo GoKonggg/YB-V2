@@ -45,6 +45,10 @@
                         <button id="tab-all" class="tab-filter tab-active flex-1 text-sm font-semibold py-2 px-4 rounded-lg transition-colors">All</button>
                         <button id="tab-dm" class="tab-filter text-gray-500 flex-1 text-sm font-semibold py-2 px-4 rounded-lg transition-colors">Personal</button>
                         <button id="tab-group" class="tab-filter text-gray-500 flex-1 text-sm font-semibold py-2 px-4 rounded-lg transition-colors">Groups</button>
+                         <button id="tab-requests" class="tab-filter text-gray-500 flex-1 text-sm font-semibold py-2 px-4 rounded-lg transition-colors relative">
+        Requests
+        <span id="requests-count-badge" class="hidden absolute -top-1 -right-1 w-4 h-4 bg-pink-500 text-white text-xs rounded-full"></span>
+    </button>
                     </div>
                 </div>
 
@@ -64,7 +68,7 @@
                 </div>
             </a>
             <a href="#" class="flex items-center justify-end group">
-                <span class="bg-white text-gray-700 font-semibold text-sm px-4 py-2 rounded-lg shadow-md mr-3 group-hover:bg-gray-100 transition-colors">Add New Client</span>
+                <span class="bg-white text-gray-700 font-semibold text-sm px-4 py-2 rounded-lg shadow-md mr-3 group-hover:bg-gray-100 transition-colors">Add New Schedule</span>
                 <div class="bg-primary-gradient text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
                 </div>
@@ -101,6 +105,7 @@
 </nav>
     </div>
 
+    <script src="../data.js"></script>
     <script src="main-coach.js"></script>
     <script src="coach-messages.js"></script>
 </body>
