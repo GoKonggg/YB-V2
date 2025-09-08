@@ -28,6 +28,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const clientLogContent = document.getElementById('client-log-content');
     const allActionsListContainer = document.getElementById('all-actions-list-container');
 
+    const notificationBellBtn = document.getElementById('notification-bell-btn');
+const notificationIndicator = document.getElementById('notification-indicator');
+const notificationPanel = document.getElementById('notification-panel');
+const notificationListContainer = document.getElementById('notification-list-container');
+const closeNotificationPanelBtn = document.getElementById('close-notification-panel-btn');
+const notificationOverlay = document.getElementById('notification-overlay');
+
     // --- STATE MANAGEMENT ---
     let currentDetailClient = null;
     let currentDetailDate = new Date();
@@ -159,6 +166,65 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
+
+    // --- NOTIFICATION LOGIC ---
+
+// 1. Fungsi untuk membuat daftar notifikasi
+const generateNotifications = () => {
+    return coachClients
+        .map(client => ({ client, status: getClientStatus(client.id) }))
+        .filter(item => item.status.type === 'NEEDS_ATTENTION' || item.status.type === 'POSITIVE_UPDATE')
+        .map(item => {
+            const isAttention = item.status.type === 'NEEDS_ATTENTION';
+            return {
+                clientId: item.client.id,
+                avatar: item.client.avatar,
+                name: item.client.name,
+                reason: item.status.reason,
+                icon: isAttention 
+                    ? `<div class="bg-amber-100 text-amber-600 p-2 rounded-full"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></div>`
+                    : `<div class="bg-pink-100 text-pink-600 p-2 rounded-full"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>`,
+            };
+        });
+};
+
+// 2. Fungsi untuk menampilkan notifikasi di panel
+const renderNotifications = (notifications) => {
+    if (!notificationListContainer) return;
+    notificationListContainer.innerHTML = ''; // Kosongkan dulu
+
+    if (notifications.length === 0) {
+        notificationListContainer.innerHTML = `<p class="text-center text-gray-500 py-16">No new activity.</p>`;
+        return;
+    }
+
+    notifications.forEach(notif => {
+        const item = document.createElement('div');
+        item.className = 'flex items-center p-3 space-x-4 hover:bg-gray-100 rounded-lg cursor-pointer view-details-btn';
+        item.dataset.clientId = notif.clientId; // Tambahkan data-client-id agar bisa diklik
+
+        item.innerHTML = `
+            ${notif.icon}
+            <div class="flex-grow">
+                <p class="text-sm font-semibold text-gray-800">${notif.name}</p>
+                <p class="text-xs text-gray-600">${notif.reason}</p>
+            </div>
+            <img src="${notif.avatar}" class="w-10 h-10 rounded-full object-cover">
+        `;
+        notificationListContainer.appendChild(item);
+    });
+};
+
+// 3. Fungsi untuk update titik merah (indikator)
+const updateNotificationIndicator = (notifications) => {
+    if (!notificationIndicator) return;
+    if (notifications.length > 0) {
+        notificationIndicator.classList.remove('hidden');
+    } else {
+        notificationIndicator.classList.add('hidden');
+    }
+};
+
     // --- VIEW SWITCHING & EVENT LISTENERS ---
     
     const showClientDetail = (clientId) => {
@@ -190,6 +256,25 @@ document.addEventListener('DOMContentLoaded', () => {
         updateDashboardStats(); 
         renderClientList(); 
     };
+
+    // Event listener untuk membuka panel notifikasi
+if (notificationBellBtn) {
+    notificationBellBtn.addEventListener('click', () => {
+        notificationPanel.classList.remove('translate-x-full');
+        notificationOverlay.classList.remove('hidden');
+        notificationIndicator.classList.add('hidden'); // Sembunyikan titik merah saat panel dibuka
+    });
+}
+
+// Fungsi untuk menutup panel
+const closeNotificationPanel = () => {
+    notificationPanel.classList.add('translate-x-full');
+    notificationOverlay.classList.add('hidden');
+};
+
+// Event listener untuk menutup panel
+if (closeNotificationPanelBtn) closeNotificationPanelBtn.addEventListener('click', closeNotificationPanel);
+if (notificationOverlay) notificationOverlay.addEventListener('click', closeNotificationPanel);
 
     const showAllActions = () => {
         dashboardView.classList.add('hidden');
@@ -321,6 +406,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- INITIALIZATION ---
+
+
+    const notifications = generateNotifications();
+renderNotifications(notifications);
+updateNotificationIndicator(notifications);
     updateDashboardStats();
     renderClientList();
 });
