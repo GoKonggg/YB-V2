@@ -1,4 +1,4 @@
-// File: routines.js (Versi Final)
+// File: routines.js (Versi Final - Tanpa Mock Data)
 
 document.addEventListener('DOMContentLoaded', () => {
     // Pastikan kita berada di halaman yang benar dengan memeriksa keberadaan elemen
@@ -20,47 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- RENDER FUNCTION ---
     /**
-     * Memuat data rutinitas dari localStorage, membuat mock data jika kosong,
-     * lalu menampilkannya ke dalam halaman.
+     * Memuat data rutinitas dari localStorage, lalu menampilkannya ke dalam halaman.
+     * Jika tidak ada data, akan memulai dengan array kosong.
      */
     const loadAndRenderRoutines = () => {
-        let routines = JSON.parse(localStorage.getItem('routineMealsList'));
-
-        // Jika tidak ada data sama sekali, buat mock data untuk demo.
-        if (!routines) {
-            console.log("No routine data found. Creating mock data for demo...");
-            routines = [
-                {
-                    id: 1678886400001,
-                    name: "Post-Workout Shake",
-                    schedule: {
-                        enabled: true,
-                        mealSection: "snack", // Menggunakan 'snack' (singular)
-                        days: [1, 3, 5] 
-                    },
-                    foods: [
-                        { id: "food-a1", name: "Whey Protein", calories: 150, serving: "1 scoop" },
-                        { id: "food-a2", name: "Banana", calories: 105, serving: "1 piece" },
-                        { id: "food-a3", name: "Almond Milk", calories: 60, serving: "1 cup" }
-                    ]
-                },
-                {
-                    id: 1678886400002,
-                    name: "Quick Office Lunch",
-                    schedule: {
-                        enabled: false,
-                        mealSection: "lunch",
-                        days: []
-                    },
-                    foods: [
-                        { id: "food-b1", name: "Chicken Breast", calories: 165, serving: "100 gr" },
-                        { id: "food-b2", name: "Brown Rice", calories: 111, serving: "1 cup" },
-                        { id: "food-b3", name: "Broccoli", calories: 55, serving: "1 cup" }
-                    ]
-                }
-            ];
-            localStorage.setItem('routineMealsList', JSON.stringify(routines));
-        }
+        // [PERUBAHAN] Sekarang hanya memuat data atau memulai dengan array kosong
+        const routines = JSON.parse(localStorage.getItem('routineMealsList')) || [];
 
         // Kosongkan kontainer sebelum menampilkan daftar baru.
         routineListContainer.innerHTML = ''; 
@@ -104,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 </a>
                 <button class="log-now-btn bg-pink-500 text-white font-bold py-2 px-3 rounded-lg text-sm hover:bg-pink-600">Log Now</button>
             `;
-
             routineListContainer.appendChild(routineEl);
         });
     };
