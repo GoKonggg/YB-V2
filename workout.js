@@ -123,6 +123,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const templateExerciseList = document.getElementById('template-exercise-list');
     const addExerciseToTemplateBtn = document.getElementById('add-exercise-to-template-btn');
 
+    const toastNotification = document.getElementById('toast-notification');
+    const toastMessage = document.getElementById('toast-message');
+
     Chart.register(ChartDataLabels);
     
     // ===================================================================
@@ -139,6 +142,35 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===================================================================
     // == FUNGSI-FUNGSI BARU UNTUK "MY LIBRARY" & TEMPLATE ==
     // ===================================================================
+    const getShownProgramGuides = () => JSON.parse(localStorage.getItem('shownProgramGuides')) || [];
+    const saveShownProgramGuides = (guides) => localStorage.setItem('shownProgramGuides', JSON.stringify(guides));
+
+    // [BARU] Fungsi untuk menampilkan notifikasi toast
+    const showToast = (message) => {
+    if (!toastNotification || !toastMessage) return;
+
+    // Gunakan innerHTML agar bisa merender style dari <span>
+    toastMessage.innerHTML = message; 
+    toastNotification.classList.remove('hidden');
+
+    // Beri jeda sesaat agar browser sempat memproses .remove('hidden')
+    // sebelum kita memulai transisi animasi. Ini trik standar.
+    setTimeout(() => {
+        // Trigger animasi masuk (slide down & fade in) dengan menghapus class-nya
+        toastNotification.classList.remove('opacity-0', '-translate-y-12');
+    }, 50);
+
+    // Atur waktu untuk menyembunyikan toast dengan animasi keluar
+    setTimeout(() => {
+        // Trigger animasi keluar dengan menambahkan kembali class-nya
+        toastNotification.classList.add('opacity-0', '-translate-y-12');
+        
+        // Sembunyikan elemen sepenuhnya (display: none) setelah transisi selesai
+        setTimeout(() => {
+            toastNotification.classList.add('hidden');
+        }, 500); // Durasi ini (500ms) harus cocok dengan `duration-500` di HTML
+    }, 4000); // Total durasi notifikasi tampil di layar
+};
 
     function renderLibraryList() {
     const programIds = getUserPrograms();
@@ -373,53 +405,69 @@ function loadProgramWorkout(programId, weekNum, dayNum) {
 
     // Tambahkan fungsi baru ini di workout.js
 
-function autoLoadWorkoutFromURL() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const programId = urlParams.get('programId');
-    const weekNum = parseInt(urlParams.get('week'));
-    const dayNum = parseInt(urlParams.get('day'));
+ function autoLoadWorkoutFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const programId = urlParams.get('programId');
+        const weekNum = parseInt(urlParams.get('week'));
+        const dayNum = parseInt(urlParams.get('day'));
 
-    if (!programId || !weekNum || !dayNum) {
-        return; // Tidak ada data program di URL, keluar dari fungsi
-    }
-
-    // Cari program di 'programsData' (dari data.js)
-    const program = programsData.find(p => p.id === programId);
-    if (!program) return;
-
-    // Cari minggu yang sesuai
-    const week = program.plan.find(w => w.week === weekNum);
-    if (!week) return;
-
-    // Cari hari yang sesuai
-    const day = week.days.find(d => d.day === dayNum);
-    if (!day || day.exercises.length === 0) return;
-
-    // Kita punya data latihannya! Sekarang muat ke log hari ini.
-    const workoutToLoad = day.exercises.map(ex => ({
-        name: ex.name,
-        categories: exerciseDatabase.find(dbEx => dbEx.name === ex.name)?.categories || [],
-        sets: ex.setsReps.startsWith('Follow along') 
-            ? [{ time: '' }] 
-            : Array(parseInt(ex.setsReps.split(' ')[0])).fill(null).map(() => ({ weight: '', reps: '' }))
-    }));
-
-    const allWorkouts = getWorkouts();
-    const dateKey = toDateKey(new Date()); // Selalu muat untuk hari ini
-    
-    // Cek jika hari ini sudah ada latihan, tanyakan pengguna
-    if (allWorkouts[dateKey] && allWorkouts[dateKey].length > 0) {
-        if (!confirm('You already have a workout logged for today. Do you want to add exercises from the program?')) {
+        if (!programId || !weekNum || !dayNum) {
             return;
         }
+
+        // --- Logika Panduan Pengguna Baru ---
+        const shownGuides = getShownProgramGuides();
+        if (!shownGuides.includes(programId)) {
+            const programName = programsData.find(p => p.id === programId)?.title || 'This program';
+            // Tampilkan notifikasi dan arahan HANYA jika panduan untuk program ini BELUM pernah ditampilkan
+            showToast(`<span><span class="font-bold text-pink-400">${programName}</span> is now in your Library!</span>`);
+            
+            mainFabBtn.classList.add('call-to-action-glow');
+
+            // Hentikan animasi saat pengguna berinteraksi dengan tombol FAB
+            mainFabBtn.addEventListener('click', () => {
+                mainFabBtn.classList.remove('call-to-action-glow');
+            }, { once: true }); // Event listener ini hanya akan berjalan sekali
+
+            // Simpan ID program agar panduan tidak muncul lagi
+            shownGuides.push(programId);
+            saveShownProgramGuides(shownGuides);
+        }
+        // --- Akhir Logika Panduan ---
+
+        const program = programsData.find(p => p.id === programId);
+        if (!program) return;
+
+        const week = program.plan.find(w => w.week === weekNum);
+        if (!week) return;
+
+        const day = week.days.find(d => d.day === dayNum);
+        if (!day || day.exercises.length === 0) return;
+
+        const workoutToLoad = day.exercises.map(ex => ({
+            name: ex.name,
+            categories: exerciseDatabase.find(dbEx => dbEx.name === ex.name)?.categories || [],
+            sets: ex.setsReps.startsWith('Follow along') 
+                ? [{ time: '' }] 
+                : Array(parseInt(ex.setsReps.split(' ')[0])).fill(null).map(() => ({ weight: '', reps: '' }))
+        }));
+
+        const allWorkouts = getWorkouts();
+        const dateKey = toDateKey(new Date()); 
+        
+        if (allWorkouts[dateKey] && allWorkouts[dateKey].length > 0) {
+            if (!confirm('You already have a workout logged for today. Do you want to add exercises from the program?')) {
+                // Hapus parameter URL walaupun pengguna membatalkan, agar tidak muncul konfirmasi lagi
+                window.history.replaceState({}, document.title, window.location.pathname);
+                return;
+            }
+        }
+
+        allWorkouts[dateKey] = [...(allWorkouts[dateKey] || []), ...JSON.parse(JSON.stringify(workoutToLoad))];
+        saveWorkouts(allWorkouts);
+
+        window.history.replaceState({}, document.title, window.location.pathname);
     }
-
-    allWorkouts[dateKey] = [...(allWorkouts[dateKey] || []), ...JSON.parse(JSON.stringify(workoutToLoad))];
-    saveWorkouts(allWorkouts);
-
-    // Hapus parameter dari URL agar tidak ter-load lagi saat refresh
-    window.history.replaceState({}, document.title, window.location.pathname);
-}
 
     // ===================================================================
     // == RENDER & LOGIC FUNCTIONS (MAIN VIEW) ==

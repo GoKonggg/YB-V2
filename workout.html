@@ -96,12 +96,31 @@
         border-color: transparent;
         box-shadow: 0 4px 14px -4px rgba(236, 72, 153, 0.5);
     }
+
+    @keyframes pulse-glow {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7);
+      }
+      50% {
+        box-shadow: 0 0 0 15px rgba(236, 72, 153, 0);
+      }
+    }
+    .call-to-action-glow {
+      animation: pulse-glow 2s infinite;
+    }
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
 
     <div class="w-full max-w-md mx-auto h-[800px] relative">
 
+       <div id="toast-notification" class="hidden absolute top-5 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-3 w-auto max-w-xs p-3 px-5 bg-slate-800 text-white rounded-full shadow-lg shadow-pink-500/20 transform transition-all duration-500 ease-in-out opacity-0 -translate-y-12" role="alert">
+            <div class="inline-flex items-center justify-center flex-shrink-0 w-7 h-7 text-sky-400 bg-slate-700 rounded-full">
+                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
+            </div>
+            <div id="toast-message" class="text-sm font-semibold"></div>
+        </div>
+        
         <div id="app-container" class="w-full h-full bg-gray-50 text-gray-800 rounded-2xl shadow-xl relative overflow-hidden flex flex-col z-20">
             <div class="absolute top-0 -left-16 w-72 h-72 bg-pink-300 rounded-full opacity-30 filter blur-3xl"></div>
             <div class="absolute bottom-0 -right-16 w-72 h-72 bg-purple-300 rounded-full opacity-30 filter blur-3xl"></div>

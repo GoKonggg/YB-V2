@@ -1,4 +1,4 @@
-// File: program-view.js (Versi Lengkap dan Benar)
+// File: program-view.js (Versi Lengkap)
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- Elemen-elemen Penting ---
@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const videoModal = document.getElementById('video-modal');
     const videoIframe = document.getElementById('video-iframe');
     const closeModalBtn = document.getElementById('close-modal-btn');
+
+    // Elemen Tombol CTA
+    const startWorkoutBtn = document.getElementById('start-workout-now-btn');
 
     // --- Fungsi Modal Video ---
     const openVideoModal = (url) => {
@@ -34,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
             exercises.forEach(ex => {
                 exercisesHtml += `
                     <div class="flex items-center space-x-4">
-                        <img src="https://placehold.co/100x75/f9a8d4/4a044e?text=Video" alt="${ex.name} Thumbnail" class="w-24 h-16 object-cover rounded-lg flex-shrink-0">
+                        <img src="${ex.thumbnail || 'https://placehold.co/100x75/f9a8d4/4a044e?text=Video'}" alt="${ex.name} Thumbnail" class="w-24 h-16 object-cover rounded-lg flex-shrink-0">
                         <div class="flex-grow">
                             <p class="font-semibold text-slate-800">${ex.name}</p>
                             <p class="text-sm text-slate-500">${ex.setsReps}</p>
@@ -50,27 +53,24 @@ document.addEventListener('DOMContentLoaded', () => {
         return exercisesHtml;
     };
 
-    // [PASTIKAN FUNGSI INI BENAR] - Menerima 'programId' dan 'weekData'
     const renderWeekSchedule = (programId, weekData) => {
         if (!weekScheduleContainer || !weekData) return;
         
-        // Baris yang menyebabkan error sebelumnya. 
-        // Sekarang aman karena kita memastikan weekData tidak undefined.
         const days = weekData.days;
-        weekScheduleContainer.innerHTML = ''; // Kosongkan jadwal
+        weekScheduleContainer.innerHTML = ''; 
 
         days.forEach((day, index) => {
             const isRestDay = !day.exercises || day.exercises.length === 0;
             
             const dayWrapper = document.createElement(isRestDay ? 'div' : 'a');
-            dayWrapper.className = `block`; // block agar link memenuhi div
+            dayWrapper.className = `block ${!isRestDay ? 'workout-day-link' : ''}`; // Menambahkan class untuk user guidance
             
             if (!isRestDay) {
                 dayWrapper.href = `workout.html?programId=${programId}&week=${weekData.week}&day=${day.day}`;
             }
 
             const dayCard = document.createElement('div');
-            dayCard.className = `p-4 rounded-xl shadow-sm ${isRestDay ? 'bg-white opacity-70' : 'bg-white shadow-md border border-slate-200 cursor-pointer hover:border-fuchsia-400'}`;
+            dayCard.className = `p-4 rounded-xl shadow-sm ${isRestDay ? 'bg-white opacity-70' : 'bg-white shadow-md border border-slate-200 cursor-pointer hover:border-fuchsia-400 transition-colors'}`;
             
             let content = `
                 <div class="flex justify-between items-center ${!isRestDay ? 'mb-4' : ''}">
@@ -87,11 +87,10 @@ document.addEventListener('DOMContentLoaded', () => {
             weekScheduleContainer.appendChild(dayWrapper);
         });
 
-        // Tambahkan event listener ke tombol play yang baru di-render
         document.querySelectorAll('.play-video-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                e.preventDefault(); // Mencegah link <a> terbuka jika tombol play diklik
-                e.stopPropagation(); // Mencegah event "bubble up" ke link <a>
+                e.preventDefault(); 
+                e.stopPropagation(); 
                 openVideoModal(btn.dataset.videoUrl);
             });
         });
@@ -100,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Logika Utama ---
     const urlParams = new URLSearchParams(window.location.search);
     const programId = urlParams.get('id');
-
     const program = programsData.find(p => p.id === programId);
 
     if (program) {
@@ -111,15 +109,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (program.plan && program.plan.length > 0) {
             program.plan.forEach((weekData, index) => {
                 const tab = document.createElement('button');
-                tab.className = `py-3 border-b-2 ${index === 0 ? 'tab-active' : 'border-transparent text-slate-500'}`;
+                tab.className = `py-3 border-b-2 font-semibold transition-colors ${index === 0 ? 'tab-active' : 'border-transparent text-slate-500 hover:text-slate-800'}`;
                 tab.textContent = `Week ${weekData.week}`;
                 
                 tab.addEventListener('click', () => {
-                    weeksTabsContainer.querySelectorAll('button').forEach(t => t.classList.remove('tab-active'));
+                    weeksTabsContainer.querySelectorAll('button').forEach(t => {
+                        t.classList.remove('tab-active');
+                        t.classList.add('border-transparent', 'text-slate-500', 'hover:text-slate-800');
+                    });
                     tab.classList.add('tab-active');
+                    tab.classList.remove('border-transparent', 'text-slate-500', 'hover:text-slate-800');
                     
                     weekTitleEl.textContent = `Week ${weekData.week} Schedule`;
-                    // [PASTIKAN PEMANGGILAN INI BENAR] - Mengirim program.id dan objek weekData
                     renderWeekSchedule(program.id, weekData);
                 });
                 weeksTabsContainer.appendChild(tab);
@@ -127,10 +128,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Render jadwal untuk minggu pertama secara default
             weekTitleEl.textContent = `Week ${program.plan[0].week} Schedule`;
-            // [PASTIKAN PEMANGGILAN INI BENAR] - Mengirim program.id dan objek minggu pertama
             renderWeekSchedule(program.id, program.plan[0]);
         }
+
+        // --- Logika untuk Arahan Pengguna Baru ---
+        const highlightFirstWorkout = () => {
+            const firstWorkoutLink = document.querySelector('.workout-day-link');
+            if (firstWorkoutLink) {
+                const firstWorkoutCard = firstWorkoutLink.querySelector('div');
+                if(firstWorkoutCard) {
+                    firstWorkoutCard.classList.add('call-to-action-pulse');
+                    weekScheduleContainer.addEventListener('click', () => {
+                        firstWorkoutCard.classList.remove('call-to-action-pulse');
+                    }, { once: true });
+                }
+            }
+        };
+        highlightFirstWorkout();
+
+        // --- Logika untuk Tombol "Start Workout Now" ---
+        let firstWorkoutUrl = '#';
+        for (const week of program.plan) {
+            const firstValidDay = week.days.find(day => day.exercises && day.exercises.length > 0);
+            if (firstValidDay) {
+                firstWorkoutUrl = `workout.html?programId=${program.id}&week=${week.week}&day=${firstValidDay.day}`;
+                break;
+            }
+        }
+
+        if (startWorkoutBtn && firstWorkoutUrl !== '#') {
+            startWorkoutBtn.href = firstWorkoutUrl;
+            startWorkoutBtn.classList.add('call-to-action-bounce');
+            setTimeout(() => {
+                startWorkoutBtn.classList.remove('call-to-action-bounce');
+            }, 3000);
+        } else if (startWorkoutBtn) {
+            startWorkoutBtn.style.display = 'none';
+        }
+
     } else {
         programTitleEl.textContent = 'Program Not Found';
+        if (startWorkoutBtn) startWorkoutBtn.style.display = 'none';
     }
 });
