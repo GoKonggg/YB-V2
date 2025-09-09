@@ -10,6 +10,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
+        /* Hide number input arrows */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* Custom style for the subtle pressable button */
+        .btn-press-effect {
+            /* Even more subtle initial shadow */
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+            transition: all 0.2s ease-in-out;
+        }
+        .btn-press-effect:hover,
+        .btn-press-effect.active {
+            /* Subtle inset shadow for a clean pressed effect */
+            box-shadow: inset 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            transform: translateY(0.5px);
+        }
+
+        /* Custom style to align input height with the button */
+        #servings-amount-input {
+            height: 38px; /* Matching the button's new height */
+            padding-top: 0;
+            padding-bottom: 0;
+            line-height: normal;
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen p-4">
@@ -31,24 +61,34 @@
                     </button>
                 </div>
 
-                <div class="flex-grow overflow-y-auto -mr-2 pr-2 pb-28 space-y-4">
-                    <h2 id="food-name" class="text-3xl font-bold text-gray-800 text-center mb-4">Chicken Breast</h2>
+                <div class="flex-grow overflow-y-auto -mr-2 pr-2 pb-8 space-y-4">
+                    <h2 id="food-name" class="text-3xl font-bold text-gray-800 text-center mb-4">Loading...</h2>
 
-                    <div class="bg-white rounded-xl p-4 shadow-sm grid grid-cols-2 gap-x-4 gap-y-3 items-center">
-    <label class="font-semibold text-gray-600">Meal</label>
-    <span id="meal-type" class="font-bold text-pink-500 bg-gray-100 rounded-lg px-3 py-2 text-center capitalize">Breakfast</span>
-    
-    <label class="font-semibold text-gray-600">Time</label>
-    <span id="food-time" class="w-full font-bold text-pink-500 bg-gray-100 rounded-lg px-3 py-2 text-center">08:26 AM</span>
+                    <div class="bg-white rounded-xl shadow-sm">
+                        <div class="divide-y divide-gray-200">
 
-    <label class="font-semibold text-gray-600">Serving Size</label>
-    <span id="food-serving" class="font-bold text-pink-500 bg-gray-100 rounded-lg px-3 py-2 text-center">100 gr</span>
-    
-    <label class="font-semibold text-gray-600">Number of Servings</label>
-    <div class="bg-gray-100 rounded-lg">
-        <input type="number" value="1" class="w-full text-center font-bold text-pink-500 bg-transparent border-none focus:outline-none focus:ring-0 px-3 py-2">
-    </div>
-</div>
+                            <div class="flex justify-between items-center p-5">
+                                <span class="font-semibold text-gray-600">Meal</span>
+                                <span id="meal-type-text" class="font-bold text-pink-500 capitalize">Breakfast</span>
+                            </div>
+
+                            <div class="flex justify-between items-center p-5">
+                                <span class="font-semibold text-gray-600">Time</span>
+                                <span id="food-time-text" class="font-bold text-pink-500">00:00 AM</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center p-5">
+                                <label class="font-semibold text-gray-600">Serving</label>
+                                <div class="flex items-center gap-2">
+                                    <input type="number" value="1" id="servings-amount-input" class="w-12 p-0 text-center text-xl font-bold text-gray-800 bg-transparent border-0 border-b-2 border-gray-200 focus:border-pink-500 focus:ring-0">
+                                    <button id="unit-selector-btn" class="flex items-center justify-center bg-white rounded-lg px-3 py-1.5 text-pink-500 font-semibold text-lg btn-press-effect border border-gray-200">
+                                        <span id="unit-selector-text">gram</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
                     
                     <div class="flex flex-col items-center pt-8 space-y-6">
                         <div class="relative w-40 h-40">
@@ -57,22 +97,22 @@
                              <svg id="fat-arc" class="absolute inset-0" viewBox="0 0 36 36" style="transform: rotate(-90deg);"><circle class="text-yellow-400" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="transparent" r="15.9155" cx="18" cy="18" stroke-dasharray="0, 100"/></svg>
                              <svg id="carbs-arc" class="absolute inset-0" viewBox="0 0 36 36" style="transform: rotate(-90deg);"><circle class="text-blue-400" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="transparent" r="15.9155" cx="18" cy="18" stroke-dasharray="0, 100"/></svg>
                              <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-                                <span id="food-calories" class="text-4xl font-bold text-gray-800">165</span>
-                                <span class="text-sm text-gray-500 block -mt-1">cal</span>
+                                 <span id="food-calories" class="text-4xl font-bold text-gray-800">0</span>
+                                 <span class="text-sm text-gray-500 block -mt-1">cal</span>
                              </div>
                         </div>
                         <div class="grid grid-cols-3 gap-4 w-full max-w-xs text-center">
-                             <div class="bg-blue-50 rounded-lg p-2">
+                            <div class="bg-blue-50 rounded-lg p-2">
                                 <p class="text-sm text-blue-500">Carbs</p>
                                 <p id="food-carbs" class="font-bold text-lg text-gray-800">0 g</p>
                             </div>
-                             <div class="bg-yellow-50 rounded-lg p-2">
+                            <div class="bg-yellow-50 rounded-lg p-2">
                                 <p class="text-sm text-yellow-500">Fat</p>
-                                <p id="food-fat" class="font-bold text-lg text-gray-800">3.6 g</p>
+                                <p id="food-fat" class="font-bold text-lg text-gray-800">0 g</p>
                             </div>
-                             <div class="bg-red-50 rounded-lg p-2">
+                            <div class="bg-red-50 rounded-lg p-2">
                                 <p class="text-sm text-red-500">Protein</p>
-                                <p id="food-protein" class="font-bold text-lg text-gray-800">31 g</p>
+                                <p id="food-protein" class="font-bold text-lg text-gray-800">0 g</p>
                             </div>
                         </div>
                     </div>
