@@ -1,11 +1,12 @@
-// File: diary.js
-// Fungsi: Menampilkan dan mengelola makanan, dengan navigasi tanggal tanpa batas untuk meal planning.
+// File: diary.js (Versi Final - Tanpa AutoLogger)
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Pastikan kita berada di halaman yang benar dengan memeriksa keberadaan salah satu elemen
     const dateDisplay = document.querySelector('h2.font-bold');
+    if (!dateDisplay) return;
+
     const prevDayButton = dateDisplay.previousElementSibling;
     const nextDayButton = dateDisplay.nextElementSibling;
-
     let currentDate = new Date();
 
     const formatDateKey = (date) => {
@@ -15,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${year}-${month}-${day}`;
     };
 
-    // [DIUBAH] Fungsi update tampilan tanggal sekarang mendukung hari esok dan masa depan
     const updateDateDisplay = () => {
         const today = new Date();
         const yesterday = new Date();
@@ -23,22 +23,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const tomorrow = new Date();
         tomorrow.setDate(today.getDate() + 1);
 
-        if (formatDateKey(currentDate) === formatDateKey(today)) {
+        // Set tanggal hari ini ke format YYYY-MM-DD agar tidak terpengaruh timezone
+        today.setHours(0, 0, 0, 0);
+        currentDate.setHours(0, 0, 0, 0);
+
+        if (currentDate.getTime() === today.getTime()) {
             dateDisplay.textContent = 'Today';
         } else if (formatDateKey(currentDate) === formatDateKey(yesterday)) {
             dateDisplay.textContent = 'Yesterday';
         } else if (formatDateKey(currentDate) === formatDateKey(tomorrow)) {
-            dateDisplay.textContent = 'Tomorrow'; // Tampilan khusus untuk "Besok"
+            dateDisplay.textContent = 'Tomorrow';
         } else {
             dateDisplay.textContent = currentDate.toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric'
+                month: 'short', day: 'numeric', year: 'numeric'
             });
         }
-        
-        // [DIHAPUS] Logika yang menonaktifkan tombol 'next' telah dihapus
-        // untuk mengizinkan perencanaan di masa depan.
     };
     
     const getFoodForDate = (dateKey) => {
@@ -62,8 +61,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const updateTotalCalories = () => {
         let total = 0;
-        document.querySelectorAll('.food-item-wrapper').forEach(item => {
-            total += parseInt(item.dataset.calories, 10);
+        // Gunakan selector yang lebih spesifik untuk menghindari elemen lain
+        const foodItems = document.querySelectorAll('#breakfast-card-body .food-item-wrapper, #lunch-card-body .food-item-wrapper, #dinner-card-body .food-item-wrapper, #snack-card-body .food-item-wrapper');
+        foodItems.forEach(item => {
+            const calories = parseInt(item.dataset.calories, 10);
+            if (!isNaN(calories)) {
+                total += calories;
+            }
         });
         caloriesConsumedElement.textContent = total;
         const caloriesProgress = document.getElementById('calories-progress');
@@ -87,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="text-xs text-gray-500">${foodData.serving}</p>
                 </div>
                 <div class="text-right">
-                    <p class="font-semibold text-gray-700">${foodData.calories} kal</p>
+                    <p class="font-semibold text-gray-700">${foodData.calories} kcal</p>
                     <p class="text-xs text-gray-500">${foodData.time || ''}</p>
                 </div>
             </div>
@@ -97,9 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     const addSwipeToDelete = (element) => {
-        let startX = 0;
-        let currentX = 0;
-        let isSwiping = false;
+        let startX = 0, currentX = 0, isSwiping = false;
         const deleteThreshold = -100;
         const content = element.querySelector('.food-item-content');
         const deleteAction = element.querySelector('.delete-action');
@@ -115,7 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!isSwiping) return;
             currentX = e.touches[0].clientX;
             let diff = currentX - startX;
-            
             if (diff < 0) {
                 content.style.transform = `translateX(${diff}px)`;
                 deleteAction.style.opacity = Math.min(Math.abs(diff) / Math.abs(deleteThreshold), 1);
@@ -129,7 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
             deleteAction.style.transition = 'opacity 0.3s ease-out';
             
             const diff = currentX - startX;
-            
             if (diff < deleteThreshold) {
                 const mealType = element.parentElement.id.split('-')[0];
                 const foodId = element.dataset.id;
@@ -143,7 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const deleteItem = (element, mealType, foodId) => {
         const cardBody = element.parentElement;
-        
         element.style.maxHeight = '0px';
         element.style.opacity = '0';
         
@@ -152,8 +151,11 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const dateKey = formatDateKey(currentDate);
             let dailyFood = getFoodForDate(dateKey);
-            dailyFood[mealType] = dailyFood[mealType].filter(food => food.id !== foodId);
-            saveFoodForDate(dateKey, dailyFood);
+
+            if (dailyFood[mealType]) {
+                dailyFood[mealType] = dailyFood[mealType].filter(food => food.id !== foodId);
+                saveFoodForDate(dateKey, dailyFood);
+            }
 
             updateTotalCalories();
 
@@ -167,14 +169,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const newFoodJSON = sessionStorage.getItem('newlyAddedFood');
         if (newFoodJSON) {
             const newFood = JSON.parse(newFoodJSON);
-            
             newFood.id = `food-${Date.now()}`;
-            const dateKey = formatDateKey(currentDate); // Simpan makanan pada tanggal yg sedang aktif
+            const dateKey = formatDateKey(currentDate);
             let dailyFood = getFoodForDate(dateKey);
-            dailyFood[newFood.meal].push(newFood);
-            saveFoodForDate(dateKey, dailyFood);
+            
+            if (dailyFood[newFood.meal]) {
+                dailyFood[newFood.meal].push(newFood);
+                saveFoodForDate(dateKey, dailyFood);
+            }
             
             sessionStorage.removeItem('newlyAddedFood');
+            // Langsung panggil render ulang untuk tanggal saat ini
             loadAndDisplayFoodForDate(currentDate);
         }
     };
@@ -182,21 +187,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadAndDisplayFoodForDate = (date) => {
         const dateKey = formatDateKey(date);
         const dailyFood = getFoodForDate(dateKey);
-        
         const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
         
         mealTypes.forEach(meal => {
             const cardBody = document.getElementById(`${meal}-card-body`);
-            cardBody.innerHTML = '';
-            
-            const foodList = dailyFood[meal];
-            if (foodList && foodList.length > 0) {
-                foodList.forEach(foodData => {
-                    const foodElement = createFoodElement(foodData);
-                    cardBody.appendChild(foodElement);
-                });
-            } else {
-                cardBody.innerHTML = `<div class="text-center text-gray-500 py-6 bg-white/20 rounded-lg"><p class="text-sm">No ${meal} logged yet.</p></div>`;
+            if (cardBody) {
+                cardBody.innerHTML = '';
+                const foodList = dailyFood[meal];
+                if (foodList && foodList.length > 0) {
+                    foodList.forEach(foodData => {
+                        const foodElement = createFoodElement(foodData);
+                        cardBody.appendChild(foodElement);
+                    });
+                } else {
+                    cardBody.innerHTML = `<div class="text-center text-gray-500 py-6 bg-white/20 rounded-lg"><p class="text-sm">No ${meal} logged yet.</p></div>`;
+                }
             }
         });
         
@@ -209,9 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadAndDisplayFoodForDate(currentDate);
     });
 
-    // [DIUBAH] Event listener untuk tombol 'next' sekarang lebih simpel
     nextDayButton.addEventListener('click', () => {
-        // Pengecekan 'disabled' dihapus, tombol bisa selalu diklik
         currentDate.setDate(currentDate.getDate() + 1);
         loadAndDisplayFoodForDate(currentDate);
     });

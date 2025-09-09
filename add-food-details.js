@@ -1,18 +1,6 @@
+// File: add-food-details.js (Versi Final & Bersih)
+
 document.addEventListener('DOMContentLoaded', () => {
-
-    // --- MOCK DATA ---
-    // In a real app, this would come from the previous page (e.g., via sessionStorage)
-    const mockFoodData = {
-        name: 'Chicken Breast',
-        calories: 165,
-        serving: '100 gr',
-        protein: 31,
-        fat: 3.6,
-        carbs: 0
-    };
-    sessionStorage.setItem('selectedFood', JSON.stringify(mockFoodData));
-    // --- END MOCK DATA ---
-
 
     // --- ELEMENT SELECTORS ---
     const foodNameEl = document.getElementById('food-name');
@@ -25,41 +13,49 @@ document.addEventListener('DOMContentLoaded', () => {
     const foodFatEl = document.getElementById('food-fat');
     const foodProteinEl = document.getElementById('food-protein');
     const saveButton = document.getElementById('save-food-btn');
+    const backLink = document.getElementById('back-link');
 
     const proteinArc = document.querySelector('#protein-arc circle');
     const fatArc = document.querySelector('#fat-arc circle');
     const carbsArc = document.querySelector('#carbs-arc circle');
 
+    // --- STATE MANAGEMENT ---
     let baseFoodData = {};
+    let context = 'diary'; // Default context
+    let routineId = '';
+    let mealType = 'breakfast';
 
     // --- INITIALIZATION ---
     function initializePage() {
-        // 1. Get data passed from the previous page
-        const selectedFoodJSON = sessionStorage.getItem('selectedFood');
-        if (!selectedFoodJSON) {
-            console.error("No food data found in session storage.");
-            // Redirect or show an error
-            return;
-        }
-        baseFoodData = JSON.parse(selectedFoodJSON);
-
-        // 2. Get meal type from URL parameter
+        // 1. Ambil semua data dari URL parameter
         const urlParams = new URLSearchParams(window.location.search);
-        const meal = urlParams.get('meal') || 'breakfast'; // Default to breakfast
+        context = urlParams.get('context') || 'diary';
+        routineId = urlParams.get('routineId');
+        mealType = urlParams.get('meal') || 'breakfast';
 
-        // 3. Set initial values on the page
+        // 2. Isi data dasar makanan dari URL
+        baseFoodData = {
+            name: urlParams.get('name') || 'Unknown Food',
+            calories: parseFloat(urlParams.get('calories')) || 0,
+            serving: urlParams.get('serving') || '1 serving',
+            protein: parseFloat(urlParams.get('protein')) || 0,
+            fat: parseFloat(urlParams.get('fat')) || 0,
+            carbs: parseFloat(urlParams.get('carbs')) || 0
+        };
+        
+        // 3. Atur link "Back" agar kembali ke halaman yang benar dengan konteks yang sama
+        backLink.href = `add-food.html?context=${context}&routineId=${routineId}&meal=${mealType}`;
+
+        // 4. Isi elemen-elemen di halaman dengan data awal
         foodNameEl.textContent = baseFoodData.name;
-        mealTypeEl.textContent = meal;
+        mealTypeEl.textContent = mealType.charAt(0).toUpperCase() + mealType.slice(1);
         foodServingEl.textContent = baseFoodData.serving;
+        foodTimeEl.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-        // Set current time
-        const now = new Date();
-        foodTimeEl.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-        // 4. Perform initial calculation
+        // 5. Lakukan kalkulasi awal untuk 1 porsi
         updateCalculations();
 
-        // 5. Add event listeners
+        // 6. Tambahkan event listeners
         servingsInput.addEventListener('input', updateCalculations);
         saveButton.addEventListener('click', saveFoodEntry);
     }
@@ -98,38 +94,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const proteinPercent = (protein / totalMacros) * 100;
         const fatPercent = (fat / totalMacros) * 100;
-        const carbsPercent = (carbs / totalMacros) * 100;
 
         const fatOffset = proteinPercent;
         const carbsOffset = proteinPercent + fatPercent;
 
         setArc(proteinArc, proteinPercent);
         setArc(fatArc, fatPercent, fatOffset);
-        setArc(carbsArc, carbsPercent, carbsOffset);
+        setArc(carbsArc, 100 - proteinPercent - fatPercent, carbsOffset); // Gunakan sisa persentase untuk memastikan 100%
     }
 
     function setArc(arcElement, percentage, offset = 0) {
-        const circumference = 100; // Since stroke-dasharray is based on a 100-unit path
+        const circumference = 100;
+        if (percentage < 0) percentage = 0;
+        if (percentage > 100) percentage = 100;
         arcElement.style.strokeDasharray = `${percentage} ${circumference}`;
+        // CSS transform rotate(-90deg) sudah menangani titik awal, jadi offset tidak perlu diubah
         arcElement.style.strokeDashoffset = `-${offset}`;
     }
-
+    
+    // --- MAIN ACTION (SAVE) ---
     function saveFoodEntry() {
         const finalServings = parseFloat(servingsInput.value) || 0;
-        
-        const newlyAddedFood = {
+        if (finalServings <= 0) {
+            alert("Please enter a valid number of servings.");
+            return;
+        }
+
+        // Siapkan data makanan final
+        const finalFoodData = {
+            id: `food-${Date.now()}`,
             name: baseFoodData.name,
-            meal: mealTypeEl.textContent.toLowerCase(),
-            time: foodTimeEl.textContent,
+            calories: Math.round(baseFoodData.calories * finalServings),
             serving: `${finalServings} x ${baseFoodData.serving}`,
-            calories: Math.round(baseFoodData.calories * finalServings)
+            protein: parseFloat((baseFoodData.protein * finalServings).toFixed(1)),
+            fat: parseFloat((baseFoodData.fat * finalServings).toFixed(1)),
+            carbs: parseFloat((baseFoodData.carbs * finalServings).toFixed(1))
         };
         
-        // Save to sessionStorage for the diary page to pick up
-        sessionStorage.setItem('newlyAddedFood', JSON.stringify(newlyAddedFood));
-        
-        // Redirect to the diary page
-        window.location.href = 'diary.html';
+        // --- LOGIKA UTAMA BERDASARKAN KONTEKS ---
+        if (context === 'routine') {
+            // Jika konteksnya adalah rutinitas, kirim data kembali ke halaman editor
+            sessionStorage.setItem('newRoutineFood', JSON.stringify(finalFoodData));
+            window.location.href = `edit-routine.html?id=${routineId}`;
+        } else {
+            // Jika tidak (konteks 'diary'), kirim data ke diary seperti biasa
+            finalFoodData.meal = mealType;
+            finalFoodData.time = foodTimeEl.textContent;
+            sessionStorage.setItem('newlyAddedFood', JSON.stringify(finalFoodData));
+            window.location.href = 'diary.html';
+        }
     }
 
     // --- RUN INITIALIZATION ---

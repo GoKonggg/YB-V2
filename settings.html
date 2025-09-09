@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Tracker - Settings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div id="app-container" class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden relative h-[800px]">
+        <div class="relative flex flex-col h-full bg-gray-50">
+            <div class="absolute top-0 -left-16 w-72 h-72 bg-pink-300 rounded-full opacity-30 filter blur-3xl"></div>
+            <div class="absolute bottom-0 -right-16 w-72 h-72 bg-purple-300 rounded-full opacity-30 filter blur-3xl"></div>
+            
+            <div class="relative z-10 flex-grow overflow-y-auto">
+               <header class="p-4 flex items-center sticky top-0 backdrop-blur-sm z-10">
+                    <a href="profile.html" class="p-2 rounded-full hover:bg-gray-200/50">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </a>
+                    <h1 class="text-xl font-bold text-gray-800 mx-auto">Settings</h1>
+                </header>
+
+                <div class="px-6 py-4 space-y-5">
+                    
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider pt-2">Account</h3>
+                    <div class="bg-white/60 rounded-xl p-2 space-y-1 shadow-sm">
+                        <a href="edit-profile.html" class="flex items-center p-3 hover:bg-gray-200/50 rounded-lg transition-colors">
+                            <span class="text-lg">✏️</span>
+                            <span class="ml-4 font-semibold text-gray-700">Edit Profile</span>
+                            <span class="ml-auto text-gray-400">&gt;</span>
+                        </a>
+                        <a href="change-password.html" class="flex items-center p-3 hover:bg-gray-200/50 rounded-lg transition-colors">
+                            <span class="text-lg">🔑</span>
+                            <span class="ml-4 font-semibold text-gray-700">Change Password</span>
+                            <span class="ml-auto text-gray-400">&gt;</span>
+                        </a>
+                    </div>
+
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Preferences</h3>
+                    <div class="bg-white/60 rounded-xl p-2 space-y-1 shadow-sm">
+                        <a href="appearance.html" class="flex items-center p-3 hover:bg-gray-200/50 rounded-lg transition-colors">
+                            <span class="text-lg">🎨</span>
+                            <span class="ml-4 font-semibold text-gray-700">Appearance</span>
+                            <span class="ml-auto text-gray-500 text-sm">Light</span>
+                        </a>
+                        <a href="units.html" class="flex items-center p-3 hover:bg-gray-200/50 rounded-lg transition-colors">
+                            <span class="text-lg">📏</span>
+                            <span class="ml-4 font-semibold text-gray-700">Units of Measure</span>
+                            <span class="ml-auto text-gray-400">&gt;</span>
+                        </a>
+                    </div>
+
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Privacy & Social</h3>
+                    <div class="bg-white/60 rounded-xl p-2 space-y-1 shadow-sm">
+                         <a href="close-friends.html" class="flex items-center p-3 hover:bg-gray-200/50 rounded-lg transition-colors">
+                            <span class="text-lg">⭐</span>
+                            <span class="ml-4 font-semibold text-gray-700">Manage Close Friends</span>
+                            <span class="ml-auto text-gray-400">&gt;</span>
+                        </a>
+                        <a href="privacy-policy.html" class="flex items-center p-3 hover:bg-gray-200/50 rounded-lg transition-colors">
+                            <span class="text-lg">🛡️</span>
+                            <span class="ml-4 font-semibold text-gray-700">Privacy Policy</span>
+                            <span class="ml-auto text-gray-400">&gt;</span>
+                        </a>
+                    </div>
+                    
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Support</h3>
+                    <div class="bg-white/60 rounded-xl p-2 space-y-1 shadow-sm">
+                        <a href="help-center.html" class="flex items-center p-3 hover:bg-gray-200/50 rounded-lg transition-colors">
+                            <span class="text-lg">❓</span>
+                            <span class="ml-4 font-semibold text-gray-700">Help Center</span>
+                            <span class="ml-auto text-gray-400">&gt;</span>
+                        </a>
+                        <a href="about.html" class="flex items-center p-3 hover:bg-gray-200/50 rounded-lg transition-colors">
+                            <span class="text-lg">ℹ️</span>
+                            <span class="ml-4 font-semibold text-gray-700">About App</span>
+                            <span class="ml-auto text-gray-400">&gt;</span>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

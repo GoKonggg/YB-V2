@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Tracker - Reminders</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .toggle-checkbox:checked { right: 0; border-color: #ec4899; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #ec4899; }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div id="app-container" class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden relative h-[800px]">
+        <div class="relative flex flex-col h-full bg-gray-50">
+            <div class="absolute top-0 -left-16 w-72 h-72 bg-pink-300 rounded-full opacity-30 filter blur-3xl"></div>
+            <div class="absolute bottom-0 -right-16 w-72 h-72 bg-purple-300 rounded-full opacity-30 filter blur-3xl"></div>
+            
+            <div class="relative z-10 flex-grow overflow-y-auto">
+                <header class="p-4 flex items-center sticky top-0 backdrop-blur-sm z-10">
+                    <a href="profile.html" class="p-2 rounded-full hover:bg-gray-200/50">
+                        <svg class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                    </a>
+                    <h1 class="text-xl font-bold text-gray-800 mx-auto">Reminders & Notifications</h1>
+                </header>
+
+                <div class="px-6 py-4 space-y-6">
+                    
+                    <div>
+                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Custom Reminders</h3>
+                        <div class="bg-white/60 rounded-xl p-4 shadow-sm">
+                            <div id="custom-reminders-list" class="space-y-4">
+                                </div>
+
+                            <div id="add-reminder-form" class="hidden pt-4 mt-4 border-t border-gray-200">
+                                <p class="font-semibold text-gray-700 mb-2">New Reminder</p>
+                                <input type="text" id="new-reminder-name" placeholder="Reminder name (e.g., Take Vitamins)" class="w-full p-2 border border-gray-300 rounded-md mb-2 focus:ring-pink-500 focus:border-pink-500">
+                                <input type="time" id="new-reminder-time" class="w-full p-2 border border-gray-300 rounded-md">
+                                <div class="flex justify-end space-x-2 mt-4">
+                                    <button id="cancel-reminder-btn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">Cancel</button>
+                                    <button id="save-reminder-btn" class="px-4 py-2 text-sm font-medium text-white bg-pink-500 rounded-lg hover:bg-pink-600">Save</button>
+                                </div>
+                            </div>
+                            
+                            <button id="add-reminder-btn" class="w-full mt-4 p-2 flex items-center justify-center text-pink-500 font-semibold border-2 border-dashed border-pink-300 rounded-lg hover:bg-pink-50 transition-colors">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                                Add New Reminder
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- DOM ELEMENT SELECTORS ---
+    const remindersList = document.getElementById('custom-reminders-list');
+    const addReminderBtn = document.getElementById('add-reminder-btn');
+    const addReminderForm = document.getElementById('add-reminder-form');
+    const cancelReminderBtn = document.getElementById('cancel-reminder-btn');
+    const saveReminderBtn = document.getElementById('save-reminder-btn');
+    const reminderNameInput = document.getElementById('new-reminder-name');
+    const reminderTimeInput = document.getElementById('new-reminder-time');
+
+    // --- STATE MANAGEMENT ---
+    let reminders = [];
+
+    const saveReminders = () => {
+        localStorage.setItem('customReminders', JSON.stringify(reminders));
+    };
+
+    const loadReminders = () => {
+        const storedReminders = localStorage.getItem('customReminders');
+        if (storedReminders) {
+            reminders = JSON.parse(storedReminders);
+        } else {
+            // Mock data if localStorage is empty
+            reminders = [
+                { id: Date.now(), name: 'Drink Water', time: '08:00', enabled: true },
+                { id: Date.now() + 1, name: 'Afternoon Snack', time: '15:30', enabled: false }
+            ];
+            saveReminders();
+        }
+    };
+
+    // --- RENDER FUNCTION ---
+    const renderReminders = () => {
+        remindersList.innerHTML = ''; // Clear the list before rendering
+
+        if (reminders.length === 0) {
+            remindersList.innerHTML = `<p class="text-center text-gray-500 text-sm">No custom reminders yet. Add one!</p>`;
+        }
+
+        reminders.forEach(reminder => {
+            const reminderEl = document.createElement('div');
+            reminderEl.className = 'flex items-center justify-between';
+            reminderEl.dataset.id = reminder.id;
+            
+            const checkedAttribute = reminder.enabled ? 'checked' : '';
+            const timeFormatted = formatTime(reminder.time);
+
+            reminderEl.innerHTML = `
+                <div class="flex items-center">
+                    <button class="delete-btn text-gray-400 hover:text-red-500 mr-3">
+                        <svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                    <div>
+                        <p class="font-semibold text-gray-800">${reminder.name}</p>
+                        <p class="text-sm text-gray-500">Every day at ${timeFormatted}</p>
+                    </div>
+                </div>
+                <div class="relative inline-block w-10 align-middle select-none">
+                    <input type="checkbox" id="toggle-${reminder.id}" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" ${checkedAttribute}/>
+                    <label for="toggle-${reminder.id}" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                </div>
+            `;
+            remindersList.appendChild(reminderEl);
+        });
+    };
+    
+    // --- UTILITY FUNCTION ---
+    const formatTime = (time) => { // time is "HH:mm"
+        const [hour, minute] = time.split(':');
+        const hourInt = parseInt(hour);
+        const ampm = hourInt >= 12 ? 'PM' : 'AM';
+        const formattedHour = hourInt % 12 || 12; // convert 0 to 12
+        return `${formattedHour}:${minute} ${ampm}`;
+    };
+
+    // --- EVENT HANDLERS ---
+    const showAddForm = () => {
+        addReminderForm.classList.remove('hidden');
+        addReminderBtn.classList.add('hidden');
+        reminderNameInput.focus();
+    };
+
+    const hideAddForm = () => {
+        addReminderForm.classList.add('hidden');
+        addReminderBtn.classList.remove('hidden');
+        reminderNameInput.value = '';
+        reminderTimeInput.value = '';
+    };
+
+    saveReminderBtn.addEventListener('click', () => {
+        const name = reminderNameInput.value.trim();
+        const time = reminderTimeInput.value;
+
+        if (name && time) {
+            const newReminder = {
+                id: Date.now(),
+                name: name,
+                time: time,
+                enabled: true
+            };
+            reminders.push(newReminder);
+            saveReminders();
+            renderReminders();
+            hideAddForm();
+        } else {
+            alert('Please enter a name and time for the reminder.');
+        }
+    });
+    
+    addReminderBtn.addEventListener('click', showAddForm);
+    cancelReminderBtn.addEventListener('click', hideAddForm);
+
+    // Event Delegation for delete and toggle
+    remindersList.addEventListener('click', (e) => {
+        const id = parseInt(e.target.closest('.flex')?.dataset.id);
+        if (!id) return;
+
+        // Handle Delete
+        if (e.target.closest('.delete-btn')) {
+            reminders = reminders.filter(r => r.id !== id);
+            saveReminders();
+            renderReminders();
+        }
+        
+        // Handle Toggle
+        if (e.target.classList.contains('toggle-checkbox')) {
+            const reminder = reminders.find(r => r.id === id);
+            reminder.enabled = e.target.checked;
+            saveReminders();
+        }
+    });
+
+    // --- INITIALIZATION ---
+    loadReminders();
+    renderReminders();
+
+});
+</script>
+
+</body>
+</html>
