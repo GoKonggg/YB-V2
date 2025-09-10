@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const dayCard = document.createElement('div');
-            dayCard.className = `p-4 rounded-xl shadow-sm ${isRestDay ? 'bg-white opacity-70' : 'bg-white shadow-md border border-slate-200 cursor-pointer hover:border-fuchsia-400 transition-colors'}`;
+            dayCard.className = `p-4 rounded-xl ${isRestDay ? 'glass-card opacity-70' : 'glass-card cursor-pointer hover:border-fuchsia-400 transition-colors border border-transparent'}`;
             
             let content = `
                 <div class="flex justify-between items-center ${!isRestDay ? 'mb-4' : ''}">

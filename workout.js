@@ -405,69 +405,126 @@ function loadProgramWorkout(programId, weekNum, dayNum) {
 
     // Tambahkan fungsi baru ini di workout.js
 
- function autoLoadWorkoutFromURL() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const programId = urlParams.get('programId');
-        const weekNum = parseInt(urlParams.get('week'));
-        const dayNum = parseInt(urlParams.get('day'));
+function autoLoadWorkoutFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const programId = urlParams.get('programId');
+    const weekNum = parseInt(urlParams.get('week'));
+    const dayNum = parseInt(urlParams.get('day'));
 
-        if (!programId || !weekNum || !dayNum) {
-            return;
-        }
+    if (!programId || !weekNum || !dayNum) {
+        return;
+    }
 
-        // --- Logika Panduan Pengguna Baru ---
-        const shownGuides = getShownProgramGuides();
-        if (!shownGuides.includes(programId)) {
-            const programName = programsData.find(p => p.id === programId)?.title || 'This program';
-            // Tampilkan notifikasi dan arahan HANYA jika panduan untuk program ini BELUM pernah ditampilkan
-            showToast(`<span><span class="font-bold text-pink-400">${programName}</span> is now in your Library!</span>`);
-            
-            mainFabBtn.classList.add('call-to-action-glow');
+    // --- MULAI BLOK PANDUAN PENGGUNA BARU (VERSI MULTI-LANGKAH) ---
+    const shownGuides = getShownProgramGuides();
+    if (!shownGuides.includes(programId)) {
+        const spotlight = document.getElementById('guide-spotlight');
+        const tooltip1 = document.getElementById('guide-tooltip-step1');
+        const tooltip2 = document.getElementById('guide-tooltip-step2');
+        
+        const libraryAction = document.getElementById('library-fab-action');
+        const recapAction = document.getElementById('recap-fab-action');
+        const addAction = document.getElementById('add-fab-action');
 
-            // Hentikan animasi saat pengguna berinteraksi dengan tombol FAB
-            mainFabBtn.addEventListener('click', () => {
-                mainFabBtn.classList.remove('call-to-action-glow');
-            }, { once: true }); // Event listener ini hanya akan berjalan sekali
+        const closeGuide = () => {
+            // Sembunyikan semua elemen panduan
+            spotlight.classList.add('hidden');
+            tooltip1.classList.remove('visible');
+            tooltip2.classList.remove('visible');
+            setTimeout(() => {
+                tooltip1.classList.add('hidden');
+                tooltip2.classList.add('hidden');
+            }, 300); // Tunggu animasi selesai
+
+            // Hapus semua class modifikasi dari elemen FAB
+            mainFabBtn.classList.remove('spotlight-active', 'call-to-action-glow');
+            if (libraryAction) libraryAction.classList.remove('spotlight-active', 'call-to-action-glow');
+            if (recapAction) recapAction.classList.remove('de-emphasized');
+            if (addAction) addAction.classList.remove('de-emphasized');
 
             // Simpan ID program agar panduan tidak muncul lagi
-            shownGuides.push(programId);
-            saveShownProgramGuides(shownGuides);
-        }
-        // --- Akhir Logika Panduan ---
-
-        const program = programsData.find(p => p.id === programId);
-        if (!program) return;
-
-        const week = program.plan.find(w => w.week === weekNum);
-        if (!week) return;
-
-        const day = week.days.find(d => d.day === dayNum);
-        if (!day || day.exercises.length === 0) return;
-
-        const workoutToLoad = day.exercises.map(ex => ({
-            name: ex.name,
-            categories: exerciseDatabase.find(dbEx => dbEx.name === ex.name)?.categories || [],
-            sets: ex.setsReps.startsWith('Follow along') 
-                ? [{ time: '' }] 
-                : Array(parseInt(ex.setsReps.split(' ')[0])).fill(null).map(() => ({ weight: '', reps: '' }))
-        }));
-
-        const allWorkouts = getWorkouts();
-        const dateKey = toDateKey(new Date()); 
-        
-        if (allWorkouts[dateKey] && allWorkouts[dateKey].length > 0) {
-            if (!confirm('You already have a workout logged for today. Do you want to add exercises from the program?')) {
-                // Hapus parameter URL walaupun pengguna membatalkan, agar tidak muncul konfirmasi lagi
-                window.history.replaceState({}, document.title, window.location.pathname);
-                return;
+            const currentGuides = getShownProgramGuides();
+            if (!currentGuides.includes(programId)) {
+                currentGuides.push(programId);
+                saveShownProgramGuides(currentGuides);
             }
-        }
+             // Hapus event listener dari tombol FAB utama agar tidak konflik
+            mainFabBtn.removeEventListener('click', advanceGuide);
+        };
 
-        allWorkouts[dateKey] = [...(allWorkouts[dateKey] || []), ...JSON.parse(JSON.stringify(workoutToLoad))];
-        saveWorkouts(allWorkouts);
+        const advanceGuide = () => {
+            tooltip1.classList.remove('visible');
+            setTimeout(() => tooltip1.classList.add('hidden'), 300);
+            
+            tooltip2.classList.remove('hidden');
+            setTimeout(() => tooltip2.classList.add('visible'), 50);
 
-        window.history.replaceState({}, document.title, window.location.pathname);
+            mainFabBtn.classList.remove('call-to-action-glow');
+
+            if (libraryAction) {
+                libraryAction.classList.add('spotlight-active', 'call-to-action-glow');
+            }
+            if (recapAction) recapAction.classList.add('de-emphasized');
+            if (addAction) addAction.classList.add('de-emphasized');
+
+            spotlight.addEventListener('click', closeGuide, { once: true });
+            if (fabLibraryBtn) {
+                fabLibraryBtn.addEventListener('click', closeGuide, { once: true });
+            }
+        };
+
+        const startGuide = () => {
+            if (!spotlight || !tooltip1 || !mainFabBtn) return;
+            
+            spotlight.classList.remove('hidden');
+            tooltip1.classList.remove('hidden');
+            setTimeout(() => tooltip1.classList.add('visible'), 50);
+
+            mainFabBtn.classList.add('spotlight-active', 'call-to-action-glow');
+            mainFabBtn.addEventListener('click', advanceGuide, { once: true });
+        };
+
+        // Mulai panduan
+        startGuide();
+
+        // Tampilkan Toast juga
+        const programName = programsData.find(p => p.id === programId)?.title || 'This program';
+        showToast(`<span><span class="font-bold text-pink-400">${programName}</span> has been added to your Library!</span>`);
     }
+    // --- AKHIR BLOK PANDUAN PENGGUNA BARU ---
+
+    const program = programsData.find(p => p.id === programId);
+    if (!program) return;
+
+    const week = program.plan.find(w => w.week === weekNum);
+    if (!week) return;
+
+    const day = week.days.find(d => d.day === dayNum);
+    if (!day || day.exercises.length === 0) return;
+
+    const workoutToLoad = day.exercises.map(ex => ({
+        name: ex.name,
+        categories: exerciseDatabase.find(dbEx => dbEx.name === ex.name)?.categories || [],
+        sets: ex.setsReps.startsWith('Follow along') 
+            ? [{ time: '' }] 
+            : Array(parseInt(ex.setsReps.split(' ')[0])).fill(null).map(() => ({ weight: '', reps: '' }))
+    }));
+
+    const allWorkouts = getWorkouts();
+    const dateKey = toDateKey(new Date()); 
+    
+    if (allWorkouts[dateKey] && allWorkouts[dateKey].length > 0) {
+        if (!confirm('You already have a workout logged for today. Do you want to add exercises from the program?')) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+            return;
+        }
+    }
+
+    allWorkouts[dateKey] = [...(allWorkouts[dateKey] || []), ...JSON.parse(JSON.stringify(workoutToLoad))];
+    saveWorkouts(allWorkouts);
+
+    window.history.replaceState({}, document.title, window.location.pathname);
+}
 
     // ===================================================================
     // == RENDER & LOGIC FUNCTIONS (MAIN VIEW) ==

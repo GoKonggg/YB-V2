@@ -108,6 +108,77 @@
     .call-to-action-glow {
       animation: pulse-glow 2s infinite;
     }
+
+    /* CSS BARU UNTUK PANDUAN TOOLTIP */
+#guide-spotlight {
+    position: absolute; /* DIUBAH DARI FIXED */
+    inset: 0; /* Mengisi seluruh kontainer parent */
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 40;
+    border-radius: 1rem; /* Samakan dengan border-radius app-container */
+}
+
+/* CSS BARU UNTUK PANDUAN TOOLTIP */
+.guide-tooltip {
+    position: absolute; /* DIUBAH DARI FIXED */
+    z-index: 51;
+    background-color: #1f2937;
+    color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    max-width: 180px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+}
+
+.guide-tooltip.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Ini adalah CSS untuk membuat panah di bawah tooltip */
+/* ... CSS untuk .guide-tooltip dan .guide-tooltip.visible tetap sama ... */
+
+/* Panah default (untuk langkah 1) */
+.guide-tooltip--step1::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    right: 24px;
+    width: 16px;
+    height: 16px;
+    background-color: #1f2937;
+    transform: rotate(45deg);
+}
+
+/* Posisi spesifik untuk langkah 1 (tetap sama) */
+.guide-tooltip--step1 {
+    bottom: 96px;
+    right: 16px;
+}
+
+/* Posisi BARU untuk langkah 2 */
+.guide-tooltip--step2 {
+    bottom: 220px; /* Posisikan lebih tinggi, sejajar dengan tombol 'My Library' */
+    left: 16px;   /* Posisikan di sebelah kiri frame */
+    right: auto;  /* Hapus posisi kanan agar tidak konflik */
+}
+
+/* Panah BARU untuk langkah 2, menunjuk ke kanan */
+.guide-tooltip--step2::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -8px; /* Letakkan di sisi kanan tooltip */
+    left: auto;
+    transform: translateY(-50%) rotate(45deg); /* Putar & tengahkan vertikal */
+    width: 16px;
+    height: 16px;
+    background-color: #1f2937;
+}
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
@@ -391,6 +462,36 @@
         </div>
 
         <div id="fab-backdrop" class="hidden absolute inset-0 bg-black/40 z-20"></div>
+        
+        <div id="new-user-guide-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl p-6 text-center max-w-sm w-full shadow-xl">
+        <svg class="w-16 h-16 text-pink-500 mx-auto mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h3 class="text-lg font-bold text-gray-800">Workout Loaded!</h3>
+        <p class="text-sm text-gray-600 mt-2 mb-6">
+            Exercises from this program have been added to today's schedule. You can access your programs and templates anytime via the <span class="font-bold text-pink-500">+</span> button below.
+        </p>
+        <button id="close-guide-modal-btn" class="w-full bg-pink-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-pink-600 transition-colors">
+            Got it!
+        </button>
+    </div>
+</div>
+
+<div id="guide-spotlight" class="hidden fixed inset-0 bg-black/70 z-40"></div>
+
+<div id="guide-tooltip-step1" class="hidden guide-tooltip guide-tooltip--step1">
+    <p class="text-sm font-semibold">
+        Your workout is ready! <span class="text-pink-400">Click this button</span> to see your options.
+    </p>
+</div>
+
+<div id="guide-tooltip-step2" class="hidden guide-tooltip guide-tooltip--step2">
+    <p class="text-sm">
+        Great job! Your new program is saved in <span class="font-bold text-sky-400">My Library</span>. Access it again anytime from here.
+    </p>
+</div>
+
     
     </div>
 
