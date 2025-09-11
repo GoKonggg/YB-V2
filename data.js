@@ -809,3 +809,49 @@ const scheduleData = [
     title: 'Planning session with John Smith'
   }
 ];
+
+const chatHistory = {
+    'client001': [
+        { sender: 'client', text: "Hey! Just checking in for the week.", timestamp: "10:30 AM" },
+        { sender: 'coach', text: "Hi Jane! Great to hear from you. How was the new breakfast suggestion?", timestamp: "10:31 AM" },
+        { sender: 'client', text: "Okay, I'll try that for tomorrow's breakfast!", timestamp: "10:32 AM" }
+    ],
+    'client002': [
+        { sender: 'coach', text: "Hey John, I noticed you didn't log your food yesterday. Everything alright?", timestamp: "8:45 AM" },
+        { sender: 'client', text: "I missed my workout yesterday, feeling a bit demotivated.", timestamp: "9:15 AM" }
+    ],
+    'client003': [
+        { sender: 'client', text: "Just hit a new PR on my squats! Thanks for the tip.", timestamp: "Yesterday" }
+    ],
+    'client004': [
+        // Riwayat chat kosong untuk klien baru
+    ]
+};
+
+
+const groupChatHistory = {
+    'group001': [
+        { 
+            sender: 'coach', 
+            text: "Hey everyone, welcome to the September program! Feel free to ask any questions here.", 
+            timestamp: "11:05 AM" 
+        },
+        { 
+            sender: 'client', 
+            senderId: 'client001', // ID klien yang mengirim
+            text: "Hey everyone, excited to start!", 
+            timestamp: "11:06 AM" 
+        },
+        { 
+            sender: 'coach', 
+            text: "Welcome, Jane! Glad to have you all here.", 
+            timestamp: "11:07 AM" 
+        },
+        { 
+            sender: 'client', 
+            senderId: 'client002', // ID klien yang mengirim
+            text: "Thanks, Coach! What's the best way to approach the first week's meal plan?", 
+            timestamp: "11:09 AM" 
+        }
+    ]
+};
