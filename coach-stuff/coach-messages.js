@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabRequests = document.getElementById('tab-requests');
     const requestsCountBadge = document.getElementById('requests-count-badge');
     
+    // --- ELEMENT SELECTORS (Tambahkan ini) ---
+const chatPlaceholder = document.getElementById('chat-placeholder');
+const dmChatWindow = document.getElementById('dm-chat-window');
+const groupChatWindow = document.getElementById('group-chat-window');
     // Kelompokkan semua tab dalam satu array
     const tabs = [tabAll, tabDm, tabGroup, tabRequests];
 
@@ -118,11 +122,113 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
                 `;
+
+                conversationEl.addEventListener('click', (e) => {
+    // Hanya berlaku untuk desktop
+    if (window.innerWidth < 1024) return; 
+
+    e.preventDefault(); // Mencegah link berpindah halaman di desktop
+
+    // Beri highlight pada percakapan yang aktif
+    document.querySelectorAll('#conversations-list a').forEach(el => el.classList.remove('conversation-active'));
+    conversationEl.classList.add('conversation-active');
+
+    // Panggil fungsi untuk menampilkan chat di panel kanan
+    const convoData = item.isRequest ? { type: 'dm', id: item.client.id } : item;
+                showChatWindow(convoData);
+});
                 conversationsList.appendChild(conversationEl);
             }
         });
     };
+    // --- FUNGSI BARU UNTUK MERENDER ISI PESAN ---
+const renderMessages = (messages = [], container, chatType = 'dm') => {
+    container.innerHTML = ''; // Kosongkan kontainer
 
+    messages.forEach(msg => {
+        const isCoach = msg.sender === 'coach';
+        
+        // Menentukan style bubble
+        const bubbleClasses = isCoach 
+            ? 'bg-primary-gradient text-white rounded-br-none' 
+            : 'bg-gray-200 text-gray-800 rounded-bl-none';
+
+        const messageEl = document.createElement('div');
+        messageEl.className = `flex items-end gap-2 ${isCoach ? 'justify-end' : 'justify-start'}`;
+        
+        let senderAvatar = '';
+        let senderName = '';
+
+        // Untuk grup, tampilkan avatar dan nama pengirim lain
+        if (chatType === 'group' && !isCoach) {
+            const client = coachClients.find(c => c.id === msg.senderId);
+            if (client) {
+                senderAvatar = `<img src="${client.avatar}" class="w-8 h-8 rounded-full object-cover">`;
+                senderName = `<p class="text-xs font-bold text-pink-600 mb-1">${client.name}</p>`;
+            }
+        }
+        
+        // Tentukan urutan bubble dan avatar
+        const bubbleHTML = `
+            <div class="max-w-xs md:max-w-md">
+                ${senderName}
+                <div class="p-3 rounded-2xl ${bubbleClasses}">
+                    <p class="text-sm">${msg.text}</p>
+                </div>
+                <p class="text-xs text-gray-400 mt-1 px-1 ${isCoach ? 'text-right' : ''}">${msg.timestamp}</p>
+            </div>
+        `;
+        
+        messageEl.innerHTML = (chatType === 'group' && !isCoach) 
+            ? senderAvatar + bubbleHTML 
+            : bubbleHTML;
+
+        container.appendChild(messageEl);
+    });
+
+    // Auto-scroll ke pesan paling bawah
+    container.scrollTop = container.scrollHeight;
+};
+
+    // --- FUNGSI BARU UNTUK MENAMPILKAN CHAT DI PANEL KANAN ---
+const showChatWindow = (convoData) => {
+    if (!chatPlaceholder) return; 
+
+    chatPlaceholder.classList.add('hidden');
+    const convo = convoData.isRequest ? { type: 'dm', id: convoData.client.id } : convoData;
+
+    if (convo.type === 'dm') {
+        groupChatWindow.classList.add('hidden');
+        dmChatWindow.classList.remove('hidden');
+
+        const client = coachClients.find(c => c.id === convo.id);
+        if (!client) return;
+        
+        document.getElementById('client-avatar').src = client.avatar;
+        document.getElementById('client-name').textContent = client.name;
+        
+        // --- MODIFIKASI DI SINI ---
+        const history = chatHistory[client.id] || [];
+        const container = document.getElementById('chat-container-dm');
+        renderMessages(history, container, 'dm');
+
+    } else if (convo.type === 'group') {
+        dmChatWindow.classList.add('hidden');
+        groupChatWindow.classList.remove('hidden');
+
+        const group = groups.find(g => g.id === convo.id);
+        if (!group) return;
+
+        document.getElementById('group-avatar').src = group.avatar;
+        document.getElementById('group-name').textContent = group.name;
+        document.getElementById('group-members').textContent = `${group.members.length} Members`;
+        
+        // --- MODIFIKASI DI SINI ---
+        const history = groupChatHistory[group.id] || [];
+        const container = document.getElementById('chat-container-group');
+        renderMessages(history, container, 'group');
+    }
+};
     // --- EVENT LISTENERS UNTUK TABS ---
     const handleTabClick = (filter, clickedTab) => {
         currentFilter = filter;
