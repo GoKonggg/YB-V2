@@ -1,22 +1,40 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- ELEMENT SELECTORS ---
+    // App Containers
     const startScreen = document.getElementById('start-screen');
     const wizardContainer = document.getElementById('wizard-container');
+
+    // Start Screen
     const createNewBtn = document.getElementById('create-new-btn');
     const templateListContainer = document.getElementById('template-list-container');
+
+    // Wizard
     const stepperItems = document.querySelectorAll('.stepper-item');
     const stepContainers = document.querySelectorAll('.wizard-step');
     const saveProgramBtnFooter = document.querySelector('footer');
     const step1NextBtn = document.getElementById('step-1-next-btn');
     const programTypeSelector = document.getElementById('program-type-selector');
     const clientSelectorContainer = document.getElementById('client-selector-container');
+    
+    // Step 2 General Selectors
     const step2GeneralBackBtn = document.getElementById('step-2-general-back-btn');
     const step2GeneralNextBtn = document.getElementById('step-2-general-next-btn');
+    const imageUploadContainer = document.getElementById('image-upload-wrapper');
+    const videoIntroContainer = document.getElementById('video-intro-wrapper');
     const priceContainer = document.getElementById('price-container');
+    
+    // Step 2 Personalized Selectors
     const step2PersonalizedBackBtn = document.getElementById('step-2-personalized-back-btn');
     const step2PersonalizedNextBtn = document.getElementById('step-2-personalized-next-btn');
+    const videoIntroWrapperPersonalized = document.getElementById('video-intro-wrapper-personalized');
+
+    // Step 3
     const step3BackBtn = document.getElementById('step-3-back-btn');
+    
+    // Back to Start Screen Button
     const backToStartScreenBtn = document.getElementById('back-to-start-screen-btn');
+
+    // Media Inputs (General)
     const imageUploadInput = document.getElementById('program-image-upload');
     const imagePreview = document.getElementById('image-preview');
     const imageUploadLabel = document.querySelector('label[for="program-image-upload"]');
@@ -25,13 +43,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const videoPreviewContainer = document.getElementById('video-preview-container');
     const videoThumbnailPreview = document.getElementById('video-thumbnail-preview');
     const removeVideoBtn = document.getElementById('remove-video-btn');
+
+    // Media Inputs (Personalized)
     const videoIntroInputPersonalized = document.getElementById('program-video-intro-personalized');
     const videoInputContainerPersonalized = document.getElementById('video-input-container-personalized');
     const videoPreviewContainerPersonalized = document.getElementById('video-preview-container-personalized');
     const videoThumbnailPreviewPersonalized = document.getElementById('video-thumbnail-preview-personalized');
     const removeVideoBtnPersonalized = document.getElementById('remove-video-btn-personalized');
+
+    // Planner
     const planContainer = document.getElementById('plan-builder-container');
     const addWeekBtn = document.getElementById('add-week-btn');
+
+    // Exercise Library Modal
     const libraryModal = document.getElementById('exercise-library-modal');
     const closeLibraryBtn = document.getElementById('close-library-btn');
     const libraryListContainer = document.getElementById('exercise-library-list');
@@ -40,68 +64,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('search-exercise-input');
     const muscleGroupFilter = document.getElementById('filter-muscle-group');
     const equipmentFilter = document.getElementById('filter-equipment');
+
+    // Save Success Modal
     const saveSuccessModal = document.getElementById('save-success-modal');
     const templateNameInput = document.getElementById('template-name-input');
     const saveAsTemplateBtn = document.getElementById('save-as-template-btn');
     const closeSuccessModalBtn = document.getElementById('close-success-modal-btn');
+    
     const form = document.getElementById('program-builder-form');
-
-    const step3Tooltip = document.getElementById('step-3-tooltip');
-
 
     // --- STATE MANAGEMENT ---
     let currentStep = 1;
     let selectedProgramType = null;
     let selectedExercises = new Set();
     let programState = { plan: [] };
-    // --- STATE BARU UNTUK DESKTOP ---
-    let activeDayTarget = { week: null, day: null };
-    let hasShownTooltip = false;
 
     // =======================================================
     // FUNCTIONS
     // =======================================================
 
-    
-
     const goToStep = (step) => {
         currentStep = step;
-        stepContainers.forEach(container => {
-            if (container) container.classList.add('hidden');
-        });
-        
-        const currentStepContainer = document.getElementById(`step-${step}`);
-        if (currentStepContainer) {
-            currentStepContainer.classList.remove('hidden');
-        }
+        stepContainers.forEach(container => container.classList.add('hidden'));
+        document.getElementById(`step-${step}`).classList.remove('hidden');
 
         const stepNumber = parseInt(step.toString().charAt(0));
         stepperItems.forEach((item, index) => {
-            if (item) item.classList.toggle('active', (index + 1) === stepNumber);
+            item.classList.toggle('active', (index + 1) === stepNumber);
         });
-        if (saveProgramBtnFooter) {
-            saveProgramBtnFooter.classList.toggle('hidden', stepNumber !== 3);
-        }
-
-        // --- LOGIKA BARU UNTUK MENAMPILKAN TOOLTIP ---
-        if (step.toString() === '3' && !hasShownTooltip && window.innerWidth >= 1024) {
-            if (step3Tooltip) {
-                step3Tooltip.classList.remove('hidden');
-                hasShownTooltip = true; // Tandai bahwa tooltip sudah pernah muncul
-                
-                // Sembunyikan tooltip setelah beberapa detik
-                setTimeout(() => {
-                    step3Tooltip.classList.add('opacity-0');
-                    // Hapus dari DOM setelah transisi selesai
-                    setTimeout(() => step3Tooltip.classList.add('hidden'), 500); 
-                }, 5000); // Tampilkan selama 5 detik
-            }
-        }
+        saveProgramBtnFooter.classList.toggle('hidden', stepNumber !== 3);
     };
 
-
     const renderTemplates = () => {
-        if (!templateListContainer) return;
         templateListContainer.innerHTML = '';
         if (typeof programTemplatesData === 'undefined' || programTemplatesData.length === 0) {
             templateListContainer.innerHTML = '<p class="text-center text-sm text-gray-400 py-4">No templates saved yet.</p>';
@@ -140,10 +134,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         } else {
-            document.getElementById('program-title-personalized').value = programState.title || '';
-            document.getElementById('program-duration-personalized').value = programState.duration || '';
-            document.getElementById('program-description-personalized').value = programState.description || '';
-            if (programState.videoIntroUrl) {
+             document.getElementById('program-title-personalized').value = programState.title || '';
+             document.getElementById('program-duration-personalized').value = programState.duration || '';
+             document.getElementById('program-description-personalized').value = programState.description || '';
+             if (programState.videoIntroUrl) {
                 const videoID = extractYouTubeID(programState.videoIntroUrl);
                 if (videoID) {
                     videoThumbnailPreviewPersonalized.src = `https://img.youtube.com/vi/${videoID}/hqdefault.jpg`;
@@ -170,11 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
             weekWrapper.className = 'week-container bg-black/5 p-3 rounded-lg';
             let daysHTML = '';
             week.days.forEach((day, dayIndex) => {
-                // --- MODIFIKASI DIMULAI DISINI ---
-                const isActive = activeDayTarget.week === weekIndex && activeDayTarget.day === dayIndex;
-                const activeClass = isActive ? 'day-active' : '';
-                // --- MODIFIKASI SELESAI DISINI ---
-
                 let exercisesHTML = '';
                 day.exercises.forEach((ex, exIndex) => {
                     exercisesHTML += `
@@ -186,15 +175,14 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         </div>`;
                 });
-                // --- MODIFIKASI DISINI: tambahkan activeClass ---
                 daysHTML += `
-                    <div class="day-card bg-white/30 p-3 rounded-md mt-2 border-2 border-transparent ${activeClass}">
+                    <div class="day-card bg-white/30 p-3 rounded-md mt-2">
                         <div class="flex justify-between items-center mb-2">
                             <input type="text" value="${day.title || ''}" class="form-input p-1 text-sm font-semibold text-gray-700 w-full" placeholder="Day Title" data-week="${weekIndex}" data-day="${dayIndex}" data-field="title">
                             <button type="button" class="remove-day-btn text-red-500 font-bold ml-2 text-xs" data-week="${weekIndex}" data-day="${dayIndex}">DELETE</button>
                         </div>
                         <div class="space-y-2">${exercisesHTML}</div>
-                        <button type="button" class="open-library-btn w-full text-xs text-center border-2 border-dashed border-gray-400/50 text-gray-500 font-semibold p-2 rounded-lg hover:bg-white/50 hover:text-pink-500 hover:border-pink-300 transition-colors mt-3" data-week="${weekIndex}" data-day="${dayIndex}">⊕ Add Exercise</button>
+                        <button type="button" class="open-library-btn w-full text-xs text-center border-2 border-dashed border-gray-400/50 text-gray-500 font-semibold p-2 rounded-lg hover:bg-white/50 hover:text-pink-500 hover:border-pink-300 transition-colors mt-3" data-week="${weekIndex}" data-day="${dayIndex}">⊕ Add Exercise from Library</button>
                     </div>`;
             });
             weekWrapper.innerHTML = `
@@ -255,22 +243,27 @@ document.addEventListener('DOMContentLoaded', () => {
         programState = { plan: [] };
         selectedProgramType = null;
         form.reset();
+        
         document.querySelectorAll('.type-selector-card').forEach(card => card.classList.remove('selected'));
         clientSelectorContainer.classList.add('hidden');
-        if(priceContainer) priceContainer.classList.remove('hidden');
+        priceContainer.classList.remove('hidden');
         step1NextBtn.disabled = true;
         step1NextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        
         imagePreview.classList.add('hidden');
         imagePreview.src = '';
         imageUploadLabel.classList.remove('hidden');
+        
         videoPreviewContainer.classList.add('hidden');
         videoInputContainer.classList.remove('hidden');
         videoIntroInput.value = '';
         videoThumbnailPreview.src = '';
+
         videoPreviewContainerPersonalized.classList.add('hidden');
         videoInputContainerPersonalized.classList.remove('hidden');
         videoIntroInputPersonalized.value = '';
         videoThumbnailPreviewPersonalized.src = '';
+
         startScreen.classList.add('hidden');
         wizardContainer.classList.remove('hidden');
         goToStep(1);
@@ -303,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
     step2GeneralNextBtn.addEventListener('click', () => goToStep(3));
     step2PersonalizedBackBtn.addEventListener('click', () => goToStep(1));
     step2PersonalizedNextBtn.addEventListener('click', () => goToStep(3));
+
     step3BackBtn.addEventListener('click', () => {
         if (programState.type === 'general') {
             goToStep('2-general');
@@ -318,7 +312,11 @@ document.addEventListener('DOMContentLoaded', () => {
         programState.type = selectedProgramType;
         document.querySelectorAll('.type-selector-card').forEach(card => card.classList.remove('selected'));
         selectedCard.classList.add('selected');
-        clientSelectorContainer.classList.toggle('hidden', selectedProgramType !== 'personalized');
+        if (selectedProgramType === 'personalized') {
+            clientSelectorContainer.classList.remove('hidden');
+        } else {
+            clientSelectorContainer.classList.add('hidden');
+        }
         step1NextBtn.disabled = false;
         step1NextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
     });
@@ -380,39 +378,39 @@ document.addEventListener('DOMContentLoaded', () => {
         renderPlan();
     });
 
-    // --- MODIFIKASI Event Listener untuk planContainer ---
     planContainer.addEventListener('click', (e) => {
         const target = e.target;
         let stateChanged = false;
         const openLibraryButton = target.closest('.open-library-btn');
         if (openLibraryButton) {
             e.preventDefault();
-            const weekIndex = parseInt(openLibraryButton.dataset.week);
-            const dayIndex = parseInt(openLibraryButton.dataset.day);
-
-            if (window.innerWidth < 1024) {
-                // Perilaku LAMA di Mobile: Buka Modal
-                libraryModal.dataset.currentTargetWeek = weekIndex;
-                libraryModal.dataset.currentTargetDay = dayIndex;
-                selectedExercises.clear();
-                applyLibraryFiltersAndRender();
-                updateLibraryFooter();
-                libraryModal.classList.remove('hidden');
-            } else {
-                // Perilaku BARU di Desktop: Tandai hari sebagai aktif
-                activeDayTarget = { week: weekIndex, day: dayIndex };
-                renderPlan();
-            }
+            libraryModal.dataset.currentTargetWeek = openLibraryButton.dataset.week;
+            libraryModal.dataset.currentTargetDay = openLibraryButton.dataset.day;
+            selectedExercises.clear();
+            searchInput.value = '';
+            muscleGroupFilter.value = 'all';
+            equipmentFilter.value = 'all';
+            applyLibraryFiltersAndRender();
+            updateLibraryFooter();
+            libraryModal.classList.remove('hidden');
             return;
         }
-        
         const weekIndex = parseInt(target.dataset.week);
         const dayIndex = parseInt(target.dataset.day);
         const exIndex = parseInt(target.dataset.ex);
-        if (target.matches('.remove-week-btn')) { programState.plan.splice(weekIndex, 1); stateChanged = true; } 
-        else if (target.matches('.add-day-btn')) { programState.plan[weekIndex].days.push({ day: programState.plan[weekIndex].days.length + 1, title: '', exercises: [] }); stateChanged = true; } 
-        else if (target.matches('.remove-day-btn')) { programState.plan[weekIndex].days.splice(dayIndex, 1); stateChanged = true; }
-        else if (target.matches('.remove-exercise-btn')) { programState.plan[weekIndex].days[dayIndex].exercises.splice(exIndex, 1); stateChanged = true; }
+        if (target.matches('.remove-week-btn')) {
+            programState.plan.splice(weekIndex, 1);
+            stateChanged = true;
+        } else if (target.matches('.add-day-btn')) {
+            programState.plan[weekIndex].days.push({ day: programState.plan[weekIndex].days.length + 1, title: '', exercises: [] });
+            stateChanged = true;
+        } else if (target.matches('.remove-day-btn')) {
+            programState.plan[weekIndex].days.splice(dayIndex, 1);
+            stateChanged = true;
+        } else if (target.matches('.remove-exercise-btn')) {
+            programState.plan[weekIndex].days[dayIndex].exercises.splice(exIndex, 1);
+            stateChanged = true;
+        }
         if (stateChanged) renderPlan();
     });
 
@@ -449,50 +447,19 @@ document.addEventListener('DOMContentLoaded', () => {
         updateLibraryFooter();
     });
 
-    // --- MODIFIKASI Event Listener untuk addSelectedBtn ---
     addSelectedBtn.addEventListener('click', () => {
-        let weekIndex, dayIndex;
-        
-        if (window.innerWidth < 1024) {
-            weekIndex = parseInt(libraryModal.dataset.currentTargetWeek);
-            dayIndex = parseInt(libraryModal.dataset.currentTargetDay);
-        } else {
-            weekIndex = activeDayTarget.week;
-            dayIndex = activeDayTarget.day;
-        }
-        
-        if (weekIndex === null || isNaN(weekIndex) || dayIndex === null || isNaN(dayIndex)) {
-             if (window.innerWidth >= 1024) alert("Please select a day first by clicking '+ Add Exercise'.");
-             return;
-        }
-        
+        const weekIndex = parseInt(libraryModal.dataset.currentTargetWeek);
+        const dayIndex = parseInt(libraryModal.dataset.currentTargetDay);
+        if (isNaN(weekIndex) || isNaN(dayIndex)) return;
         const exercisesToAdd = Array.from(selectedExercises).map(exerciseId => {
             const libraryEx = exerciseLibraryData.find(ex => ex.id === exerciseId);
             return { name: libraryEx.name, setsReps: '', videoUrl: libraryEx.videoUrl, notes: '' };
         });
-
-        if (programState.plan[weekIndex] && programState.plan[weekIndex].days[dayIndex]) {
-            programState.plan[weekIndex].days[dayIndex].exercises.push(...exercisesToAdd);
-        }
-
+        programState.plan[weekIndex].days[dayIndex].exercises.push(...exercisesToAdd);
         renderPlan();
-        
-        if (window.innerWidth < 1024) {
-            libraryModal.classList.add('hidden');
-        } else {
-            selectedExercises.clear();
-            applyLibraryFiltersAndRender();
-            updateLibraryFooter();
-        }
+        libraryModal.classList.add('hidden');
     });
 
-    if (step3Tooltip) {
-        step3Tooltip.addEventListener('click', () => {
-            step3Tooltip.classList.add('opacity-0');
-            setTimeout(() => step3Tooltip.classList.add('hidden'), 500);
-        });
-    }
-    
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         if (programState.type === 'general') {
