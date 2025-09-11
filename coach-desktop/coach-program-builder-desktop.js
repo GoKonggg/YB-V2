@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Wizard
     const stepperItems = document.querySelectorAll('.stepper-item');
     const stepContainers = document.querySelectorAll('.wizard-step');
-    const saveProgramBtnFooter = document.querySelector('footer');
+    const saveProgramBtnFooter = document.querySelector('#wizard-container footer');
     const step1NextBtn = document.getElementById('step-1-next-btn');
     const programTypeSelector = document.getElementById('program-type-selector');
     const clientSelectorContainer = document.getElementById('client-selector-container');
@@ -19,14 +19,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Step 2 General Selectors
     const step2GeneralBackBtn = document.getElementById('step-2-general-back-btn');
     const step2GeneralNextBtn = document.getElementById('step-2-general-next-btn');
-    const imageUploadContainer = document.getElementById('image-upload-wrapper');
-    const videoIntroContainer = document.getElementById('video-intro-wrapper');
-    const priceContainer = document.getElementById('price-container');
     
     // Step 2 Personalized Selectors
     const step2PersonalizedBackBtn = document.getElementById('step-2-personalized-back-btn');
     const step2PersonalizedNextBtn = document.getElementById('step-2-personalized-next-btn');
-    const videoIntroWrapperPersonalized = document.getElementById('video-intro-wrapper-personalized');
 
     // Step 3
     const step3BackBtn = document.getElementById('step-3-back-btn');
@@ -86,7 +82,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const goToStep = (step) => {
         currentStep = step;
         stepContainers.forEach(container => container.classList.add('hidden'));
-        document.getElementById(`step-${step}`).classList.remove('hidden');
+        
+        const stepId = `step-${step}`;
+        const currentStepContainer = document.getElementById(stepId);
+        if (currentStepContainer) {
+            currentStepContainer.classList.remove('hidden');
+        }
 
         const stepNumber = parseInt(step.toString().charAt(0));
         stepperItems.forEach((item, index) => {
@@ -156,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderPlan = () => {
         planContainer.innerHTML = '';
         if (!programState.plan || programState.plan.length === 0) {
-            planContainer.innerHTML = '<p class="text-center text-sm text-gray-500 py-4">No weeks added yet.</p>';
+            planContainer.innerHTML = '<p class="text-center text-sm text-gray-500 py-4">No weeks added yet. Click "+ Add Week" to start.</p>';
             return;
         }
         programState.plan.forEach((week, weekIndex) => {
@@ -165,33 +166,34 @@ document.addEventListener('DOMContentLoaded', () => {
             let daysHTML = '';
             week.days.forEach((day, dayIndex) => {
                 let exercisesHTML = '';
-                // Inside renderPlan function...
-day.exercises.forEach((ex, exIndex) => {
-    // Find the original exercise from the library to get its thumbnail
-    const libraryExercise = exerciseLibraryData.find(libEx => libEx.name === ex.name);
-    const thumbnailUrl = libraryExercise ? libraryExercise.thumbnailUrl : 'path/to/default/image.jpg'; // Fallback image
+                day.exercises.forEach((ex, exIndex) => {
+                    const isReadOnly = !ex.isPlaceholder && ex.name !== '';
+                    const hasThumbnail = ex.thumbnailUrl && ex.thumbnailUrl !== '';
+                    
+                    const thumbnailHTML = hasThumbnail 
+                        ? `<img src="${ex.thumbnailUrl}" alt="${ex.name}" class="w-20 h-16 object-cover rounded-md border border-gray-200">`
+                        : `<div class="w-20 h-16 rounded-md bg-gray-200 flex items-center justify-center"><svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.55a2 2 0 010 3.98l-4.55 2.55M4 12h8m4-4l-4 4 4 4"></path></svg></div>`;
 
-    exercisesHTML += `
-        <div class="border-t border-gray-200/60 pt-3 mt-3">
-            <div class="flex items-start space-x-3 text-sm">
-                <img src="${thumbnailUrl}" alt="${ex.name}" class="w-20 h-16 object-cover rounded-md border border-gray-200">
-                
-                <div class="flex-grow space-y-2">
-                    <input type="text" value="${ex.name}" class="w-full form-input p-2 text-xs font-semibold bg-white/50" readonly>
-                    <div class="flex items-center space-x-2">
-                        <input type="text" value="${ex.setsReps || ''}" class="form-input p-2 text-xs w-full" placeholder="e.g., 3 sets x 12 reps" ...>
-                        <button type="button" class="remove-exercise-btn text-red-500 hover:text-red-700 p-1 flex-shrink-0" ...>
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>`;
-});
+                    exercisesHTML += `
+                        <div class="border-t border-gray-200/60 pt-3 mt-3">
+                            <div class="flex items-start space-x-3 text-sm">
+                                ${thumbnailHTML}
+                                <div class="flex-grow space-y-2">
+                                    <input type="text" value="${ex.name}" data-week="${weekIndex}" data-day="${dayIndex}" data-ex="${exIndex}" data-field="name" class="w-full form-input p-2 text-xs font-semibold" ${isReadOnly ? 'readonly' : ''} placeholder="Type exercise name or add from library...">
+                                    <div class="flex items-center space-x-2">
+                                        <input type="text" value="${ex.setsReps || ''}" data-week="${weekIndex}" data-day="${dayIndex}" data-ex="${exIndex}" data-field="setsReps" class="form-input p-2 text-xs w-full" placeholder="e.g., 3 sets x 12 reps">
+                                        <button type="button" class="remove-exercise-btn text-red-500 hover:text-red-700 p-1 flex-shrink-0" data-week="${weekIndex}" data-day="${dayIndex}" data-ex="${exIndex}">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                });
                 daysHTML += `
                     <div class="day-card bg-white/30 p-3 rounded-md mt-2">
                         <div class="flex justify-between items-center mb-2">
-                            <input type="text" value="${day.title || ''}" class="form-input p-1 text-sm font-semibold text-gray-700 w-full" placeholder="Day Title" data-week="${weekIndex}" data-day="${dayIndex}" data-field="title">
+                            <input type="text" value="${day.title || ''}" class="form-input p-1 text-sm font-semibold text-gray-700 w-full" placeholder="Day Title (e.g., Leg Day)" data-week="${weekIndex}" data-day="${dayIndex}" data-field="title">
                             <button type="button" class="remove-day-btn text-red-500 font-bold ml-2 text-xs" data-week="${weekIndex}" data-day="${dayIndex}">DELETE</button>
                         </div>
                         <div class="space-y-2">${exercisesHTML}</div>
@@ -244,6 +246,7 @@ day.exercises.forEach((ex, exIndex) => {
     };
 
     const extractYouTubeID = (url) => {
+        if (!url) return null;
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
         const match = url.match(regExp);
         return (match && match[2].length === 11) ? match[2] : null;
@@ -259,7 +262,6 @@ day.exercises.forEach((ex, exIndex) => {
         
         document.querySelectorAll('.type-selector-card').forEach(card => card.classList.remove('selected'));
         clientSelectorContainer.classList.add('hidden');
-        priceContainer.classList.remove('hidden');
         step1NextBtn.disabled = true;
         step1NextBtn.classList.add('opacity-50', 'cursor-not-allowed');
         
@@ -298,11 +300,7 @@ day.exercises.forEach((ex, exIndex) => {
 
     step1NextBtn.addEventListener('click', () => {
         if (!selectedProgramType) return;
-        if (selectedProgramType === 'general') {
-            goToStep('2-general');
-        } else {
-            goToStep('2-personalized');
-        }
+        goToStep(selectedProgramType === 'general' ? '2-general' : '2-personalized');
     });
 
     step2GeneralBackBtn.addEventListener('click', () => goToStep(1));
@@ -311,11 +309,7 @@ day.exercises.forEach((ex, exIndex) => {
     step2PersonalizedNextBtn.addEventListener('click', () => goToStep(3));
 
     step3BackBtn.addEventListener('click', () => {
-        if (programState.type === 'general') {
-            goToStep('2-general');
-        } else {
-            goToStep('2-personalized');
-        }
+        goToStep(programState.type === 'general' ? '2-general' : '2-personalized');
     });
 
     programTypeSelector.addEventListener('click', (e) => {
@@ -325,11 +319,7 @@ day.exercises.forEach((ex, exIndex) => {
         programState.type = selectedProgramType;
         document.querySelectorAll('.type-selector-card').forEach(card => card.classList.remove('selected'));
         selectedCard.classList.add('selected');
-        if (selectedProgramType === 'personalized') {
-            clientSelectorContainer.classList.remove('hidden');
-        } else {
-            clientSelectorContainer.classList.add('hidden');
-        }
+        clientSelectorContainer.classList.toggle('hidden', selectedProgramType !== 'personalized');
         step1NextBtn.disabled = false;
         step1NextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
     });
@@ -394,11 +384,28 @@ day.exercises.forEach((ex, exIndex) => {
     planContainer.addEventListener('click', (e) => {
         const target = e.target;
         let stateChanged = false;
+
         const openLibraryButton = target.closest('.open-library-btn');
         if (openLibraryButton) {
             e.preventDefault();
-            libraryModal.dataset.currentTargetWeek = openLibraryButton.dataset.week;
-            libraryModal.dataset.currentTargetDay = openLibraryButton.dataset.day;
+            const weekIndex = parseInt(openLibraryButton.dataset.week);
+            const dayIndex = parseInt(openLibraryButton.dataset.day);
+
+            const newExercisePlaceholder = {
+                name: '',
+                setsReps: '',
+                thumbnailUrl: '',
+                isPlaceholder: true
+            };
+
+            programState.plan[weekIndex].days[dayIndex].exercises.push(newExercisePlaceholder);
+
+            const newExerciseIndex = programState.plan[weekIndex].days[dayIndex].exercises.length - 1;
+
+            libraryModal.dataset.currentTargetWeek = weekIndex;
+            libraryModal.dataset.currentTargetDay = dayIndex;
+            libraryModal.dataset.currentTargetExercise = newExerciseIndex;
+
             selectedExercises.clear();
             searchInput.value = '';
             muscleGroupFilter.value = 'all';
@@ -406,11 +413,16 @@ day.exercises.forEach((ex, exIndex) => {
             applyLibraryFiltersAndRender();
             updateLibraryFooter();
             libraryModal.classList.remove('hidden');
+
+            renderPlan();
+            
             return;
         }
+
         const weekIndex = parseInt(target.dataset.week);
         const dayIndex = parseInt(target.dataset.day);
         const exIndex = parseInt(target.dataset.ex);
+        
         if (target.matches('.remove-week-btn')) {
             programState.plan.splice(weekIndex, 1);
             stateChanged = true;
@@ -424,16 +436,27 @@ day.exercises.forEach((ex, exIndex) => {
             programState.plan[weekIndex].days[dayIndex].exercises.splice(exIndex, 1);
             stateChanged = true;
         }
-        if (stateChanged) renderPlan();
+        
+        if (stateChanged) {
+            renderPlan();
+        }
     });
 
     planContainer.addEventListener('input', (e) => {
         const { week, day, ex, field } = e.target.dataset;
         if (week === undefined) return;
+
+        const value = e.target.value;
+
         if (ex !== undefined) {
-            programState.plan[week].days[day].exercises[ex][field] = e.target.value;
+            const exercise = programState.plan[week].days[day].exercises[ex];
+            exercise[field] = value;
+            // Jika nama diketik manual, hapus status placeholder agar tidak ditimpa
+            if (field === 'name' && value.trim() !== '') {
+                delete exercise.isPlaceholder;
+            }
         } else if (day !== undefined) {
-            programState.plan[week].days[day][field] = e.target.value;
+            programState.plan[week].days[day][field] = value;
         }
     });
 
@@ -463,13 +486,34 @@ day.exercises.forEach((ex, exIndex) => {
     addSelectedBtn.addEventListener('click', () => {
         const weekIndex = parseInt(libraryModal.dataset.currentTargetWeek);
         const dayIndex = parseInt(libraryModal.dataset.currentTargetDay);
-        if (isNaN(weekIndex) || isNaN(dayIndex)) return;
-        const exercisesToAdd = Array.from(selectedExercises).map(exerciseId => {
-            const libraryEx = exerciseLibraryData.find(ex => ex.id === exerciseId);
-            return { name: libraryEx.name, setsReps: '', videoUrl: libraryEx.videoUrl, notes: '' };
-        });
-        programState.plan[weekIndex].days[dayIndex].exercises.push(...exercisesToAdd);
+        const exerciseIndex = parseInt(libraryModal.dataset.currentTargetExercise);
+
+        if (isNaN(weekIndex) || isNaN(dayIndex) || isNaN(exerciseIndex)) {
+            alert("Terjadi kesalahan. Tidak ada kartu latihan yang ditargetkan.");
+            return;
+        }
+        
+        if (selectedExercises.size === 0) {
+            alert("Pilih setidaknya satu latihan dari Pustaka Latihan.");
+            return;
+        }
+
+        const firstSelectedId = selectedExercises.values().next().value;
+        const libraryEx = exerciseLibraryData.find(ex => ex.id === firstSelectedId);
+        if (!libraryEx) {
+            alert("Latihan yang dipilih tidak ditemukan di data pustaka.");
+            return;
+        }
+
+        const targetExercise = programState.plan[weekIndex].days[dayIndex].exercises[exerciseIndex];
+        const hasCustomName = targetExercise.name.trim() !== '';
+
+        targetExercise.name = hasCustomName ? targetExercise.name : libraryEx.name;
+        targetExercise.thumbnailUrl = libraryEx.thumbnailUrl; 
+        delete targetExercise.isPlaceholder;
+
         renderPlan();
+        
         libraryModal.classList.add('hidden');
     });
 
@@ -487,7 +531,7 @@ day.exercises.forEach((ex, exIndex) => {
             programState.description = document.getElementById('program-description-personalized').value;
             programState.image = ''; 
         }
-        console.log("Program siap disimpan:", programState);
+        console.log("Program siap disimpan:", JSON.stringify(programState, null, 2));
         saveSuccessModal.classList.remove('hidden');
     });
 
@@ -510,7 +554,6 @@ day.exercises.forEach((ex, exIndex) => {
         } else {
             window.programTemplatesData = [newTemplate];
         }
-        console.log("Template Disimpan:", newTemplate);
         alert(`Template "${templateName}" has been saved!`);
         saveSuccessModal.classList.add('hidden');
         wizardContainer.classList.add('hidden');

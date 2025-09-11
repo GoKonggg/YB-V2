@@ -36,9 +36,9 @@
         .flash-active { animation: flash-border 1s ease-out; }
     </style>
 </head>
-<body class="bg-gray-100 h-screen overflow-hidden">
+<body class="bg-gray-100 min-h-screen">
 
-    <div class="flex h-full">
+    <div class="flex h-screen">
         <aside class="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 flex-shrink-0">
             <div class="p-6"><h1 class="text-2xl font-bold text-gray-900 bg-clip-text text-transparent bg-primary-gradient">FitCoach</h1><p class="text-sm text-gray-500">Workspace</p></div>
             <nav id="sidebar-nav" class="flex-grow px-4 space-y-2">
@@ -163,7 +163,7 @@
     <div id="plus-menu-overlay" class="lg:hidden hidden absolute inset-0 bg-black/30 z-20"></div>
     
     <script src="../data.js" defer></script>
-    <script src="../coach-stuff/coach-program-builder.js" defer></script>
+    <script src ="coach-program-builder-desktop.js" defer></script>
     <script src="../coach-stuff/main-coach.js" defer></script>
 </body>
 </html>
