@@ -3,37 +3,251 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Program Builder - Responsive</title>
+    <title>Program Builder - FitCoach</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
         .app-bg { background-color: #f7f7f8; }
         .glass-card { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); }
-        .form-input { background-color: #f3f4f6; border: 1px solid #e5e7eb; transition: all 0.2s; border-radius: 0.5rem; padding: 0.75rem; width: 100%; }
-        .form-input:focus { border-color: #ec4899; background-color: white; box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.2); outline: none; }
+        .form-input { 
+            background-color: #f3f4f6; 
+            border: 1px solid #e5e7eb; 
+            transition: all 0.2s; 
+            border-radius: 0.5rem; 
+            padding: 0.75rem; 
+            width: 100%; 
+            color: #111827;
+        }
+        .form-input:focus { 
+            border-color: #ec4899; 
+            background-color: white; 
+            box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.2); 
+            outline: none; 
+        }
         .bg-primary-gradient { background-image: linear-gradient(to right, #ec4899, #d946ef); }
         .type-selector-card { border: 2px solid #e5e7eb; transition: all 0.2s; }
         .type-selector-card.selected { border-color: #ec4899; background-color: #fdf2f8; }
-        .stepper-item.active .stepper-circle { background-color: #ec4899; color: white; border-color: #ec4899; }
-        .stepper-item.active .stepper-label { color: #ec4899; font-weight: 600; }
+        
+        .stepper-item .stepper-circle { 
+            background-color: #e5e7eb;
+            color: #6b7280;
+            border-color: #e5e7eb; 
+            transition: all 0.3s ease;
+        }
+        .stepper-item.active .stepper-circle { 
+            background-color: #ec4899; 
+            color: white; 
+            border-color: #ec4899; 
+        }
+        .stepper-item .stepper-label { 
+            color: #6b7280;
+            transition: all 0.3s ease;
+        }
+        .stepper-item.active .stepper-label { 
+            color: #ec4899; 
+            font-weight: 600; 
+        }
         .stepper-line { background-color: #e5e7eb; }
+
         .form-group { position: relative; padding-top: 1.5rem; }
         .form-field { width: 100%; border: 0; border-bottom: 2px solid #d1d5db; outline: 0; font-size: 1rem; color: #111827; padding: 7px 0; background: transparent; transition: border-color 0.2s; }
         .form-field::placeholder { color: transparent; }
         .form-label { position: absolute; top: 2.2rem; display: block; transition: 0.2s; font-size: 1rem; color: #6b7280; pointer-events: none; }
         .form-field:focus { border-bottom: 2px solid #ec4899; }
-        .form-field:focus + .form-label, .form-field:not(:placeholder-shown) + .form-label { top: 0.5rem; font-size: 0.8rem; color: #ec4899; }
+        .form-field:focus + .form-label, 
+        .form-field:not(:placeholder-shown) + .form-label { top: 0.5rem; font-size: 0.8rem; color: #ec4899; }
         .form-field.textarea { resize: none; min-height: 80px; }
         .sidebar-active { background-color: #fce7f3; color: #ec4899; font-weight: 600; }
         .sidebar-active svg { color: #ec4899; }
-        .day-card.day-active { box-shadow: 0 0 0 2px #ec4899; border-color: #ec4899 !important; }
+
         @keyframes flash-border {
             0% { box-shadow: 0 0 0 0px rgba(236, 72, 153, 0.7); }
             50% { box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.3); }
             100% { box-shadow: 0 0 0 0px rgba(236, 72, 153, 0); }
         }
         .flash-active { animation: flash-border 1s ease-out; }
+
+        /* === NEW PLAN BUILDER STYLES: LIGHT & FOCUSED THEME === */
+        .plan-background {
+            background-color: #f8f9fa; /* Light gray background */
+        }
+        .plan-week-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb; /* border-gray-200 */
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* shadow-md */
+        }
+        .day-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb; /* border-gray-200 */
+            transition: all 0.2s ease-in-out;
+        }
+        .day-card.day-active {
+            border-color: #ec4899; /* primary-pink */
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2);
+        }
+        
+        .plan-week-card h3 { color: #111827; /* text-gray-900 */ }
+        .day-card span { color: #1f2937; /* text-gray-800 */ }
+        
+        .plan-input {
+            background-color: #f9fafb; /* bg-gray-50 */
+            border: 1px solid #d1d5db; /* border-gray-300 */
+            color: #374151; /* text-gray-700 */
+            border-radius: 0.375rem; /* rounded-md */
+            padding: 0.5rem 0.75rem;
+            width: 100%;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        .plan-input::placeholder {
+            color: #9ca3af; /* text-gray-400 */
+        }
+        .plan-input:focus {
+            outline: none;
+            border-color: #ec4899;
+            box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.2);
+        }
+
+        /* Generic Button Base */
+        .btn-plan {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem; /* rounded-lg */
+            border: 1px solid transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .btn-plan:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.3);
+        }
+        
+        /* Primary Action Button (Add Day/Week) */
+        .btn-plan-primary {
+            background-image: linear-gradient(to right, #ec4899, #d946ef);
+            color: white;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        }
+        .btn-plan-primary:hover {
+            opacity: 0.9;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        /* Secondary Action Button (Duplicate) */
+        .btn-plan-secondary {
+            background-color: #ffffff;
+            color: #4b5563; /* text-gray-600 */
+            border-color: #d1d5db; /* border-gray-300 */
+        }
+        .btn-plan-secondary:hover {
+            background-color: #f9fafb; /* bg-gray-50 */
+            border-color: #9ca3af;
+        }
+
+        /* Destructive Action Button (Delete) */
+        .btn-plan-danger {
+            background-color: #fee2e2; /* bg-red-100 */
+            color: #dc2626; /* text-red-600 */
+            font-weight: 600;
+        }
+        .btn-plan-danger:hover {
+            background-color: #ef4444; /* bg-red-500 */
+            color: #ffffff;
+        }
+
+        /* Simple Text Button (Delete/Duplicate Week) */
+        .btn-plan-text {
+            font-size: 0.875rem;
+            font-weight: 500;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+        .btn-plan-text.danger {
+            color: #ef4444;
+        }
+        .btn-plan-text.danger:hover {
+            color: #b91c1c;
+        }
+        .btn-plan-text.secondary {
+            color: #6b7280;
+        }
+        .btn-plan-text.secondary:hover {
+            color: #1f2937;
+        }
+
+        /* GANTI DENGAN SEMUA INI */
+/* Generic Button Base */
+.btn-plan {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    border: 1px solid transparent;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+.btn-plan:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.3);
+}
+
+/* Compact Button for Day Actions */
+.btn-plan-compact {
+    font-size: 0.75rem; /* 12px */
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.375rem; /* rounded-md */
+}
+
+/* Secondary Action Button (Duplicate Day) */
+.btn-plan-secondary {
+    background-color: #ffffff;
+    color: #4b5563; /* text-gray-600 */
+    border-color: #d1d5db; /* border-gray-300 */
+}
+.btn-plan-secondary:hover {
+    background-color: #f9fafb; /* bg-gray-50 */
+    border-color: #9ca3af;
+}
+
+/* Destructive Action Button (Delete Day) */
+.btn-plan-danger {
+    background-color: #fee2e2; /* bg-red-100 */
+    color: #dc2626; /* text-red-600 */
+}
+.btn-plan-danger:hover {
+    background-color: #ef4444; /* bg-red-500 */
+    color: #ffffff;
+}
+
+/* Text Button for Week Actions */
+.btn-plan-text {
+    font-size: 0.875rem; /* 14px */
+    font-weight: 600; /* Semibold */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    transition: color 0.2s ease-in-out;
+}
+.btn-plan-text.danger {
+    color: #ef4444; /* text-red-500 */
+}
+.btn-plan-text.danger:hover {
+    color: #b91c1c; /* text-red-700 */
+}
+.btn-plan-text.secondary {
+    color: #6b7280; /* text-gray-500 */
+}
+.btn-plan-text.secondary:hover {
+    color: #1f2937; /* text-gray-800 */
+}
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -68,13 +282,7 @@
                     </div>
 
                     <div id="wizard-container" class="hidden flex flex-col h-full">
-                        <form id="program-builder-form" class="flex flex-col h-full w-full lg:max-w-7xl lg:mx-auto p-4 lg:p-8">
-                            <div id="step-3-tooltip" class="hidden absolute inset-0 bg-black/30 backdrop-blur-sm z-50 transition-opacity duration-500">
-                                <div class="relative w-full h-full">
-                                    <div class="absolute bg-gray-800 text-white text-sm rounded-lg p-3 shadow-lg w-64" style="top: 25%; left: 20%;"><p><span class="font-bold">Step 1:</span> Click a day's <span class="text-pink-400 font-semibold">'⊕ Add Exercise'</span> button to make it active.</p><div class="absolute w-3 h-3 bg-gray-800 transform rotate-45" style="top: 50%; right: -6px; margin-top: -6px;"></div></div>
-                                    <div class="absolute bg-gray-800 text-white text-sm rounded-lg p-3 shadow-lg w-64" style="top: 25%; left: 65%;"><p><span class="font-bold">Step 2:</span> Select exercises from the library on the right, then click 'Add to Plan'.</p><div class="absolute w-3 h-3 bg-gray-800 transform rotate-45" style="top: 50%; left: -6px; margin-top: -6px;"></div></div>
-                                </div>
-                            </div>
+                        <form id="program-builder-form" class="flex flex-col h-full w-full lg:max-w-7xl lg:mx-auto p-4 lg:p-8" novalidate>
                             <header class="flex items-center justify-between mb-4 lg:mb-6 flex-shrink-0">
                                 <div class="flex items-center"><a href="#" id="back-to-start-screen-btn" class="p-2 text-gray-500 rounded-full mr-3 hover:bg-gray-200/50"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></a><h1 class="text-2xl lg:text-3xl font-bold text-gray-900">Program Builder</h1></div>
                                 <button id="exit-builder-btn-desktop" type="button" class="hidden lg:block bg-white border border-gray-300 text-gray-700 font-semibold px-4 py-2 rounded-lg hover:bg-gray-100">Exit Builder</button>
@@ -87,54 +295,117 @@
                                 <div class="stepper-item flex items-center" id="stepper-3"><div class="stepper-circle w-6 h-6 lg:w-8 lg:h-8 rounded-full flex items-center justify-center font-bold border-2 text-xs lg:text-sm">3</div><span class="stepper-label ml-2 lg:ml-3 font-medium text-sm">Plan</span></div>
                             </nav>
                             
-                            <main class="flex-grow overflow-hidden">
-                                <div id="step-1" class="wizard-step max-w-4xl mx-auto">
-    <div class="glass-card p-4 rounded-xl space-y-4">
-        <p class="text-base font-semibold text-gray-800">Select Program Type</p>
-        <div id="program-type-selector" class="space-y-3">
-            
-            <button type="button" class="type-selector-card p-4 rounded-lg cursor-pointer w-full text-left" data-type="general">
-                <h3 class="font-bold">🏪 General Program</h3>
-                <p class="text-sm text-gray-500">For the marketplace.</p>
-            </button>
-            
-            <button type="button" class="type-selector-card p-4 rounded-lg cursor-pointer w-full text-left" data-type="personalized">
-                <h3 class="font-bold">👤 Personalized Program</h3>
-                <p class="text-sm text-gray-500">For a specific client.</p>
-            </button>
-
-        </div>
-        <div id="client-selector-container" class="hidden">
-            <label for="client-select" class="block text-sm font-medium text-gray-700 mb-1">Select Client</label>
-            <select id="client-select" class="form-input text-sm">
-                <option>John Doe</option>
-            </select>
-        </div>
-    </div>
-    <button type="button" id="step-1-next-btn" class="mt-4 w-full bg-primary-gradient text-white font-bold py-3 rounded-lg opacity-50 cursor-not-allowed" disabled>Next</button>
-</div>
-                                <div id="step-2-general" class="wizard-step hidden max-w-4xl mx-auto">
-                                    <div class="glass-card p-6 rounded-xl space-y-6"><h2 class="text-xl font-bold text-gray-800">Program Details (Marketplace)</h2><div id="image-upload-wrapper"><label class="block text-sm font-medium text-gray-700 mb-2">Cover Photo</label><label for="program-image-upload" class="flex justify-center w-full h-32 px-4 transition bg-gray-100 border-2 border-gray-300 border-dashed rounded-md cursor-pointer hover:border-pink-400"><span class="flex items-center space-x-2"><svg class="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-4-4V7a4 4 0 014-4h2a4 4 0 014 4v1m-4 4h12a2 2 0 002-2V7a2 2 0 00-2-2h-2m-4 7l4 4m0 0l4-4m-4 4v-7" /></svg><span class="font-medium text-gray-600">Drop files or <span class="text-pink-600 underline">browse</span></span></span><input type="file" id="program-image-upload" name="program-image-upload" accept="image/png, image/jpeg" class="hidden"></label><img id="image-preview" src="" alt="Image Preview" class="hidden w-full h-32 object-cover rounded-md mt-2"></div><div id="video-intro-wrapper"><div id="video-input-container"><div class="form-group"><input type="text" id="program-video-intro" class="form-field" placeholder=" "><label for="program-video-intro" class="form-label">Intro Video URL (Optional)</label></div></div><div id="video-preview-container" class="hidden relative mt-2"><img id="video-thumbnail-preview" src="" alt="Video Thumbnail" class="w-full h-auto object-cover rounded-md"><button id="remove-video-btn" type="button" class="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md text-red-500 hover:bg-red-50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div></div><div class="form-group"><input type="text" id="program-title" class="form-field font-semibold" placeholder=" " required><label for="program-title" class="form-label">Program Title</label></div><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div class="form-group" id="price-container"><input type="number" id="program-price" class="form-field" placeholder=" " required><label for="program-price" class="form-label">Price ($)</label></div><div class="form-group"><input type="text" id="program-duration" class="form-field" placeholder=" " required><label for="program-duration" class="form-label">Duration (e.g., 4 Weeks)</label></div></div><div class="form-group"><textarea id="program-description" class="form-field textarea" placeholder=" " required></textarea><label for="program-description" class="form-label">Description</label></div></div><div class="mt-4 grid grid-cols-2 gap-3"><button type="button" id="step-2-general-back-btn" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-lg">Back</button><button type="button" id="step-2-general-next-btn" class="w-full bg-primary-gradient text-white font-bold py-3 rounded-lg">Next</button></div>
-                                </div>
-                                <div id="step-2-personalized" class="wizard-step hidden max-w-4xl mx-auto">
-                                    <div class="glass-card p-6 rounded-xl space-y-6"><h2 class="text-xl font-bold text-gray-800">Program Details (Personalized)</h2><div id="video-intro-wrapper-personalized"><div id="video-input-container-personalized"><div class="form-group"><input type="text" id="program-video-intro-personalized" class="form-field" placeholder=" "><label for="program-video-intro-personalized" class="form-label">Intro Video URL (Optional)</label></div></div><div id="video-preview-container-personalized" class="hidden relative mt-2"><img id="video-thumbnail-preview-personalized" src="" alt="Video Thumbnail" class="w-full h-auto object-cover rounded-md"><button id="remove-video-btn-personalized" type="button" class="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md text-red-500 hover:bg-red-50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div></div><div class="form-group"><input type="text" id="program-title-personalized" class="form-field font-semibold" placeholder=" " required><label for="program-title-personalized" class="form-label">Program Title (e.g., John's Strength Plan)</label></div><div class="form-group"><input type="text" id="program-duration-personalized" class="form-field" placeholder=" " required><label for="program-duration-personalized" class="form-label">Duration (e.g., 4 Weeks)</label></div><div class="form-group"><textarea id="program-description-personalized" class="form-field textarea" placeholder=" " required></textarea><label for="program-description-personalized" class="form-label">Program notes for the client</label></div></div><div class="mt-4 grid grid-cols-2 gap-3"><button type="button" id="step-2-personalized-back-btn" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-lg">Back</button><button type="button" id="step-2-personalized-next-btn" class="w-full bg-primary-gradient text-white font-bold py-3 rounded-lg">Next</button></div>
-                                </div>
-                                <div id="step-3" class="wizard-step hidden h-full">
-                                    <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 h-full">
-                                        <div class="lg:col-span-3 h-full flex flex-col">
-                                            <div class="glass-card p-4 rounded-xl flex-grow flex flex-col overflow-hidden"><h2 class="text-xl font-semibold text-gray-800 mb-3 flex-shrink-0">Workout Plan</h2><div id="plan-builder-container" class="space-y-4 overflow-y-auto flex-grow pr-2"></div><button type="button" id="add-week-btn" class="mt-4 w-full text-center bg-white/50 text-pink-600 font-semibold p-2.5 rounded-lg flex-shrink-0">+ Add Week</button></div>
-                                            <div class="mt-4 flex-shrink-0"><button type="button" id="step-3-back-btn" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-lg">Back</button></div>
-                                        </div>
-                                        <div id="exercise-library-panel" class="hidden lg:flex lg:col-span-2 h-full flex-col bg-white/80 rounded-2xl shadow-lg">
-                                            <header class="p-5 border-b border-gray-200 flex justify-between items-center flex-shrink-0"><h2 class="text-xl font-bold text-gray-800">Exercise Library</h2></header>
-                                            <div class="p-5 flex-shrink-0 space-y-4"><input type="search" id="search-exercise-input" placeholder="🔍 Search exercise..." class="w-full form-input text-base"><div class="flex space-x-2"><select id="filter-muscle-group" class="form-input p-2 text-sm"><option value="all">All Muscle Groups</option><option value="Legs">Legs</option><option value="Chest">Chest</option><option value="Back">Back</option><option value="Core">Core</option></select><select id="filter-equipment" class="form-input p-2 text-sm"><option value="all">All Equipment</option><option value="Dumbbell">Dumbbell</option><option value="Barbell">Barbell</option><option value="Bodyweight">Bodyweight</option></select></div></div>
-                                            <main id="exercise-library-list" class="flex-grow p-5 pt-0 overflow-y-auto grid grid-cols-2 gap-4"></main>
-                                            <footer class="p-5 border-t border-gray-200 flex-shrink-0 flex justify-between items-center bg-gray-50/50"><p id="selected-count" class="text-sm font-medium text-gray-600">0 selected</p><button id="add-selected-to-plan-btn" type="button" class="bg-primary-gradient text-white font-bold py-2.5 px-6 rounded-lg shadow-lg disabled:opacity-50" disabled>Add to Plan</button></footer>
-                                        </div>
+                            <div id="step-1" class="wizard-step max-w-4xl mx-auto">
+                                <div class="glass-card p-4 rounded-xl space-y-4">
+                                    <p class="text-base font-semibold text-gray-800">Select Program Type</p>
+                                    <div id="program-type-selector" class="space-y-3">
+                                        <button type="button" class="type-selector-card p-4 rounded-lg cursor-pointer w-full text-left" data-type="general">
+                                            <h3 class="font-bold">🏪 General Program</h3>
+                                            <p class="text-sm text-gray-500">For the marketplace.</p>
+                                        </button>
+                                        <button type="button" class="type-selector-card p-4 rounded-lg cursor-pointer w-full text-left" data-type="personalized">
+                                            <h3 class="font-bold">👤 Personalized Program</h3>
+                                            <p class="text-sm text-gray-500">For a specific client.</p>
+                                        </button>
+                                    </div>
+                                    <div id="client-selector-container" class="hidden">
+                                        <label for="client-select" class="block text-sm font-medium text-gray-700 mb-1">Select Client</label>
+                                        <select id="client-select" class="form-input text-sm">
+                                            <option>John Doe</option>
+                                        </select>
                                     </div>
                                 </div>
-                            </main>
-                            <footer class="flex-shrink-0 p-4 hidden max-w-4xl mx-auto w-full"><button type="submit" id="save-program-btn" class="w-full bg-primary-gradient text-white font-bold py-3.5 rounded-xl">Save Program</button></footer>
+                                <button type="button" id="step-1-next-btn" class="mt-4 w-full bg-primary-gradient text-white font-bold py-3 rounded-lg opacity-50 cursor-not-allowed" disabled>Next</button>
+                            </div>
+                            
+                            <div id="step-2-general" class="wizard-step hidden max-w-4xl mx-auto">
+                                <div class="glass-card p-6 rounded-xl space-y-6">
+                                    <h2 class="text-xl font-bold text-gray-800">Program Details (Marketplace)</h2>
+                                    <div id="image-upload-wrapper">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Cover Photo</label>
+                                        <label for="program-image-upload" class="flex justify-center w-full h-32 px-4 transition bg-gray-100 border-2 border-gray-300 border-dashed rounded-md cursor-pointer hover:border-pink-400">
+                                            <span class="flex items-center space-x-2">
+                                                <svg class="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-4-4V7a4 4 0 014-4h2a4 4 0 014 4v1m-4 4h12a2 2 0 002-2V7a2 2 0 00-2-2h-2m-4 7l4 4m0 0l4-4m-4 4v-7" /></svg>
+                                                <span class="font-medium text-gray-600">Drop files or <span class="text-pink-600 underline">browse</span></span>
+                                            </span>
+                                            <input type="file" id="program-image-upload" name="program-image-upload" accept="image/png, image/jpeg" class="hidden">
+                                        </label>
+                                        <img id="image-preview" src="" alt="Image Preview" class="hidden w-full h-32 object-cover rounded-md mt-2">
+                                    </div>
+                                    <div id="video-intro-wrapper">
+                                        <div id="video-input-container">
+                                            <div class="form-group"><input type="text" id="program-video-intro" class="form-field" placeholder=" "><label for="program-video-intro" class="form-label">Intro Video URL (Optional)</label></div>
+                                        </div>
+                                        <div id="video-preview-container" class="hidden relative mt-2">
+                                            <img id="video-thumbnail-preview" src="" alt="Video Thumbnail" class="w-full h-auto object-cover rounded-md">
+                                            <button id="remove-video-btn" type="button" class="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md text-red-500 hover:bg-red-50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group"><input type="text" id="program-title" class="form-field font-semibold" placeholder=" " required><label for="program-title" class="form-label">Program Title</label></div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div class="form-group" id="price-container"><input type="number" id="program-price" class="form-field" placeholder=" " required><label for="program-price" class="form-label">Price ($)</label></div>
+                                        <div class="form-group"><input type="text" id="program-duration" class="form-field" placeholder=" " required><label for="program-duration" class="form-label">Duration (e.g., 4 Weeks)</label></div>
+                                    </div>
+                                    <div class="form-group"><textarea id="program-description" class="form-field textarea" placeholder=" " required></textarea><label for="program-description" class="form-label">Description</label></div>
+                                </div>
+                                <div class="mt-4 grid grid-cols-2 gap-3">
+                                    <button type="button" id="step-2-general-back-btn" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-lg">Back</button>
+                                    <button type="button" id="step-2-general-next-btn" class="w-full bg-primary-gradient text-white font-bold py-3 rounded-lg">Next</button>
+                                </div>
+                            </div>
+                            
+                            <div id="step-2-personalized" class="wizard-step hidden max-w-4xl mx-auto">
+                                <div class="glass-card p-6 rounded-xl space-y-6">
+                                    <h2 class="text-xl font-bold text-gray-800">Program Details (Personalized)</h2>
+                                    <div id="video-intro-wrapper-personalized">
+                                        <div id="video-input-container-personalized">
+                                            <div class="form-group"><input type="text" id="program-video-intro-personalized" class="form-field" placeholder=" "><label for="program-video-intro-personalized" class="form-label">Intro Video URL (Optional)</label></div>
+                                        </div>
+                                        <div id="video-preview-container-personalized" class="hidden relative mt-2">
+                                            <img id="video-thumbnail-preview-personalized" src="" alt="Video Thumbnail" class="w-full h-auto object-cover rounded-md">
+                                            <button id="remove-video-btn-personalized" type="button" class="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md text-red-500 hover:bg-red-50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group"><input type="text" id="program-title-personalized" class="form-field font-semibold" placeholder=" " required><label for="program-title-personalized" class="form-label">Program Title (e.g., John's Strength Plan)</label></div>
+                                    <div class="form-group"><input type="text" id="program-duration-personalized" class="form-field" placeholder=" " required><label for="program-duration-personalized" class="form-label">Duration (e.g., 4 Weeks)</label></div>
+                                    <div class="form-group"><textarea id="program-description-personalized" class="form-field textarea" placeholder=" " required></textarea><label for="program-description-personalized" class="form-label">Program notes for the client</label></div>
+                                </div>
+                                <div class="mt-4 grid grid-cols-2 gap-3">
+                                    <button type="button" id="step-2-personalized-back-btn" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-lg">Back</button>
+                                    <button type="button" id="step-2-personalized-next-btn" class="w-full bg-primary-gradient text-white font-bold py-3 rounded-lg">Next</button>
+                                </div>
+                            </div>
+
+                            <div id="step-3" class="wizard-step hidden h-full">
+                                <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 h-full">
+                                    <div class="lg:col-span-3 h-full flex flex-col plan-background rounded-2xl p-6 shadow-xl">
+                                        <div class="flex-grow flex flex-col overflow-hidden">
+                                            <h2 class="text-2xl font-bold text-gray-900 mb-4 flex-shrink-0">Workout Plan</h2>
+                                            <div id="plan-builder-container" class="space-y-4 overflow-y-auto flex-grow pr-2">
+                                                </div>
+                                        </div>
+                                        <div class="mt-4 flex-shrink-0 grid grid-cols-2 gap-4">
+                                            <button type="button" id="step-3-back-btn" class="w-full bg-gray-200 text-gray-800 font-bold py-3 rounded-lg hover:bg-gray-300">Back</button>
+                                            <button type="submit" id="save-program-btn" class="w-full bg-primary-gradient text-white font-bold py-3 rounded-lg hidden">Save Program</button>
+                                        </div>
+                                    </div>
+                                    <div id="exercise-library-panel" class="hidden lg:flex lg:col-span-2 h-full flex-col bg-white/80 rounded-2xl shadow-lg">
+                                        <header class="p-5 border-b border-gray-200 flex justify-between items-center flex-shrink-0"><h2 class="text-xl font-bold text-gray-800">Exercise Library</h2></header>
+                                        <div class="p-5 flex-shrink-0 space-y-4">
+                                            <input type="search" id="search-exercise-input" placeholder="🔍 Search exercise..." class="w-full form-input text-base">
+                                            <div class="flex space-x-2">
+                                                <select id="filter-muscle-group" class="form-input p-2 text-sm"><option value="all">All Muscle Groups</option><option value="Legs">Legs</option><option value="Chest">Chest</option><option value="Back">Back</option><option value="Core">Core</option></select>
+                                                <select id="filter-equipment" class="form-input p-2 text-sm"><option value="all">All Equipment</option><option value="Dumbbell">Dumbbell</option><option value="Barbell">Barbell</option><option value="Bodyweight">Bodyweight</option></select>
+                                            </div>
+                                        </div>
+                                        <main id="exercise-library-list" class="flex-grow p-5 pt-0 overflow-y-auto grid grid-cols-2 gap-4"></main>
+                                        <footer class="p-5 border-t border-gray-200 flex-shrink-0 flex justify-between items-center bg-gray-50/50">
+                                            <p id="selected-count" class="text-sm font-medium text-gray-600">0 selected</p>
+                                            <button id="add-selected-to-plan-btn" type="button" class="bg-primary-gradient text-white font-bold py-2.5 px-6 rounded-lg shadow-lg disabled:opacity-50" disabled>Add to Plan</button>
+                                        </footer>
+                                    </div>
+                                </div>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -143,10 +414,37 @@
     </div>
     
     <div id="exercise-library-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm lg:hidden items-center justify-center p-4 z-50">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl flex flex-col h-[90vh]"><header class="p-5 border-b border-gray-200 flex justify-between items-center flex-shrink-0"><h2 class="text-xl font-bold text-gray-800">Exercise Library</h2><button id="close-library-btn" type="button" class="p-2 rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></header><div class="p-5 flex-shrink-0 space-y-4"><input type="search" id="search-exercise-input" placeholder="🔍 Search exercise..." class="w-full form-input text-base"><div class="flex space-x-2"><select id="filter-muscle-group" class="form-input p-2 text-sm"><option value="all">All Muscle Groups</option><option value="Legs">Legs</option><option value="Chest">Chest</option><option value="Back">Back</option><option value="Core">Core</option></select><select id="filter-equipment" class="form-input p-2 text-sm"><option value="all">All Equipment</option><option value="Dumbbell">Dumbbell</option><option value="Barbell">Barbell</option><option value="Bodyweight">Bodyweight</option></select></div></div><main id="exercise-library-list" class="flex-grow p-5 pt-0 overflow-y-auto grid grid-cols-2 gap-4"></main><footer class="p-5 border-t border-gray-200 flex-shrink-0 flex justify-between items-center bg-gray-50/50"><p id="selected-count" class="text-sm font-medium text-gray-600">0 exercises selected</p><button id="add-selected-to-plan-btn" type="button" class="bg-primary-gradient text-white font-bold py-2.5 px-6 rounded-lg shadow-lg disabled:opacity-50" disabled>Add to Plan</button></footer></div>
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl flex flex-col h-[90vh]">
+            <header class="p-5 border-b border-gray-200 flex justify-between items-center flex-shrink-0">
+                <h2 class="text-xl font-bold text-gray-800">Exercise Library</h2>
+                <button id="close-library-btn" type="button" class="p-2 rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            </header>
+            <div class="p-5 flex-shrink-0 space-y-4">
+                <input type="search" id="search-exercise-input-modal" placeholder="🔍 Search exercise..." class="w-full form-input text-base">
+                <div class="flex space-x-2">
+                    <select id="filter-muscle-group-modal" class="form-input p-2 text-sm"><option value="all">All Muscle Groups</option><option value="Legs">Legs</option><option value="Chest">Chest</option><option value="Back">Back</option><option value="Core">Core</option></select>
+                    <select id="filter-equipment-modal" class="form-input p-2 text-sm"><option value="all">All Equipment</option><option value="Dumbbell">Dumbbell</option><option value="Barbell">Barbell</option><option value="Bodyweight">Bodyweight</option></select>
+                </div>
+            </div>
+            <main id="exercise-library-list-modal" class="flex-grow p-5 pt-0 overflow-y-auto grid grid-cols-2 gap-4"></main>
+            <footer class="p-5 border-t border-gray-200 flex-shrink-0 flex justify-between items-center bg-gray-50/50">
+                <p id="selected-count-modal" class="text-sm font-medium text-gray-600">0 exercises selected</p>
+                <button id="add-selected-to-plan-btn-modal" type="button" class="bg-primary-gradient text-white font-bold py-2.5 px-6 rounded-lg shadow-lg disabled:opacity-50" disabled>Add to Plan</button>
+            </footer>
+        </div>
     </div>
+    
     <div id="save-success-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-6 text-center"><div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100"><svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div><h3 class="text-lg leading-6 font-medium text-gray-900 mt-4">Program Saved!</h3><p class="text-sm text-gray-500 mt-2">Save this program as a template for faster creation next time?</p><div class="mt-4"><input type="text" id="template-name-input" class="form-input text-center" placeholder="e.g., 4-Week Glute Plan"></div><div class="mt-5 space-y-2"><button id="save-as-template-btn" type="button" class="w-full bg-primary-gradient text-white font-bold py-3 rounded-lg">Save as Template</button><button id="close-success-modal-btn" type="button" class="w-full bg-transparent text-gray-600 font-semibold py-2 rounded-lg hover:bg-gray-100">No, Thanks</button></div></div>
+        <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-6 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100"><svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div>
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mt-4">Program Saved!</h3>
+            <p class="text-sm text-gray-500 mt-2">Save this program as a template for faster creation next time?</p>
+            <div class="mt-4"><input type="text" id="template-name-input" class="form-input text-center" placeholder="e.g., 4-Week Glute Plan"></div>
+            <div class="mt-5 space-y-2">
+                <button id="save-as-template-btn" type="button" class="w-full bg-primary-gradient text-white font-bold py-3 rounded-lg">Save as Template</button>
+                <button id="close-success-modal-btn" type="button" class="w-full bg-transparent text-gray-600 font-semibold py-2 rounded-lg hover:bg-gray-100">No, Thanks</button>
+            </div>
+        </div>
     </div>
     
     <nav class="lg:hidden absolute bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-sm z-20 glass-card grid grid-cols-5 items-center p-2 rounded-2xl">
@@ -163,7 +461,7 @@
     <div id="plus-menu-overlay" class="lg:hidden hidden absolute inset-0 bg-black/30 z-20"></div>
     
     <script src="../data.js" defer></script>
-    <script src ="coach-program-builder-desktop.js" defer></script>
+    <script src="coach-program-builder-desktop.js" defer></script>
     <script src="../coach-stuff/main-coach.js" defer></script>
 </body>
 </html>

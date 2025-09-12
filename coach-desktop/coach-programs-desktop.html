@@ -9,8 +9,6 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         .bg-primary-gradient { background-image: linear-gradient(to right, #ec4899, #d946ef); }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .glass-card { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.25); }
         
         /* Sidebar & Status */
@@ -25,6 +23,22 @@
         /* Filter Tabs */
         .filter-tab { transition: all 0.2s ease-in-out; }
         .filter-tab-active { color: #db2777; border-color: #db2777; font-weight: 600; }
+
+        /* NEW STYLES FOR VIDEO LIBRARY MODAL */
+        .form-input { 
+            background-color: #f3f4f6; border: 1px solid #e5e7eb; transition: all 0.2s; 
+            border-radius: 0.5rem; padding: 0.65rem 0.75rem; width: 100%; color: #111827; font-size: 0.875rem;
+        }
+        .form-input:focus { 
+            border-color: #ec4899; background-color: white; 
+            box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.2); outline: none; 
+        }
+        .modal-overlay {
+            transition: opacity 0.3s ease;
+        }
+        .modal-box {
+            transition: all 0.3s ease;
+        }
     </style>
 </head>
 <body class="bg-gray-100 h-screen overflow-hidden">
@@ -60,134 +74,316 @@
     </aside>
 
         <main class="flex-grow bg-gray-100 relative overflow-y-auto">
-            <div class="absolute top-0 -left-24 w-72 h-72 bg-pink-300 rounded-full opacity-30 filter blur-3xl"></div>
-            <div class="absolute bottom-0 -right-24 w-72 h-72 bg-purple-300 rounded-full opacity-30 filter blur-3xl"></div>
-            
             <div class="p-8">
                 <header class="flex flex-col md:flex-row justify-between md:items-center mb-8">
                     <div>
                         <h1 class="text-3xl font-bold text-gray-900">My Programs</h1>
                         <p class="text-base text-gray-500 mt-1">Manage, create, and track your programs.</p>
                     </div>
-                    <div class="flex items-center space-x-4 mt-4 md:mt-0">
-                        <div class="relative">
-                            <input type="text" placeholder="Search programs..." class="w-full md:w-64 pl-10 pr-4 py-2 border bg-white rounded-lg focus:ring-pink-500 focus:border-pink-500 text-sm">
-                            <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </div>
+                    <div class="flex items-center space-x-2 mt-4 md:mt-0">
+                        <input type="text" id="search-programs-input" placeholder="Search programs..." class="w-full md:w-56 pl-4 pr-4 py-2 border bg-white rounded-lg focus:ring-pink-500 focus:border-pink-500 text-sm">
+                        <button id="view-library-btn" class="bg-white text-gray-700 border border-gray-300 font-semibold px-5 py-2 rounded-lg hover:bg-gray-100 transition-colors whitespace-nowrap">Video Library</button>
                         <a href="coach-program-builder-desktop.html" class="bg-primary-gradient text-white font-semibold px-5 py-2 rounded-lg shadow-lg hover:opacity-90 transition-opacity whitespace-nowrap">Create Program</a>
                     </div>
                 </header>
 
                 <section class="mb-8">
-                    <h2 class="text-sm font-bold text-gray-500 tracking-wider uppercase mb-3">Performance</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                         <div class="bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow-sm"><div class="flex items-center justify-center bg-pink-100 text-pink-600 w-8 h-8 rounded-lg mb-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg></div><p class="text-3xl font-bold text-gray-800">2</p><p class="text-sm text-gray-500 font-medium">Active Programs</p></div>
-                         <div class="bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow-sm"><div class="flex items-center justify-center bg-purple-100 text-purple-600 w-8 h-8 rounded-lg mb-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg></div><p class="text-3xl font-bold text-gray-800">1.2k</p><p class="text-sm text-gray-500 font-medium">Total Clients</p></div>
-                         <div class="bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow-sm"><div class="flex items-center justify-center bg-sky-100 text-sky-600 w-8 h-8 rounded-lg mb-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01M12 12v-2m0 2v.01M12 12a2 2 0 00-2 2h4a2 2 0 00-2-2zm0 0c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01"></path></svg></div><p class="text-3xl font-bold text-gray-800">$1.8k</p><p class="text-sm text-gray-500 font-medium">Monthly Revenue</p></div>
-                    </div>
-                </section>
-
-                <section>
                     <div class="border-b border-gray-200 mb-6">
-                        <nav class="-mb-px flex space-x-6">
-                            <button class="filter-tab py-2 px-1 border-b-2 text-sm filter-tab-active">All Programs</button>
-                            <button class="filter-tab py-2 px-1 border-b-2 border-transparent text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">Published</button>
-                            <button class="filter-tab py-2 px-1 border-b-2 border-transparent text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">Drafts</button>
+                        <nav id="filter-tabs" class="-mb-px flex space-x-6">
+                            <button class="filter-tab py-2 px-1 border-b-2 text-sm filter-tab-active" data-filter="all">All Programs</button>
+                            <button class="filter-tab py-2 px-1 border-b-2 border-transparent text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-filter="Published">Published</button>
+                            <button class="filter-tab py-2 px-1 border-b-2 border-transparent text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-filter="Draft">Drafts</button>
                         </nav>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                        <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-1 hover:shadow-2xl transition-all duration-300">
-                             <img src="https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="h-40 w-full object-cover">
-                            <div class="p-4 relative">
-                                <div class="flex justify-between items-start">
-                                    <h3 class="text-lg font-bold text-gray-900 mb-1">Booty Builder 101</h3>
-                                    <span class="status-badge status-published">Published</span>
-                                </div>
-                                <div class="flex items-center space-x-4 text-xs text-gray-500 font-medium border-b pb-3 mb-3"><span>1.2k+ Clients</span><span>$1.8k Revenue</span></div>
-                                <div class="flex justify-between items-center">
-                                    <div class="flex items-center"><svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg><p class="ml-1 text-sm font-bold text-gray-700">4.9 <span class="font-normal text-gray-500">(120 Reviews)</span></p></div>
-                                    <button class="action-menu-button p-2 text-gray-500 rounded-full hover:bg-gray-200/50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg></button>
-                                </div>
-                                <div class="action-menu hidden absolute right-4 mt-2 w-48 bg-white rounded-md shadow-lg z-20 transition-all duration-300">
-                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Edit Program</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Delete</a>
-                                </div>
-                            </div>
+                    <div id="programs-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                         </div>
-                        <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-1 hover:shadow-2xl transition-all duration-300">
-                             <div class="h-40 w-full bg-gray-200 flex items-center justify-center"><svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>
-                            <div class="p-4 relative">
-                                <div class="flex justify-between items-start">
-                                    <h3 class="text-lg font-bold text-gray-900 mb-1">Total Abs Workout</h3>
-                                    <span class="status-badge status-draft">Draft</span>
-                                </div>
-                                <p class="text-sm text-gray-400 mb-3 border-b pb-3">No performance data yet.</p>
-                                <div class="flex justify-between items-center">
-                                    <button class="text-sm font-semibold text-pink-600 hover:text-pink-800">Continue Editing</button>
-                                    <button class="action-menu-button p-2 text-gray-500 rounded-full hover:bg-gray-200/50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg></button>
-                                </div>
-                                <div class="action-menu hidden absolute right-4 mt-2 w-48 bg-white rounded-md shadow-lg z-20 transition-all duration-300">
-                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Edit Program</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Delete</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </section>
             </div>
         </main>
     </div>
 
-    <div class="lg:hidden">
-        <div class="w-full max-w-md mx-auto bg-gray-50 rounded-2xl shadow-xl overflow-hidden relative h-[800px]">
-           </div>
-        <nav class="absolute bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-sm z-20 glass-card grid grid-cols-5 items-center p-2 rounded-2xl">
-            </nav>
+    <div id="video-library-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-40 hidden modal-overlay opacity-0">
+        <div class="bg-gray-50 w-full max-w-6xl h-[90vh] rounded-xl shadow-2xl flex flex-col modal-box transform scale-95">
+            <header class="p-5 border-b border-gray-200 flex justify-between items-center flex-shrink-0">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">Video Library</h2>
+                    <p class="text-sm text-gray-500">Manage your exercise video assets.</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button id="add-video-btn-modal" class="bg-primary-gradient text-white font-semibold px-4 py-2 text-sm rounded-lg shadow hover:opacity-90">+ Add New Video</button>
+                    <button id="close-library-modal-btn" class="p-2 rounded-full text-gray-500 hover:bg-gray-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            </header>
+            <div class="p-5 flex-shrink-0">
+                <div class="flex items-center space-x-4">
+                    <input id="search-video-input" type="text" placeholder="Search videos..." class="w-full md:w-72 pl-4 pr-4 py-2 border bg-white rounded-lg focus:ring-pink-500 focus:border-pink-500 text-sm">
+                    <select id="filter-muscle-group" class="form-input p-2 text-sm"><option value="all">All Muscle Groups</option><option value="Legs">Legs</option><option value="Chest">Chest</option><option value="Back">Back</option><option value="Core">Core</option></select>
+                    <select id="filter-equipment" class="form-input p-2 text-sm"><option value="all">All Equipment</option><option value="Dumbbell">Dumbbell</option><option value="Barbell">Barbell</option><option value="Bodyweight">Bodyweight</option></select>
+                </div>
+            </div>
+            <main id="video-grid" class="flex-grow p-5 pt-0 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+                </main>
+        </div>
     </div>
     
+    <div id="add-video-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden modal-overlay opacity-0">
+        <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl p-6 modal-box transform scale-95">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Add New Video to Library</h2>
+            <form id="add-video-form" novalidate>
+                <div class="space-y-4">
+                    <div>
+                        <label for="exercise-name" class="text-sm font-medium text-gray-700 block mb-1">Exercise Name</label>
+                        <input type="text" id="exercise-name" class="form-input" required>
+                    </div>
+                    <div>
+                        <label for="youtube-url" class="text-sm font-medium text-gray-700 block mb-1">YouTube Video URL</label>
+                        <input type="url" id="youtube-url" placeholder="e.g., https://www.youtube.com/watch?v=..." class="form-input" required>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="muscle-group" class="text-sm font-medium text-gray-700 block mb-1">Muscle Group</label>
+                            <select id="muscle-group" class="form-input" required>
+                                <option value="Legs">Legs</option><option value="Chest">Chest</option><option value="Back">Back</option><option value="Core">Core</option><option value="Shoulders">Shoulders</option><option value="Arms">Arms</option><option value="Full Body">Full Body</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="equipment" class="text-sm font-medium text-gray-700 block mb-1">Equipment</label>
+                            <select id="equipment" class="form-input" required>
+                                <option value="Dumbbell">Dumbbell</option><option value="Barbell">Barbell</option><option value="Bodyweight">Bodyweight</option><option value="Kettlebell">Kettlebell</option><option value="Machine">Machine</option><option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button type="button" id="cancel-add-video-btn" class="bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg hover:bg-gray-300">Cancel</button>
+                    <button type="submit" class="bg-primary-gradient text-white font-semibold px-4 py-2 rounded-lg shadow-lg hover:opacity-90">Save Video</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="video-player-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden modal-overlay opacity-0">
+         <button id="close-player-btn" class="absolute top-4 right-4 text-white/70 hover:text-white z-10">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <div class="w-full max-w-4xl aspect-video modal-box transform scale-95">
+            <iframe id="youtube-player-embed" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+    
+    <div class="lg:hidden p-4">This view is for desktop.</div>
+
+    <script src="../data.js"></script>
     <script>
-        // SCRIPT INI BERLAKU UNTUK KEDUA VERSI (DESKTOP & MOBILE)
-        document.addEventListener('DOMContentLoaded', () => {
-            // Logic for Action Menu (...)
-            const setupActionMenus = () => {
-                const actionMenuButtons = document.querySelectorAll('.action-menu-button');
-                actionMenuButtons.forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        document.querySelectorAll('.action-menu').forEach(m => {
-                            if (m !== button.nextElementSibling) m.classList.add('hidden');
-                        });
-                        const menu = button.nextElementSibling;
-                        menu.classList.toggle('hidden');
-                    });
-                });
-            };
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        // --- ALL ELEMENT SELECTORS ---
+        const programsGrid = document.getElementById('programs-grid');
+        const searchProgramsInput = document.getElementById('search-programs-input');
+        const filterTabs = document.getElementById('filter-tabs');
 
-            // Logic for mobile-only FAB menu
-            const setupFabMenu = () => {
-                 const plusButton = document.getElementById('plus-button');
-                 if (plusButton) {
-                    const plusMenu = document.getElementById('plus-menu-coach');
-                    const plusOverlay = document.getElementById('plus-menu-overlay');
-                    const togglePlusMenu = () => {
-                        plusOverlay.classList.toggle('hidden');
-                        plusMenu.classList.toggle('opacity-0');
-                        plusMenu.classList.toggle('scale-95');
-                        plusMenu.classList.toggle('pointer-events-none');
-                    };
-                    plusButton.addEventListener('click', (e) => { e.stopPropagation(); togglePlusMenu(); });
-                    plusOverlay.addEventListener('click', togglePlusMenu);
-                 }
-            };
-            
-            setupActionMenus();
-            setupFabMenu();
+        const viewLibraryBtn = document.getElementById('view-library-btn');
+        const sidebarVideoLibraryLink = document.getElementById('sidebar-video-library-link');
+        const videoLibraryModal = document.getElementById('video-library-modal');
+        const closeLibraryModalBtn = document.getElementById('close-library-modal-btn');
+        
+        const videoGrid = document.getElementById('video-grid');
+        const addVideoBtnModal = document.getElementById('add-video-btn-modal');
+        const addVideoModal = document.getElementById('add-video-modal');
+        const cancelAddVideoBtn = document.getElementById('cancel-add-video-btn');
+        const addVideoForm = document.getElementById('add-video-form');
+        
+        const videoPlayerModal = document.getElementById('video-player-modal');
+        const closePlayerBtn = document.getElementById('close-player-btn');
+        const youtubePlayerEmbed = document.getElementById('youtube-player-embed');
+        
+        const searchVideoInput = document.getElementById('search-video-input');
+        const muscleGroupFilter = document.getElementById('filter-muscle-group');
+        const equipmentFilter = document.getElementById('filter-equipment');
 
-            window.addEventListener('click', () => {
-                document.querySelectorAll('.action-menu').forEach(m => m.classList.add('hidden'));
+        const PROGRAM_STORAGE_KEY = 'fitcoach_saved_programs';
+        
+        // --- UTILITY FUNCTIONS ---
+        const toggleModal = (modalElement, show) => {
+            if (show) {
+                modalElement.classList.remove('hidden');
+                setTimeout(() => {
+                    modalElement.classList.remove('opacity-0');
+                    modalElement.querySelector('.modal-box').classList.remove('scale-95');
+                }, 10);
+            } else {
+                modalElement.classList.add('opacity-0');
+                modalElement.querySelector('.modal-box').classList.add('scale-95');
+                setTimeout(() => {
+                    modalElement.classList.add('hidden');
+                }, 300);
+            }
+        };
+
+        const extractYouTubeID = (url) => {
+            if (!url) return null;
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        };
+
+        // --- PROGRAM LIST LOGIC ---
+        const createProgramCardHTML = (program) => {
+            const isDraft = program.status === 'Draft';
+            const imageHtml = (!isDraft && program.image)
+                ? `<img src="${program.image}" class="h-40 w-full object-cover">`
+                : `<div class="h-40 w-full bg-gray-200 flex items-center justify-center"><svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>`;
+            const statusBadgeHtml = isDraft
+                ? `<span class="status-badge status-draft">Draft</span>`
+                : `<span class="status-badge status-published">Published</span>`;
+            const cardFooterHtml = isDraft
+                ? `<p class="text-sm text-gray-400 mb-3 border-b pb-3">No performance data yet.</p><div class="flex justify-between items-center"><button class="text-sm font-semibold text-pink-600 hover:text-pink-800">Continue Editing</button></div>`
+                : `<div class="flex items-center space-x-4 text-xs text-gray-500 font-medium border-b pb-3 mb-3"><span>0 Clients</span><span>$0 Revenue</span></div><div class="flex justify-between items-center"><div class="flex items-center"><svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg><p class="ml-1 text-sm font-bold text-gray-700">No reviews</p></div></div>`;
+
+            return `<div class="program-card bg-white rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-1 hover:shadow-2xl transition-all duration-300" data-title="${program.title.toLowerCase()}" data-status="${program.status}">
+                        ${imageHtml}
+                        <div class="p-4 relative">
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-lg font-bold text-gray-900 mb-1">${program.title || 'Untitled Program'}</h3>
+                                ${statusBadgeHtml}
+                            </div>
+                            ${cardFooterHtml}
+                        </div>
+                    </div>`;
+        };
+
+        const renderPrograms = (programs) => {
+            programsGrid.innerHTML = '';
+            if (programs.length === 0) {
+                programsGrid.innerHTML = `<p class="md:col-span-2 xl:col-span-3 text-center text-gray-500 py-8">No programs found.</p>`;
+                return;
+            }
+            programs.forEach(program => {
+                const cardHTML = createProgramCardHTML(program);
+                programsGrid.insertAdjacentHTML('beforeend', cardHTML);
             });
+        };
+
+        const filterAndRenderPrograms = () => {
+            const savedPrograms = JSON.parse(localStorage.getItem(PROGRAM_STORAGE_KEY)) || [];
+            const searchTerm = searchProgramsInput.value.toLowerCase();
+            const activeFilter = filterTabs.querySelector('.filter-tab-active').dataset.filter;
+
+            const filtered = savedPrograms.filter(program => {
+                const titleMatch = program.title.toLowerCase().includes(searchTerm);
+                const statusMatch = (activeFilter === 'all' || program.status === activeFilter);
+                return titleMatch && statusMatch;
+            });
+            renderPrograms(filtered);
+        };
+        
+        // --- VIDEO LIBRARY LOGIC ---
+        const createVideoCardHTML = (video) => {
+            return `<div class="video-card bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transform hover:-translate-y-1 transition-transform duration-300 group" data-video-url="${video.videoUrl}">
+                        <div class="relative"><img src="${video.thumbnailUrl}" alt="${video.name}" class="w-full h-32 object-cover"><div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><svg class="w-12 h-12 text-white/80" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8.118v3.764a1 1 0 001.555.832l3.197-1.882a1 1 0 000-1.664l-3.197-1.882z" clip-rule="evenodd"></path></svg></div></div>
+                        <div class="p-3"><h3 class="font-semibold text-sm text-gray-800 truncate">${video.name}</h3><div class="flex items-center text-xs text-gray-500 mt-1"><span>${video.muscleGroup}</span><span class="mx-1.5">&bull;</span><span>${video.equipment}</span></div></div>
+                    </div>`;
+        };
+        
+        const renderVideoLibrary = (videoList) => {
+            videoGrid.innerHTML = '';
+            if (videoList.length === 0) {
+                videoGrid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-8">No videos found.</p>';
+                return;
+            }
+            videoList.forEach(video => {
+                const cardHTML = createVideoCardHTML(video);
+                videoGrid.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        };
+        
+        const handleVideoFilterChange = () => {
+            const searchTerm = searchVideoInput.value.toLowerCase();
+            const muscle = muscleGroupFilter.value;
+            const equipment = equipmentFilter.value;
+            const filteredVideos = exerciseLibraryData.filter(video => (video.name.toLowerCase().includes(searchTerm)) && (muscle === 'all' || video.muscleGroup === muscle) && (equipment === 'all' || video.equipment === equipment));
+            renderVideoLibrary(filteredVideos);
+        };
+
+        const handleVideoFormSubmit = (event) => {
+            event.preventDefault();
+            const exerciseName = document.getElementById('exercise-name').value.trim();
+            const youtubeUrl = document.getElementById('youtube-url').value.trim();
+            const muscleGroup = document.getElementById('muscle-group').value;
+            const equipment = document.getElementById('equipment').value;
+            if (!exerciseName || !youtubeUrl) { alert('Please fill out both Exercise Name and YouTube URL.'); return; }
+            const videoID = extractYouTubeID(youtubeUrl);
+            if (!videoID) { alert('Invalid YouTube URL.'); return; }
+            const newVideo = { id: 'exl' + new Date().getTime(), name: exerciseName, muscleGroup: muscleGroup, equipment: equipment, videoUrl: youtubeUrl, thumbnailUrl: `https://i.ytimg.com/vi/${videoID}/hqdefault.jpg` };
+            exerciseLibraryData.unshift(newVideo);
+            handleVideoFilterChange();
+            toggleModal(addVideoModal, false);
+            addVideoForm.reset();
+        };
+
+        // --- INITIALIZATION & EVENT LISTENERS ---
+        
+        // Initial render for programs
+        filterAndRenderPrograms();
+
+        // Listeners for program filtering
+        searchProgramsInput.addEventListener('input', filterAndRenderPrograms);
+        filterTabs.addEventListener('click', (e) => {
+            if (e.target.matches('.filter-tab')) {
+                filterTabs.querySelector('.filter-tab-active').classList.remove('filter-tab-active');
+                e.target.classList.add('filter-tab-active');
+                filterAndRenderPrograms();
+            }
         });
+
+        // Listeners for opening the Video Library
+        // Listeners for opening the Video Library
+const openVideoLibrary = () => {
+    renderVideoLibrary(exerciseLibraryData); // Render with full, unfiltered data
+    toggleModal(videoLibraryModal, true);
+};
+viewLibraryBtn.addEventListener('click', openVideoLibrary);
+
+// MENAMBAHKAN IF CHECK DI SINI
+if (sidebarVideoLibraryLink) {
+    sidebarVideoLibraryLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        openVideoLibrary();
+    });
+}
+
+        // Listeners within the Video Library modal
+        closeLibraryModalBtn.addEventListener('click', () => toggleModal(videoLibraryModal, false));
+        addVideoBtnModal.addEventListener('click', () => toggleModal(addVideoModal, true));
+        cancelAddVideoBtn.addEventListener('click', () => toggleModal(addVideoModal, false));
+        addVideoForm.addEventListener('submit', handleVideoFormSubmit);
+
+        // Listeners for video filtering
+        searchVideoInput.addEventListener('input', handleVideoFilterChange);
+        muscleGroupFilter.addEventListener('change', handleVideoFilterChange);
+        equipmentFilter.addEventListener('change', handleVideoFilterChange);
+
+        // Listener for playing a video
+        videoGrid.addEventListener('click', (event) => {
+            const card = event.target.closest('.video-card');
+            if (!card) return;
+            const videoUrl = card.dataset.videoUrl;
+            const videoID = extractYouTubeID(videoUrl);
+            if (videoID) {
+                youtubePlayerEmbed.src = `https://www.youtube.com/embed/${videoID}?autoplay=1`;
+                toggleModal(videoPlayerModal, true);
+            }
+        });
+
+        // Listener for closing the video player
+        closePlayerBtn.addEventListener('click', () => {
+            toggleModal(videoPlayerModal, false);
+            youtubePlayerEmbed.src = ''; // Stop the video
+        });
+    });
     </script>
 </body>
 </html>
