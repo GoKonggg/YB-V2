@@ -16,15 +16,17 @@
 
         /* --- UPGRADED STYLES FOR SPLIT SCREEN PREVIEW --- */
         .preview-frame {
-            width: 375px;
-            height: 750px;
-            border-radius: 40px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            border: 12px solid #111;
-            background-color: #f9fafb;
-            position: relative;
-            overflow: hidden;
-        }
+    width: 375px;
+    height: 750px;
+    border-radius: 40px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    border: 12px solid #111;
+    background-color: #f9fafb;
+    position: relative;
+    overflow: hidden;
+    display: flex; /* TAMBAHKAN INI */
+    flex-direction: column; /* TAMBAHKAN INI */
+}
         .preview-notch {
             position: absolute;
             top: 0;
@@ -38,9 +40,11 @@
             border-bottom-right-radius: 15px;
         }
         .preview-content {
-            height: 100%;
-            overflow-y: auto;
-        }
+    flex-grow: 1; /* TAMBAHKAN INI */
+    overflow-y: auto;
+    /* HAPUS height: 100%; */
+    /* HAPUS padding-bottom: 120px; */
+}
         /* CUSTOM SCROLLBAR STYLES */
         .preview-content::-webkit-scrollbar {
     width: 12px; /* Diperlebar dari 8px */
@@ -164,7 +168,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="preview-booking-button" class="absolute bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-sm border-t border-gray-200"></div>
+                    <div id="preview-booking-button" class="p-4 bg-white/80 backdrop-blur-sm border-t border-gray-200"></div>
                 </div>
             </div>
         </main>
