@@ -45,24 +45,26 @@
                     <button id="tab-snacks" class="px-3 py-2 text-sm font-semibold text-gray-500 rounded-full">Snacks</button>
                 </div>
 
-                <div class="relative mb-4 flex-shrink-0">
-                    <input type="text" placeholder="Search foods..." class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-400">
+                <form id="search-api-form" class="relative mb-4 flex-shrink-0">
+                    <input type="text" id="search-api-input" placeholder="Search foods..." class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-400">
                     <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </div>
+                </form>
 
                 <div class="flex border-b border-gray-200 mb-4 flex-shrink-0">
-                    <button id="subtab-all" class="flex-1 text-center font-semibold py-2 border-b-2 border-pink-500 text-pink-500">All Food</button>
-                    <button id="subtab-my" class="flex-1 text-center font-semibold py-2 border-b-2 border-transparent text-gray-500">My Food</button>
-                    <button id="subtab-quick" class="flex-1 text-center font-semibold py-2 border-b-2 border-transparent text-gray-500">Quick Add</button>
+                    <button id="subtab-all" class="flex-1 text-center font-semibold py-2 border-b-2">Search / History</button>
+                    <button id="subtab-my" class="flex-1 text-center font-semibold py-2 border-b-2">My Food</button>
+                    <button id="subtab-quick" class="flex-1 text-center font-semibold py-2 border-b-2">Quick Add</button>
                 </div>
                 
                 <div class="flex-grow overflow-y-auto -mr-2 pr-2 pb-28">
                     <div id="content-all" class="space-y-3">
-                        </div>
+                        <div id="search-results-container" class="space-y-3">
+                            </div>
+                    </div>
 
                     <div id="content-my" class="hidden h-full">
                         <div id="my-food-list-container" class="space-y-3 h-full">
-                           </div>
+                            </div>
                     </div>
 
                     <div id="content-quick" class="hidden space-y-4 p-4">
@@ -77,64 +79,11 @@
                         Buat Makanan Baru (+)
                     </a>
                 </div>
-                </div>
+            </div>
         </div>
     </div>
     
     <script src="add-food.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Ambil semua elemen yang dibutuhkan
-            const allTab = document.getElementById('subtab-all');
-            const myTab = document.getElementById('subtab-my');
-            const quickTab = document.getElementById('subtab-quick');
-            const tabs = [allTab, myTab, quickTab];
-
-            const allContent = document.getElementById('content-all');
-            const myContent = document.getElementById('content-my');
-            const quickContent = document.getElementById('content-quick');
-            const contents = [allContent, myContent, quickContent];
-            
-            const userStatusContainer = document.getElementById('user-status-container');
-            const createFoodButton = document.getElementById('create-food-button-wrapper');
-
-            // Fungsi untuk menangani klik tab
-            function handleTabClick(activeTab) {
-                // Sembunyikan semua konten dan hapus style aktif dari semua tab
-                tabs.forEach(tab => {
-                    tab.classList.remove('border-pink-500', 'text-pink-500');
-                    tab.classList.add('border-transparent', 'text-gray-500');
-                });
-                contents.forEach(content => content.classList.add('hidden'));
-
-                // Tampilkan konten dan style untuk tab yang aktif
-                activeTab.classList.add('border-pink-500', 'text-pink-500');
-                activeTab.classList.remove('border-transparent', 'text-gray-500');
-
-                if (activeTab === allTab) {
-                    allContent.classList.remove('hidden');
-                    userStatusContainer.classList.add('hidden'); // Sembunyikan toggle
-                    createFoodButton.classList.add('hidden'); 
-                } else if (activeTab === myTab) {
-                    myContent.classList.remove('hidden');
-                    userStatusContainer.classList.add('hidden'); // Sembunyikan toggle
-                    createFoodButton.classList.remove('hidden');
-                } else if (activeTab === quickTab) {
-                    quickContent.classList.remove('hidden');
-                    userStatusContainer.classList.remove('hidden'); // Tampilkan toggle
-                    createFoodButton.classList.add('hidden');
-                }
-            }
-
-            // Tambahkan event listener untuk setiap tab
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => handleTabClick(tab));
-            });
-
-            // Set state awal saat halaman dimuat (All Food aktif)
-            handleTabClick(allTab);
-        });
-    </script>
-</body>
+    
+    </body>
 </html>
