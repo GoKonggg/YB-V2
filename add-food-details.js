@@ -1,60 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-
-    // --- (NEW) SIMPLE FOOD DATABASE ---
-    // We define nutritional info per 100 grams as a base
-    const foodDatabase = {
-        "Chicken Breast": {
-            calories: 165,
-            protein: 31,
-            fat: 3.6,
-            carbs: 0,
-            baseServingInGrams: 100,
-            servingUnits: [
-                { "name": "gram", "gramWeight": 1 },
-                { "name": "oz", "gramWeight": 28.35 },
-                { "name": "serving (100g)", "gramWeight": 100 },
-                { "name": "portion (172g)", "gramWeight": 172 } // Average weight of one breast
-            ]
-        },
-        "Brown Rice": {
-            calories: 123, // cooked
-            protein: 2.6,
-            fat: 0.9,
-            carbs: 25.6,
-            baseServingInGrams: 100,
-            servingUnits: [
-                { "name": "gram", "gramWeight": 1 },
-                { "name": "cup (cooked)", "gramWeight": 195 },
-                { "name": "oz (cooked)", "gramWeight": 28.35 }
-            ]
-        },
-        "Broccoli": {
-            calories: 34,
-            protein: 2.8,
-            fat: 0.4,
-            carbs: 7,
-            baseServingInGrams: 100,
-            servingUnits: [
-                { "name": "gram", "gramWeight": 1 },
-                { "name": "cup (chopped)", "gramWeight": 91 },
-                { "name": "oz", "gramWeight": 28.35 }
-            ]
-        },
-        "Salmon": {
-            calories: 208,
-            protein: 20,
-            fat: 13,
-            carbs: 0,
-            baseServingInGrams: 100,
-            servingUnits: [
-                { "name": "gram", "gramWeight": 1 },
-                { "name": "oz", "gramWeight": 28.35 },
-                { "name": "fillet (170g)", "gramWeight": 170 }
-            ]
-        }
-    };
-
-    // --- ELEMENT SELECTORS (Same as before) ---
+    // ===================================================================
+    // 1. SETUP & ELEMENT SELECTORS
+    // ===================================================================
     const appContainer = document.getElementById('app-container');
     const foodNameEl = document.getElementById('food-name');
     const mealTypeText = document.getElementById('meal-type-text');
@@ -72,64 +19,104 @@ document.addEventListener('DOMContentLoaded', () => {
     const fatArc = document.querySelector('#fat-arc circle');
     const carbsArc = document.querySelector('#carbs-arc circle');
 
-    // --- STATE MANAGEMENT (Same as before) ---
+    // State Management
     let baseFoodData = {};
+    let selectedUnit = {};
     let context = 'diary';
     let routineId = '';
     let mealType = 'breakfast';
-    let selectedUnit = {};
 
-    // --- INITIALIZATION ---
-    function initializePage() {
+    // ===================================================================
+    // 2. INISIALISASI HALAMAN (LOGIKA UTAMA YANG BARU)
+    // ===================================================================
+    async function initializePage() {
         const urlParams = new URLSearchParams(window.location.search);
         
         context = urlParams.get('context') || 'diary';
         routineId = urlParams.get('routineId') || '';
         mealType = urlParams.get('meal') || 'breakfast';
+        const foodId = urlParams.get('foodId');
+        const customFoodName = decodeURIComponent(urlParams.get('name') || '');
 
-        const foodName = decodeURIComponent(urlParams.get('name') || 'No Name');
-        const foodFromDB = foodDatabase[foodName];
-
-        if (foodFromDB) {
-            // If the food is found in our database, use its detailed data
-            baseFoodData = foodFromDB;
-            // The default unit is now 'gram' or the first logical unit
-            selectedUnit = baseFoodData.servingUnits.find(u => u.name === 'gram') || baseFoodData.servingUnits[0];
-        } else {
-            // Fallback for custom foods (from "My Food")
+        foodNameEl.textContent = 'Loading...';
+        
+        if (foodId) {
+            // ALUR 1: Ambil data dari API jika ada foodId
+            try {
+                const response = await fetch(`https://yb-backend-omega.vercel.app/api/makanan/detail/${foodId}`);
+                if (!response.ok) throw new Error('Failed to fetch food details');
+                const apiData = await response.json();
+                baseFoodData = transformFatSecretData(apiData);
+                selectedUnit = baseFoodData.servingUnits.find(u => u.name === 'gram') || baseFoodData.servingUnits[0];
+            } catch (error) {
+                console.error("Error fetching food details:", error);
+                alert("Could not load food details from the server.");
+                foodNameEl.textContent = 'Error loading data';
+                return;
+            }
+        } else if (customFoodName) {
+            // ALUR 2: Fallback untuk custom food dari "My Food"
             const servingText = decodeURIComponent(urlParams.get('serving') || '1 serving');
             baseFoodData = {
-                name: foodName,
+                name: customFoodName,
                 calories: parseFloat(urlParams.get('calories') || 0),
                 protein: parseFloat(urlParams.get('protein') || 0),
                 fat: parseFloat(urlParams.get('fat') || 0),
                 carbs: parseFloat(urlParams.get('carbs') || 0),
-                baseServingInGrams: 1, // Set to 1 to make the calculation universal
+                baseServingInGrams: 1,
                 servingUnits: [{ "name": servingText, "gramWeight": 1 }]
             };
             selectedUnit = baseFoodData.servingUnits[0];
+        } else {
+            alert("No food specified.");
+            foodNameEl.textContent = 'No food specified';
+            return;
         }
         
-        // Update UI
+        updateUIAfterDataLoad();
+    }
+    
+    // ===================================================================
+    // 3. FUNGSI-FUNGSI PEMBANTU
+    // ===================================================================
+    
+    function transformFatSecretData(apiData) {
+        const servings = Array.isArray(apiData.servings.serving) ? apiData.servings.serving : [apiData.servings.serving];
+        const baseServing = servings.find(s => s.metric_serving_unit === 'g' && parseFloat(s.metric_serving_amount) === 100);
+        const nutritionBase = baseServing || servings[0];
+        const servingUnits = servings.map(s => ({ name: s.serving_description, gramWeight: parseFloat(s.metric_serving_amount) }));
+        if (!servingUnits.some(u => u.name === 'gram')) {
+            servingUnits.unshift({ name: 'gram', gramWeight: 1 });
+        }
+        return {
+            id: apiData.food_id,
+            name: apiData.food_name,
+            calories: parseFloat(nutritionBase.calories),
+            protein: parseFloat(nutritionBase.protein),
+            fat: parseFloat(nutritionBase.fat),
+            carbs: parseFloat(nutritionBase.carbohydrate),
+            baseServingInGrams: parseFloat(nutritionBase.metric_serving_amount) || 1,
+            servingUnits: servingUnits
+        };
+    }
+
+    function updateUIAfterDataLoad() {
         backLink.href = `add-food.html?context=${context}&routineId=${routineId}&meal=${mealType}`;
-        foodNameEl.textContent = foodName; // Use foodName from URL for consistency
+        foodNameEl.textContent = baseFoodData.name;
         mealTypeText.textContent = mealType;
         foodTimeText.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         unitSelectorText.textContent = selectedUnit.name;
-        
         createUnitSelectionModal();
         setupEventListeners();
         updateCalculations();
     }
 
-    // --- EVENT LISTENERS (Same as before) ---
     function setupEventListeners() {
         servingsAmountInput.addEventListener('input', updateCalculations);
         unitSelectorBtn.addEventListener('click', openUnitModal);
         saveButton.addEventListener('click', saveFoodEntry);
     }
 
-    // --- MODAL LOGIC (Same as before, now gets more data) ---
     function createUnitSelectionModal() {
         const backdrop = document.createElement('div');
         backdrop.id = 'unit-modal-backdrop';
@@ -156,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
             li.addEventListener('click', () => {
                 selectedUnit = unit;
                 unitSelectorText.textContent = unit.name;
-                servingsAmountInput.value = 1; // Reset serving amount to 1
+                servingsAmountInput.value = 1;
                 updateCalculations();
                 closeUnitModal();
             });
@@ -178,12 +165,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
     }
 
-    // --- CORE LOGIC (Reverted to the universal calculation logic) ---
     function updateCalculations() {
         const servings = parseFloat(servingsAmountInput.value) || 0;
         const getNutrientTotal = (nutrient) => {
-            if (baseFoodData.baseServingInGrams === 0) return 0;
-            // Universal formula: (nutrient per base) / base size * selected unit size * number of servings
+            if (!baseFoodData.baseServingInGrams) return 0;
             return (nutrient / baseFoodData.baseServingInGrams) * selectedUnit.gramWeight * servings;
         };
         const totalCalories = Math.round(getNutrientTotal(baseFoodData.calories));
@@ -198,7 +183,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateMacroChart(totalProtein, totalFat, totalCarbs);
     }
     
-    // --- MAIN ACTION (SAVE) (Using the same universal calculation) ---
     function saveFoodEntry() {
         const finalServings = parseFloat(servingsAmountInput.value) || 0;
         if (finalServings <= 0) {
@@ -206,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         const getNutrientTotal = (nutrient) => {
-            if (baseFoodData.baseServingInGrams === 0) return 0;
+            if (!baseFoodData.baseServingInGrams) return 0;
             return (nutrient / baseFoodData.baseServingInGrams) * selectedUnit.gramWeight * finalServings;
         };
         const finalFoodData = {
@@ -230,7 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- CHART LOGIC (UNCHANGED) ---
     function updateMacroChart(protein, fat, carbs) {
         protein = parseFloat(protein); fat = parseFloat(fat); carbs = parseFloat(carbs);
         const totalMacros = protein + fat + carbs;
@@ -252,6 +235,8 @@ document.addEventListener('DOMContentLoaded', () => {
         arcElement.style.strokeDashoffset = `-${offset}`;
     }
 
-    // --- RUN INITIALIZATION ---
+    // ===================================================================
+    // 4. JALANKAN INISIALISASI
+    // ===================================================================
     initializePage();
 });
