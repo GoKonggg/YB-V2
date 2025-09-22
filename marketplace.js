@@ -269,4 +269,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- INITIALIZATION ---
     switchView('programs');
+
+    const urlParams = new URLSearchParams(window.location.search);
+const tabParam = urlParams.get('tab');
+
+if (tabParam === 'coaches') {
+    switchView('coaches'); // Jika URL berisi ?tab=coaches, langsung buka tab coaches
+} else {
+    switchView('programs'); // Jika tidak, buka tab programs sebagai default
+}
 });
+

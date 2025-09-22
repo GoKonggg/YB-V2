@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Tracker - Learn More</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .bg-primary-gradient {
+            background-image: linear-gradient(to right, #ec4899, #d946ef);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex items-center justify-center min-h-screen p-4">
+
+    <div id="app-container" class="w-full max-w-md mx-auto bg-gray-50 rounded-2xl shadow-xl relative h-[800px] overflow-hidden">
+        
+        <div class="absolute top-0 -left-16 w-72 h-72 bg-pink-300 rounded-full opacity-30 filter blur-3xl"></div>
+        <div class="absolute bottom-0 -right-16 w-72 h-72 bg-purple-300 rounded-full opacity-30 filter blur-3xl"></div>
+
+        <div class="relative z-10 h-full flex flex-col">
+            
+            <div class="p-5 flex-shrink-0 relative">
+                <a href="index.html" class="absolute left-4 top-1/2 -translate-y-1/2 p-2 text-gray-500 rounded-full hover:bg-gray-200/50 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </a>
+                <h1 class="text-xl font-bold text-gray-800 text-center">Your Calorie Plan, Explained</h1>
+            </div>
+
+            <div class="flex-grow overflow-y-auto px-5 pb-8">
+                <div class="space-y-6">
+                    <section>
+                        <h2 class="text-lg font-semibold text-center text-gray-700 mb-4">The Two Numbers That Matter</h2>
+                        <div class="space-y-4">
+                            <div class="glass-card p-5 rounded-xl">
+                                <div class="flex items-center space-x-4">
+                                    <div class="bg-blue-100 p-3 rounded-full flex-shrink-0">
+                                        <svg class="w-8 h-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75s4.365-9.75 9.75-9.75c1.33 0 2.59.25 3.75.704m-4.5 1.585a7.5 7.5 0 00-7.5 7.5c0 4.142 3.358 7.5 7.5 7.5a7.5 7.5 0 007.5-7.5c0-1.06-.214-2.072-.608-3s-.84-1.792-1.392-2.596M12 8.25V4.5m0 3.75l-3.75-1.5M12 8.25l3.75 1.5M12 8.25l3.75-1.5M12 8.25L8.25 9.75M12 15.75v3.75m0-3.75l-3.75 1.5M12 15.75l3.75-1.5M12 15.75l3.75 1.5m0-3.75L8.25 15" /></svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-gray-800">1. Your BMR (Base Energy)</h3>
+                                        <p class="text-sm text-gray-600">Think of this as your body's "idle mode." It's the energy you burn just staying alive—breathing, thinking, and circulating blood. You burn these calories even when you're sleeping.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="glass-card p-5 rounded-xl">
+                                <div class="flex items-center space-x-4">
+                                    <div class="bg-green-100 p-3 rounded-full flex-shrink-0">
+                                         <svg class="w-8 h-8 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 12h-2.25m-1.591 5.834l-1.591-1.591M4.5 12H2.25m1.591-5.834l1.591 1.591M5.834 18.166l1.591-1.591" /></svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-gray-800">2. Your TDEE (Total Energy)</h3>
+                                        <p class="text-sm text-gray-600">This is your **BMR + all the energy you use for activities** like walking, working, and exercising. This is your "maintenance" number to stay at your current weight.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <section>
+                        <h2 class="text-lg font-semibold text-center text-gray-700 my-5">How to Achieve Your Goal</h2>
+                        <div class="space-y-4">
+                            <div class="glass-card p-5 rounded-xl">
+                                <h3 class="font-bold text-xl text-gray-800 mb-2">🎯 Goal: Lose Fat</h3>
+                                <p class="text-sm text-gray-600 mb-2"><b class="text-red-600">The Plan:</b> Eat in a <b>Calorie Deficit</b>.</p>
+                                <p class="text-sm text-gray-600"><b>What It Means:</b> Consistently eat **fewer** calories than your TDEE number. Your body, needing energy, will start to use its stored fat as fuel.</p>
+                                <p class="text-center font-semibold text-lg text-gray-700 mt-3 p-2 bg-red-50 rounded-lg">Calories IN < <b class="text-red-500">Calories OUT</b></p>
+                            </div>
+                            <div class="glass-card p-5 rounded-xl">
+                                <h3 class="font-bold text-xl text-gray-800 mb-2">💪 Goal: Gain Muscle</h3>
+                                <p class="text-sm text-gray-600 mb-2"><b class="text-green-600">The Plan:</b> Eat in a <b>Calorie Surplus</b>.</p>
+                                <p class="text-sm text-gray-600"><b>What It Means:</b> Consistently eat **more** calories than your TDEE, combined with strength training, to provide your body the fuel and materials it needs to build new muscle tissue.</p>
+                                <p class="text-center font-semibold text-lg text-gray-700 mt-3 p-2 bg-green-50 rounded-lg">Calories IN > <b class="text-green-500">Calories OUT</b></p>
+                            </div>
+                            <div class="glass-card p-5 rounded-xl">
+                                <h3 class="font-bold text-xl text-gray-800 mb-2">⚖️ Goal: Maintain Weight</h3>
+                                <p class="text-sm text-gray-600 mb-2"><b class="text-blue-600">The Plan:</b> Eat at <b>Maintenance</b>.</p>
+                                <p class="text-sm text-gray-600"><b>What It Means:</b> Eat roughly **the same** amount of calories as your TDEE number. This creates a balance where you aren't storing extra energy or burning reserves.</p>
+                                <p class="text-center font-semibold text-lg text-gray-700 mt-3 p-2 bg-blue-50 rounded-lg">Calories IN = <b class="text-blue-500">Calories OUT</b></p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <div class="p-5 flex-shrink-0">
+                <a href="index.html" class="block text-center w-full bg-primary-gradient text-white font-bold py-3 px-4 rounded-xl hover:opacity-90 transition-opacity">
+                    Got It, Let's Continue!
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
