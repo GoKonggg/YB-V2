@@ -39,6 +39,13 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        /* Cari style ini dan ganti dengan yang di bawah */
+        .option-card.selected {
+            border-color: #ec4899;
+            box-shadow: 0 0 0 2px #ec4899;
+            transform: translateY(-2px); /* Tambahkan efek sedikit terangkat */
+            background: linear-gradient(to right, #fdf2f8, #fce7f3); /* Tambahkan gradien halus */
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen p-4">

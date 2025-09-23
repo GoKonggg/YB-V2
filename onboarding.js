@@ -46,6 +46,15 @@ function calculateTDEE(bmr, activity) {
     return bmr * (activityMultipliers[activity] || 1);
 }
 
+function calculateTargetCalories(tdee, goal, pace) {
+    if (goal === 'fat_loss') {
+        return tdee - (pace * 7000 / 7);
+    } else if (goal === 'muscle_gain') {
+        return tdee + (pace * 3500 / 7);
+    }
+    return tdee;
+}
+
 
 // --- Core Navigation & UI Functions ---
 
@@ -64,10 +73,8 @@ function selectOption(key, value, element) {
 function nextScreen() {
     if (!validateScreen(currentScreenIndex)) return;
     saveScreenData(currentScreenIndex);
-
     const goal = userData.goal;
     let nextScreenNumber = currentScreenIndex + 1;
-
     if (currentScreenIndex === 3) {
         if (goal === 'maintain_weight') {
             nextScreenNumber = 6;
@@ -78,11 +85,9 @@ function nextScreen() {
     } else if (currentScreenIndex === 4) {
         nextScreenNumber = 6;
     }
-
     if (nextScreenNumber === 6) {
         showResult();
     }
-
     showScreen(nextScreenNumber);
 }
 
@@ -163,35 +168,33 @@ function saveScreenData(screenNumber) {
     }
 }
 
-
 // --- Pace Screen Generation & Logic (Screen 4) ---
 
-// [DIUBAH] Fungsi ini dirombak untuk menampilkan BMR dan feedback real-time
 function generatePaceScreen() {
     const screen4 = document.getElementById('screen-4');
     const { goal, activity } = userData;
-    
     const bmr = calculateBMR(userData);
     const tdee = calculateTDEE(bmr, activity);
 
-    let presets, title, description, unit;
+    let presets, title, unit;
     if (goal === 'fat_loss') {
         title = "Set Your Weekly Goal";
-        description = "Select a sustainable pace for fat loss.";
         presets = [0.25, 0.5, 0.75];
         unit = "kg/week";
     } else {
         title = "Set Your Weekly Goal";
-        description = "Select a pace for lean muscle gain.";
         presets = [0.2, 0.4, 0.6];
         unit = "kg/week";
     }
 
-    const presetButtons = presets.map(p => 
-        `<div onclick="selectPacePreset(${p}, this)" class="option-card text-center glass-card p-4 rounded-xl cursor-pointer">
-            <h3 class="font-semibold">${p} ${unit}</h3>
-        </div>`
-    ).join('');
+    // [DIUBAH] Preset button kembali simpel, tanpa info kalori di dalamnya
+    const presetButtons = presets.map(p => {
+        return `
+            <div onclick="selectPacePreset(${p}, this)" class="option-card text-center glass-card p-4 rounded-xl cursor-pointer transition-all duration-300">
+                <h3 class="font-bold text-lg text-slate-800">${p} ${unit}</h3>
+            </div>
+        `;
+    }).join('');
 
     const content = `
         <div class="relative flex items-center justify-center mb-2 h-8">
@@ -200,8 +203,7 @@ function generatePaceScreen() {
             </button>
             <h1 class="text-2xl font-bold">${title}</h1>
         </div>
-        <p class="text-center text-gray-500 mb-4">${description}</p>
-        
+        <p class="text-center text-gray-500 mb-4">Based on your info, here are your core estimates:</p>
         <div class="glass-card p-4 rounded-xl mb-6 grid grid-cols-2 gap-4 text-center">
             <div>
                 <p class="text-sm text-gray-600">Maintenance Calories</p>
@@ -213,33 +215,41 @@ function generatePaceScreen() {
             </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-4 mb-6">
-            ${presetButtons}
-        </div>
-        
-        <div>
-            <label for="custom-pace" class="font-semibold text-gray-800">Or set a custom goal (${unit}):</label>
-            <input type="number" id="custom-pace" step="0.05" oninput="handleCustomPaceInput(this.value)" placeholder="e.g., 0.3" class="form-input-custom w-full p-3 rounded-lg mt-2">
+        <div class="space-y-4">
+            <p class="font-semibold text-center text-gray-800">Choose your weekly pace:</p>
+            <div class="grid grid-cols-3 gap-4">
+                ${presetButtons}
+            </div>
+            <div class="flex items-center">
+                <div class="flex-grow border-t border-gray-200"></div>
+                <span class="flex-shrink mx-4 text-gray-400 text-xs font-semibold">OR</span>
+                <div class="flex-grow border-t border-gray-200"></div>
+            </div>
+            <div id="custom-pace-container" class="glass-card p-4 rounded-xl transition-all duration-300 text-center">
+                <label for="custom-pace" class="text-sm font-semibold text-gray-800">Enter a custom pace (${unit}):</label>
+                <input type="number" id="custom-pace" step="0.05" oninput="handleCustomPaceInput(this.value)" placeholder="e.g., 0.3" class="form-input-custom w-full p-3 rounded-lg mt-2 text-center font-bold text-lg text-pink-500">
+            </div>
         </div>
         
         <div id="calorie-target-feedback" class="hidden mt-4 p-3 bg-indigo-50 text-indigo-800 text-md rounded-lg text-center font-semibold">
         </div>
         
         <div id="bmr-warning" class="hidden mt-2 p-3 bg-red-100/50 text-red-700 text-sm rounded-lg text-center">
-            <b>Warning:</b> This goal is too aggressive. Your calorie intake would be below your base metabolic rate (BMR), which is not recommended.
+            <b>Warning:</b> This goal is too aggressive. Your calorie intake is below your BMR, which is not recommended.
         </div>
-
         <a href="learn-more.html" onclick="goToLearnMore(event)" class="text-center block text-pink-500 text-sm mt-4 hover:underline">Learn more about TDEE & BMR</a>
-        
         <button onclick="nextScreen()" id="btn-screen-4" class="w-full bg-primary-gradient text-white font-bold py-3 px-4 rounded-lg mt-8 hover:opacity-90 transition-opacity disabled:opacity-50" disabled>Continue</button>
     `;
     screen4.innerHTML = content;
 }
 
+// [DIUBAH] Logika menampilkan kalori di dalam card dihapus
 function selectPacePreset(pace, element) {
     document.querySelectorAll('#screen-4 .option-card').forEach(opt => opt.classList.remove('selected'));
     element.classList.add('selected');
-    document.getElementById('custom-pace').value = '';
+    const customInput = document.getElementById('custom-pace');
+    customInput.value = '';
+    customInput.parentElement.classList.remove('selected');
     userData.pace = pace;
     updatePaceUIAndWarning();
 }
@@ -248,47 +258,41 @@ function handleCustomPaceInput(value) {
     document.querySelectorAll('#screen-4 .option-card').forEach(opt => opt.classList.remove('selected'));
     const pace = parseFloat(value);
     userData.pace = pace > 0 ? pace : null;
+    document.getElementById('custom-pace-container').classList.toggle('selected', pace > 0);
     updatePaceUIAndWarning();
 }
 
-// [DIUBAH] Fungsi ini sekarang juga menghitung dan menampilkan feedback kalori
+// [DIUBAH] Fungsi ini kembali bertanggung jawab untuk menampilkan feedback
 function updatePaceUIAndWarning() {
     const continueBtn = document.getElementById('btn-screen-4');
-    const feedbackDiv = document.getElementById('calorie-target-feedback');
     const warningDiv = document.getElementById('bmr-warning');
+    const feedbackDiv = document.getElementById('calorie-target-feedback');
     
     if (!userData.pace) {
         continueBtn.disabled = true;
-        feedbackDiv.classList.add('hidden');
         warningDiv.classList.add('hidden');
+        feedbackDiv.classList.add('hidden'); // Sembunyikan feedback jika tidak ada pace
         return;
     }
-    
+
     continueBtn.disabled = false;
-    
     const bmr = calculateBMR(userData);
     const tdee = calculateTDEE(bmr, userData.activity);
-    let finalCalories = 0;
+    const finalCalories = calculateTargetCalories(tdee, userData.goal, userData.pace);
+    
+    // Update dan tampilkan feedback div
+    feedbackDiv.innerHTML = `Your Daily Calories will be ~<b>${Math.round(finalCalories)} kcal / day</b>`;
+    feedbackDiv.classList.remove('hidden');
 
     if (userData.goal === 'fat_loss') {
-        finalCalories = tdee - (userData.pace * 7000 / 7);
-        if (finalCalories < bmr) {
-            warningDiv.classList.remove('hidden');
-        } else {
-            warningDiv.classList.add('hidden');
-        }
-    } else { // muscle_gain
-        finalCalories = tdee + (userData.pace * 3500 / 7);
-        warningDiv.classList.add('hidden'); // No BMR warning for muscle gain
+        warningDiv.classList.toggle('hidden', finalCalories >= bmr);
+    } else {
+        warningDiv.classList.add('hidden');
     }
-
-    // [BARU] Update dan tampilkan feedback
-    feedbackDiv.innerHTML = `Your Daily Calories will be ~<b>${Math.round(finalCalories)} kcal</b> / day`;
-    feedbackDiv.classList.remove('hidden');
 }
 
-// --- Result Screen Logic (Screen 6) ---
 
+// --- Result Screen Logic (Screen 6) ---
 function showResult() {
     const calculatingDiv = document.getElementById('calculating');
     const resultContentDiv = document.getElementById('result-content');
@@ -298,19 +302,16 @@ function showResult() {
         el.classList.remove('fade-in-up');
         el.style.opacity = '0';
     });
-
     setTimeout(() => {
         const finalCalories = calculateFinalCalories();
         localStorage.setItem('calorieGoal', Math.round(finalCalories));
         const calorieEl = document.getElementById('calorie-result');
         animateCountUp(calorieEl, finalCalories);
-        
         const actionsContainer = document.getElementById('result-actions');
         actionsContainer.innerHTML = `
-            <button onclick="window.location.href='diary.html'" class="w-full bg-primary-gradient text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:opacity-90 transition-opacity">Start My Journey</button>
-            <button onclick="window.location.href='marketplace.html?tab=coaches'" class="w-full glass-card text-pink-500 font-bold py-3 px-4 rounded-xl hover:bg-white/50 transition-colors">Consult a Coach</button>
+            <button onclick="window.location.href='diary.html'" class="w-full bg-primary-gradient ...">Start My Journey</button>
+            <button onclick="window.location.href='marketplace.html?tab=coaches'" class="w-full glass-card ...">Consult a Coach</button>
         `;
-
         calculatingDiv.style.display = 'none';
         resultContentDiv.style.display = 'block';
         resultContentDiv.querySelectorAll('.opacity-0').forEach(el => {
@@ -323,29 +324,19 @@ function calculateFinalCalories() {
     const { activity, goal, pace } = userData;
     const bmr = calculateBMR(userData);
     const tdee = calculateTDEE(bmr, activity);
-    
-    if (goal === 'fat_loss' && pace) {
-        return tdee - (pace * 7000 / 7);
-    } else if (goal === 'muscle_gain' && pace) {
-        return tdee + (pace * 3500 / 7);
-    }
-    
-    return tdee;
+    return calculateTargetCalories(tdee, goal, pace);
 }
 
 function animateCountUp(el, to) {
     const finalValue = Math.round(to);
     if (!el || isNaN(finalValue)) return;
-    
     let from = 0;
     const duration = 1000;
     const frameDuration = 1000 / 60;
     const totalFrames = Math.round(duration / frameDuration);
     let currentFrame = 0;
-    
     if (finalValue === 0) { el.textContent = 0; return; }
     const increment = finalValue / totalFrames;
-
     const timer = setInterval(() => {
         currentFrame++;
         from += increment;
@@ -359,13 +350,9 @@ function animateCountUp(el, to) {
 }
 
 // --- Utility & State Functions ---
-
 function goToLearnMore(event) {
     event.preventDefault();
-    const currentState = {
-        userData: userData,
-        currentScreenIndex: currentScreenIndex
-    };
+    const currentState = { userData: userData, currentScreenIndex: currentScreenIndex };
     sessionStorage.setItem('onboardingState', JSON.stringify(currentState));
     window.location.href = 'learn-more.html';
 }
