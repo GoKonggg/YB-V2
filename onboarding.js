@@ -308,10 +308,10 @@ function showResult() {
         const calorieEl = document.getElementById('calorie-result');
         animateCountUp(calorieEl, finalCalories);
         const actionsContainer = document.getElementById('result-actions');
-        actionsContainer.innerHTML = `
-            <button onclick="window.location.href='diary.html'" class="w-full bg-primary-gradient ...">Start My Journey</button>
-            <button onclick="window.location.href='marketplace.html?tab=coaches'" class="w-full glass-card ...">Consult a Coach</button>
-        `;
+        actionsContainer.innerHTML = `
+            <button onclick="window.location.href='diary.html'" class="w-full bg-primary-gradient text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:opacity-90 transition-opacity">Start My Journey</button>
+            <button onclick="window.location.href='marketplace.html?tab=coaches'" class="w-full glass-card text-pink-500 font-bold py-3 px-4 rounded-xl hover:bg-white/50 transition-colors">Consult a Coach</button>
+        `;
         calculatingDiv.style.display = 'none';
         resultContentDiv.style.display = 'block';
         resultContentDiv.querySelectorAll('.opacity-0').forEach(el => {
