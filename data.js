@@ -561,6 +561,14 @@ const coachClients = [
         lastActive: '3 days ago',
         streak: 0,
         unreadMessages: 0,
+    },
+    { 
+        id: 'client005', 
+        name: 'Sarah Miller', 
+        avatar: 'https://i.pravatar.cc/150?u=sarah-miller',
+        lastActive: 'Just now',
+        streak: 0,
+        unreadMessages: 0,
     }
 ];
 
@@ -740,9 +748,10 @@ const allClientData = {
     }
 };
 
+
 const bookingRequests = [
-  { clientId: 'client004', type: 'One-Time Consultation', status: 'pending', timestamp: new Date() },
-  { clientId: 'client002', type: 'Monthly Coaching', status: 'pending', timestamp: new Date(new Date().setDate(new Date().getDate() - 1)) } // Dari kemarin
+    { clientId: 'client004', type: 'One-Time Consultation', status: 'pending', timestamp: new Date() },
+    { clientId: 'client005', type: '3-Month Transformation', status: 'pending', timestamp: new Date() }
 ];
 
 
@@ -810,21 +819,90 @@ const scheduleData = [
   }
 ];
 
+// const chatHistory = {
+//     'client001': [
+//         { sender: 'client', text: "Hey! Just checking in for the week.", timestamp: "10:30 AM" },
+//         { sender: 'coach', text: "Hi Jane! Great to hear from you. How was the new breakfast suggestion?", timestamp: "10:31 AM" },
+//         { sender: 'client', text: "Okay, I'll try that for tomorrow's breakfast!", timestamp: "10:32 AM" }
+//     ],
+//     'client002': [
+//         { sender: 'coach', text: "Hey John, I noticed you didn't log your food yesterday. Everything alright?", timestamp: "8:45 AM" },
+//         { sender: 'client', text: "I missed my workout yesterday, feeling a bit demotivated.", timestamp: "9:15 AM" }
+//     ],
+//     'client003': [
+//         { sender: 'client', text: "Just hit a new PR on my squats! Thanks for the tip.", timestamp: "Yesterday" }
+//     ],
+//     'client004': [
+//         // Riwayat chat kosong untuk klien baru
+//     ]
+// };
+
+
+// const groupChatHistory = {
+//     'group001': [
+//         { 
+//             sender: 'coach', 
+//             text: "Hey everyone, welcome to the September program! Feel free to ask any questions here.", 
+//             timestamp: "11:05 AM" 
+//         },
+//         { 
+//             sender: 'client', 
+//             senderId: 'client001', // ID klien yang mengirim
+//             text: "Hey everyone, excited to start!", 
+//             timestamp: "11:06 AM" 
+//         },
+//         { 
+//             sender: 'coach', 
+//             text: "Welcome, Jane! Glad to have you all here.", 
+//             timestamp: "11:07 AM" 
+//         },
+//         { 
+//             sender: 'client', 
+//             senderId: 'client002', // ID klien yang mengirim
+//             text: "Thanks, Coach! What's the best way to approach the first week's meal plan?", 
+//             timestamp: "11:09 AM" 
+//         }
+//     ]
+// };
 const chatHistory = {
-    'client001': [
+    'client001': [ // Jane Doe: The Engaged Client
         { sender: 'client', text: "Hey! Just checking in for the week.", timestamp: "10:30 AM" },
         { sender: 'coach', text: "Hi Jane! Great to hear from you. How was the new breakfast suggestion?", timestamp: "10:31 AM" },
-        { sender: 'client', text: "Okay, I'll try that for tomorrow's breakfast!", timestamp: "10:32 AM" }
+        { sender: 'client', text: "Loved it! Super easy. Quick question: what's a good post-workout snack to have after my leg day today?", timestamp: "10:35 AM" },
+        { sender: 'coach', text: "Great question! Something with protein and carbs is ideal. A protein shake with a banana, or some Greek yogurt with berries would be perfect to help with recovery.", timestamp: "10:36 AM" }
     ],
-    'client002': [
+    'client002': [ // John Smith: The Struggling Client
         { sender: 'coach', text: "Hey John, I noticed you didn't log your food yesterday. Everything alright?", timestamp: "8:45 AM" },
-        { sender: 'client', text: "I missed my workout yesterday, feeling a bit demotivated.", timestamp: "9:15 AM" }
+        { sender: 'client', text: "I missed my workout yesterday, feeling a bit demotivated.", timestamp: "9:15 AM" },
+        { sender: 'coach', text: "That's completely normal, John. Don't be too hard on yourself. The most important thing is getting back to it. How about we make today's workout a bit shorter and focus on just moving? No pressure.", timestamp: "9:17 AM" }
     ],
-    'client003': [
-        { sender: 'client', text: "Just hit a new PR on my squats! Thanks for the tip.", timestamp: "Yesterday" }
+    'client003': [ // Emily White: The High-Achiever
+        { sender: 'client', text: "Just hit a new PR on my squats! Thanks for the form tip you gave me last week, it made a huge difference.", timestamp: "Yesterday" },
+        { sender: 'coach', text: "YES Emily! That's amazing news, congratulations! Knew you could do it. Keep that momentum going!", timestamp: "Yesterday" }
     ],
-    'client004': [
-        // Riwayat chat kosong untuk klien baru
+    'client004': [ // Michael B: Fokus pada kekuatan
+        { 
+            sender: 'client', 
+            text: "Hey! Thanks for getting back to me. My main goal is to build some muscle and just feel stronger overall. I've been going to the gym but feel a bit lost on what to do.", 
+            timestamp: "11:25 AM" 
+        },
+        {
+            sender: 'coach',
+            text: "That's a great goal, Michael. Feeling lost is a very common starting point. We can definitely build a solid plan. Are you looking to improve specific lifts, or is it more about general strength?",
+            timestamp: "11:28 AM"
+        }
+    ],
+    'client005': [ // Sarah Miller: Fokus pada penurunan berat badan
+        {
+            sender: 'client',
+            text: "Hi, thank you! I'm really excited. My primary goal is to lose about 10kg before my wedding in 6 months. I also want to build healthier, sustainable eating habits.",
+            timestamp: "11:30 AM"
+        },
+        {
+            sender: 'coach',
+            text: "That's a fantastic and very achievable goal, Sarah! Building sustainable habits is key. We'll focus on that. Have you tried any specific diet or training programs in the past?",
+            timestamp: "11:32 AM"
+        }
     ]
 };
 
@@ -838,20 +916,26 @@ const groupChatHistory = {
         },
         { 
             sender: 'client', 
-            senderId: 'client001', // ID klien yang mengirim
+            senderId: 'client001',
             text: "Hey everyone, excited to start!", 
             timestamp: "11:06 AM" 
         },
         { 
             sender: 'coach', 
-            text: "Welcome, Jane! Glad to have you all here.", 
-            timestamp: "11:07 AM" 
+            text: "🔥 Weekly Challenge! 🔥 Let's all try to hit 8,000 steps every day this week. Who's in?", 
+            timestamp: "Yesterday" 
         },
         { 
             sender: 'client', 
-            senderId: 'client002', // ID klien yang mengirim
-            text: "Thanks, Coach! What's the best way to approach the first week's meal plan?", 
-            timestamp: "11:09 AM" 
+            senderId: 'client003',
+            text: "Challenge accepted! My dog will be happy about the extra walks.", 
+            timestamp: "Yesterday" 
+        },
+        { 
+            sender: 'client', 
+            senderId: 'client001',
+            text: "I'm in! Let's do it 💪", 
+            timestamp: "Yesterday" 
         }
     ]
 };
