@@ -10,7 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -36,6 +36,18 @@
         .form-input-custom:focus {
             box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.5);
             outline: none;
+        }
+
+        /* === CSS BARU UNTUK TEMPLATE KARTU SHARE === */
+        #share-card-template {
+            width: 350px; /* Lebar kartu */
+            aspect-ratio: 9 / 16; /* Rasio untuk Instagram Story */
+            background-image: linear-gradient(160deg, #fdf4f8 0%, #f6f4fe 100%);
+            font-family: 'Inter', sans-serif;
+            position: absolute; /* Posisikan di luar layar */
+            left: -9999px;
+            top: 0;
+            z-index: -1; /* Pastikan tidak mengganggu elemen lain */
         }
     </style>
 </head>
@@ -192,12 +204,36 @@
              </div>
         </div>
         
-        <nav>...</nav>
+        <nav class="absolute bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-sm z-30">
+            </nav>
 
+    </div>
+
+    <div id="share-card-template" class="p-8 flex flex-col text-gray-800">
+        <div class="flex items-center mb-6">
+            <div id="template-icon" class="w-12 h-12 rounded-lg flex items-center justify-center mr-4">
+                </div>
+            <div>
+                <p id="template-user-name" class="font-bold text-lg">Your Name</p>
+                <p class="text-xs text-gray-500">New Achievement</p>
+            </div>
+        </div>
+        
+        <div class="flex-grow flex flex-col items-center justify-center text-center">
+            <h1 id="template-title" class="text-5xl font-black text-primary-gradient leading-none">Title</h1>
+            <p id="template-subtitle" class="mt-2 text-gray-600">Subtitle goes here</p>
+            
+            <div id="template-stats" class="mt-8 flex items-end gap-4">
+                </div>
+        </div>
+        
+        <div class="text-center mt-auto">
+            <p class="text-sm font-bold bg-primary-gradient text-white py-1 px-3 rounded-full inline-block">MyFitApp</p>
+            <p class="text-xs text-gray-400 mt-2">Track your progress and reach your goals</p>
+        </div>
     </div>
 
     <script src="progress.js"></script>
     <script src="main.js"></script> 
-
 </body>
 </html>
