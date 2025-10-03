@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>New Journal Entry</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .bg-primary-gradient { background-image: linear-gradient(to right, #ec4899, #d946ef); }
+    .glass-card { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.25); }
+
+    /* --- Editor placeholder --- */
+    [contenteditable][data-placeholder]:empty:before {
+      content: attr(data-placeholder);
+      color: #9ca3af; /* gray-400 */
+      cursor: text;
+      pointer-events: none;
+    }
+
+    /* --- (legacy) formatting state --- */
+    .formatting-toolbar button.active {
+      background-color: #fce7f3; /* pink-100 */
+      color: #be185d;           /* pink-700 */
+    }
+
+    /* --- Calendar Styles --- */
+    #calendar-modal {
+      background-color: rgba(255, 245, 250, 0.85);
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      padding: 1.5rem;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    }
+    .flatpickr-calendar { background: transparent; box-shadow: none; width: 100% !important; }
+    .flatpickr-months { display: flex; align-items: center; margin-bottom: 1.5rem; }
+    .flatpickr-month { flex-grow: 1; text-align: center; }
+    .flatpickr-current-month { font-size: 1.125rem; font-weight: 700; color: #1f2937; }
+    .flatpickr-prev-month, .flatpickr-next-month {
+      width: 2.25rem; height: 2.25rem; border-radius: 9999px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background-color 0.2s;
+    }
+    .flatpickr-prev-month:hover, .flatpickr-next-month:hover {
+      background-color: rgba(252, 231, 243, 0.7);
+    }
+    span.flatpickr-weekday { color: #9ca3af; font-weight: 500; font-size: 0.75rem; }
+    .flatpickr-day {
+      color: #374151; border: none; width: 38px; height: 38px; line-height: 38px;
+      border-radius: 50%; font-weight: 500; transition: all 0.2s; position: relative;
+    }
+    .flatpickr-day:hover { background: rgba(252, 231, 243, 0.7); color: #be185d; }
+    .flatpickr-day.today { border: 2px solid #ec4899; color: #ec4899; }
+    .flatpickr-day.selected {
+      background: linear-gradient(to right, #ec4899, #d946ef); color: white; border: none;
+      box-shadow: 0 4px 15px -2px rgba(236, 72, 153, 0.4);
+    }
+    .journal-dot-marker {
+      width: 5px; height: 5px; border-radius: 50%; background-color: #ec4899;
+      position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%);
+    }
+
+    /* --- Panel Styles (Premium Version) – keep for future use --- */
+    .panel-section { padding-top: 10px; margin-top: 10px; border-top: 1px solid #f3f4f6; }
+    .panel-section:first-child { padding-top: 0; margin-top: 0; border-top: none; }
+    .panel-label {
+      font-size: 10px; font-weight: 500; color: #9ca3af;
+      text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;
+      padding-left: 2px; display: block;
+    }
+    .panel-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .panel-button {
+      display: flex; align-items: center; justify-content: center;
+      height: 34px; padding: 0 12px; border-radius: 8px; font-size: 13px; font-weight: 500;
+      background-color: transparent; border: 1px solid #e5e7eb; color: #374151;
+      transition: all 0.1s ease-in-out; cursor: pointer;
+    }
+    .panel-button:hover { background-color: #f9fafb; border-color: #d1d5db; }
+    .panel-button:active { transform: scale(0.97); background-color: #f3f4f6; }
+    .panel-button.icon-only { padding: 0; width: 34px; }
+    .panel-button svg { width: 18px; height: 18px; }
+    .panel-button .icon-text { margin-left: 6px; }
+    .panel-divider { width: 1px; height: 20px; background-color: #e5e7eb; margin: 0 4px; }
+    .panel-row.vertical { flex-direction: column; align-items: stretch; }
+    .panel-row.vertical .panel-button { justify-content: flex-start; }
+    #sidepanel .field {
+      height: 34px; border: 1px solid #d1d5db; border-radius: 8px; padding: 0 .75rem;
+      font-size: 13px; background-color: white; transition: all 0.15s ease-in-out;
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    }
+    #sidepanel .field:focus { border-color: #d946ef; box-shadow: 0 0 0 1px #d946ef; outline: none; }
+
+    .stepper-control { display: flex; }
+    .stepper-control .panel-button { border-radius: 0; box-shadow: none; }
+    .stepper-control .panel-button:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
+    .stepper-control .field {
+      border-radius: 0; text-align: center; position: relative; z-index: 1; margin-left: -1px; margin-right: -1px;
+    }
+    .stepper-control .panel-button:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+
+    .color-picker-wrapper {
+      display: flex; align-items: center; padding: 4px 10px 4px 6px;
+      border-radius: 8px; border: 1px solid #e5e7eb; background-color: transparent;
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    }
+    .color-picker-wrapper:hover { background-color: #f9fafb; }
+    .color-picker-wrapper .panel-label { margin-bottom: 0; margin-right: 6px; padding-left: 4px; }
+    .color-picker-wrapper input[type="color"] {
+      width: 20px; height: 20px; border: none; background: none; padding: 0;
+      border-radius: 4px; overflow: hidden; cursor: pointer;
+    }
+    input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+    input[type="color"]::-webkit-color-swatch { border: 1px solid #d1d5db; border-radius: 4px; }
+
+    /* Optional: lock UI state when prompts/palettes open (used by JS) */
+    .ui-locked * { cursor: default !important; }
+    /* ===== Journal Title tweaks ===== */
+/* Geser judul sedikit ke bawah (tetap) */
+#journal-title-input { 
+  margin-top: 15px;
+  
+  color: #111827;              /* teks saat ngetik: gray-900 */
+  font-weight: 700;            /* tebal tapi nggak lebay */
+}
+
+/* Placeholder JUDUL: hitam lembut */
+#journal-title-input::placeholder {
+  color: #111827;              /* gray-900 */
+  opacity: 0.35;               /* biar kelihatan placeholder */
+  font-weight: 700;
+}
+
+/* Placeholder BODY: abu netral */
+#journal-body-editor[data-placeholder]:empty:before {
+  color: #6b7280;              /* gray-500 */
+  
+  opacity: 0.8;
+}
+/* Konsisten: pakai padding-left, bukan margin-left */
+#journal-title-input{
+  padding-left: 12px;   /* ganti 12px sesuai selera */
+  margin-left: 0;
+}
+
+#journal-body-editor{
+  margin-top:20px;
+  padding-left: 12px;   /* caret & teks mulai di titik yang sama */
+  margin-left: 0;
+}
+
+/* Placeholder ikut align otomatis (tanpa padding tambahan) */
+#journal-body-editor[data-placeholder]:empty:before{
+  padding-left: 0;
+  margin-left: 0;
+  color: #6b7280;  /* abu netral */
+  opacity: .8;
+}
+
+
+
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen p-4">
+
+  <div id="app-container" class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden relative h-[800px]">
+    <div class="relative flex flex-col h-full bg-gray-50">
+      <!-- decorative gradients -->
+      <div class="absolute top-0 -left-16 w-72 h-72 bg-pink-300 rounded-full opacity-30 filter blur-3xl"></div>
+      <div class="absolute bottom-0 -right-16 w-72 h-72 bg-purple-300 rounded-full opacity-30 filter blur-3xl"></div>
+
+      <div class="relative z-10 flex flex-col flex-grow">
+        <!-- HEADER: back + date heading (NO "Journal" title, NO pink divider) -->
+        <header class="flex-shrink-0 p-6 pt-8">
+  <div class="relative h-10">
+    <!-- Back (tetap kiri) -->
+    <button id="back-btn"
+      class="absolute left-0 top-1/2 -translate-y-1/2 p-2 text-gray-500 hover:text-pink-500 rounded-full hover:bg-pink-50 transition-colors">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
+
+    <!-- Date (BENAR2 center) -->
+    <button id="date-picker-btn"
+      class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-left hover:opacity-90 transition">
+      <h1 class="text-2xl font-extrabold tracking-tight text-gray-900">
+        <span id="date-picker-display"></span>
+      </h1>
+    </button>
+  </div>
+</header>
+
+
+        <!-- CONTENT (rendered by JS: title + editor, no divider line) -->
+        <main id="journal-content" class="flex-grow flex flex-col overflow-y-auto px-6 pb-40"></main>
+
+        <!-- FOOTER: Save button -->
+        <footer id="journal-footer" class="absolute bottom-0 left-0 right-0 p-6 bg-gray-50/30 backdrop-blur-sm"></footer>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendar modal -->
+  <div id="calendar-modal-overlay" class="hidden absolute inset-0 z-40 bg-white/20 backdrop-blur-sm flex items-center justify-center p-6 transition-opacity duration-300">
+    <div id="calendar-modal" class="rounded-2xl shadow-xl w-full max-w-sm">
+      <div id="calendar-container"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="journal.js"></script>
+</body>
+</html>

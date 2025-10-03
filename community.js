@@ -2,11 +2,23 @@
 // Fungsi: Mengontrol tab, menampilkan post, dan menangani penyimpanan makanan dengan feedback yang jelas.
 
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Elemen Tab & Feed ---
+    const tabExplore = document.getElementById('tab-explore');
+    const tabFriends = document.getElementById('tab-friends');
+    const tabTransformations = document.getElementById('tab-transformations');
+
     const feedExploreContainer = document.getElementById('feed-explore');
     const feedFriendsContainer = document.getElementById('feed-friends');
-    if (!feedFriendsContainer) return;
+    const feedTransformationsContainer = document.getElementById('feed-transformations');
 
-    // --- FUNGSI BARU: Menampilkan notifikasi "Toast" ---
+    // Kumpulan semua tab dan feed untuk mempermudah logika
+    const TABS = {
+        explore: { button: tabExplore, feed: feedExploreContainer },
+        friends: { button: tabFriends, feed: feedFriendsContainer },
+        transformations: { button: tabTransformations, feed: feedTransformationsContainer }
+    };
+
+    // --- FUNGSI: Menampilkan notifikasi "Toast" ---
     const showToast = (message) => {
         const container = document.getElementById('toast-container');
         if (!container) return;
@@ -23,20 +35,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     };
     
-    // --- Logika Tab (Tidak Berubah) ---
-    const tabExplore = document.getElementById('tab-explore');
-    const tabFriends = document.getElementById('tab-friends');
-    const setActiveTab = (activeTab, inactiveTab, activeFeed, inactiveFeed) => {
-        activeTab.classList.add('border-pink-500', 'text-pink-500');
-        inactiveTab.classList.remove('border-pink-500', 'text-pink-500');
-        inactiveTab.classList.add('text-gray-400', 'border-transparent');
-        activeFeed.classList.remove('hidden');
-        inactiveFeed.classList.add('hidden');
+    // --- Logika Tab (Dibuat fleksibel untuk menangani banyak tab) ---
+    const setActiveTab = (activeKey) => {
+        // Loop melalui semua tab yang ada di objek TABS
+        Object.keys(TABS).forEach(key => {
+            const tab = TABS[key];
+            
+            // Periksa apakah elemen tombol dan feed ada sebelum memanipulasinya
+            if (!tab.button || !tab.feed) {
+                console.error(`Elemen untuk tab '${key}' tidak ditemukan.`);
+                return;
+            }
+
+            if (key === activeKey) {
+                // Aktifkan tab yang dipilih
+                tab.button.classList.add('border-pink-500', 'text-pink-500');
+                tab.button.classList.remove('text-gray-400', 'border-transparent');
+                tab.feed.classList.remove('hidden');
+            } else {
+                // Non-aktifkan tab lainnya
+                tab.button.classList.remove('border-pink-500', 'text-pink-500');
+                tab.button.classList.add('text-gray-400', 'border-transparent');
+                tab.feed.classList.add('hidden');
+            }
+        });
     };
-    tabExplore.addEventListener('click', () => setActiveTab(tabExplore, tabFriends, feedExploreContainer, feedFriendsContainer));
-    tabFriends.addEventListener('click', () => setActiveTab(tabFriends, tabExplore, feedFriendsContainer, feedExploreContainer));
+
+    // Tambahkan event listener untuk setiap tombol tab
+    if (tabExplore) {
+        tabExplore.addEventListener('click', () => setActiveTab('explore'));
+    }
+    if (tabFriends) {
+        tabFriends.addEventListener('click', () => setActiveTab('friends'));
+    }
+    if (tabTransformations) {
+        tabTransformations.addEventListener('click', () => setActiveTab('transformations'));
+    }
     
-    // --- Fungsi Pembuatan Elemen Post (Tombol Diperbarui) ---
+    // --- Fungsi Pembuatan Elemen Post ---
     const createPostElement = (post) => {
         const postElement = document.createElement('div');
         postElement.className = 'glass-card rounded-xl p-4';
@@ -51,7 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="text-sm text-gray-600">${post.food.calories} Calories, ${post.food.serving}</p>
             </div>` : '';
 
-        // Tombol "Add Food" HANYA untuk post tipe 'meal'
         const saveButtonHTML = (post.postType === 'meal' && post.food) ? `
             <button class="save-food-btn flex items-center ml-auto px-3 py-1.5 text-xs font-semibold text-gray-600 bg-gray-100/80 rounded-full border border-gray-200 hover:border-pink-300 hover:bg-pink-50 hover:text-pink-600 transition-colors">
                 <svg class="w-4 h-4 -ml-1 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path></svg>
@@ -74,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return postElement;
     };
     
-    // --- Fungsi Handler (Memanggil Toast Baru) ---
+    // --- Fungsi Handler untuk tombol "Add Food" ---
     const handleSaveFoodClick = (event) => {
         const saveButton = event.target.closest('.save-food-btn');
         if (!saveButton) return;
@@ -103,20 +138,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- Event Listener Utama ---
-    feedExploreContainer.addEventListener('click', handleSaveFoodClick);
-    feedFriendsContainer.addEventListener('click', handleSaveFoodClick);
+    // --- Event Listener Utama untuk tombol "Add Food" ---
+    if (feedExploreContainer) {
+        feedExploreContainer.addEventListener('click', handleSaveFoodClick);
+    }
+    if (feedFriendsContainer) {
+        feedFriendsContainer.addEventListener('click', handleSaveFoodClick);
+    }
 
-    // --- Logika Menampilkan Post Baru ---
+    // --- Logika Menampilkan Post Baru setelah dibuat ---
     const newPostJSON = sessionStorage.getItem('newPost');
     const urlParams = new URLSearchParams(window.location.search);
     if (newPostJSON) {
-        setActiveTab(tabFriends, tabExplore, feedFriendsContainer, feedExploreContainer);
+        setActiveTab('friends');
         const post = JSON.parse(newPostJSON);
         const postElement = createPostElement(post);
-        feedFriendsContainer.prepend(postElement);
+        if (feedFriendsContainer) {
+            feedFriendsContainer.prepend(postElement);
+        }
         sessionStorage.removeItem('newPost');
     } else if (urlParams.get('tab') === 'friends') {
-        setActiveTab(tabFriends, tabExplore, feedFriendsContainer, feedExploreContainer);
+        setActiveTab('friends');
+    } else {
+        // Default tab saat halaman pertama kali dibuka
+        setActiveTab('explore');
     }
 });

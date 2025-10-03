@@ -19,7 +19,6 @@
         .bg-primary-gradient {
             background-image: linear-gradient(to right, #ec4899, #d946ef);
         }
-        /* Style untuk Notifikasi Toast tetap ada untuk post dinamis nanti */
         .toast-notification {
             background: rgba(26, 26, 26, 0.9);
             color: white;
@@ -39,6 +38,20 @@
         @keyframes fadeOut {
             from { opacity: 1; }
             to { opacity: 0; }
+        }
+        /* Style untuk placeholder gambar dummy */
+        .dummy-image-placeholder {
+            background-color: #e0e0e0; /* Warna abu-abu terang */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #757575; /* Warna teks abu-abu gelap */
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-align: center;
+            border-radius: 0.5rem; /* rounded-lg */
+            height: 150px; /* Tinggi default, bisa disesuaikan */
+            width: 100%;
         }
     </style>
 </head>
@@ -68,6 +81,9 @@
                     <button id="tab-friends" class="flex-1 text-center font-semibold py-3 border-b-2 border-transparent text-gray-400 hover:text-pink-500 transition-colors duration-300">
                         Friends
                     </button>
+                    <button id="tab-transformations" class="flex-1 text-center font-semibold py-3 border-b-2 border-transparent text-gray-400 hover:text-pink-500 transition-colors duration-300">
+                        Transformations
+                    </button>
                 </div>
 
                 <div class="flex-grow overflow-y-auto -mr-2 pr-2 pb-28">
@@ -83,11 +99,10 @@
                             <p class="mb-3 text-gray-800">Starting the day right with oatmeal, berries, and a sprinkle of chia seeds! 🥣</p>
                             <img src="https://images.unsplash.com/photo-1585238342024-78d387f4a707?w=500&q=80" alt="Breakfast meal" class="rounded-lg w-full mb-3">
                              <div class="flex items-center text-gray-500 mt-4">
-                                <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"></path></svg><span class="text-sm">18</span></button>
-                                <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors ml-4"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.158 2.098.286 3.15 0.405a21.23 21.23 0 01-2.672 3.11a.75.75 0 00.058 1.141 22.536 22.536 0 005.102-2.192.53.53 0 00.27-0.215c.012-.02.023-.04.033-.06a21.23 21.23 0 012.894 0c.01.02.021.04.033.06.096.106.18.204.27.215a22.536 22.536 0 005.102 2.192.75.75 0 00.058-1.141 21.23 21.23 0 01-2.672-3.11c1.052-.119 2.082-.247 3.15-.405 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.344 48.344 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"></path></svg><span class="text-sm">3</span></button>
-                            </div>
+                                 <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"></path></svg><span class="text-sm">18</span></button>
+                                 <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors ml-4"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.158 2.098.286 3.15 0.405a21.23 21.23 0 01-2.672 3.11a.75.75 0 00.058 1.141 22.536 22.536 0 005.102-2.192.53.53 0 00.27-0.215c.012-.02.023-.04.033-.06a21.23 21.23 0 012.894 0c.01.02.021.04.033.06.096.106.18.204.27.215a22.536 22.536 0 005.102 2.192.75.75 0 00.058-1.141 21.23 21.23 0 01-2.672-3.11c1.052-.119 2.082-.247 3.15-.405 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.344 48.344 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"></path></svg><span class="text-sm">3</span></button>
+                             </div>
                         </div>
-
                         <div class="glass-card rounded-xl p-4">
                             <div class="flex items-center mb-3">
                                 <img src="https://i.pravatar.cc/150?u=johnsmith" alt="Avatar" class="w-10 h-10 rounded-full mr-3 border-2 border-white">
@@ -127,7 +142,6 @@
                                 <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors ml-4"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.158 2.098.286 3.15 0.405a21.23 21.23 0 01-2.672 3.11a.75.75 0 00.058 1.141 22.536 22.536 0 005.102-2.192.53.53 0 00.27-0.215c.012-.02.023-.04.033-.06a21.23 21.23 0 012.894 0c.01.02.021.04.033.06.096.106.18.204.27.215a22.536 22.536 0 005.102 2.192.75.75 0 00.058-1.141 21.23 21.23 0 01-2.672-3.11c1.052-.119 2.082-.247 3.15-.405 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.344 48.344 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"></path></svg><span class="text-sm">1</span></button>
                             </div>
                         </div>
-
                         <div class="glass-card rounded-xl p-4">
                             <div class="flex items-center mb-3">
                                 <img src="https://i.pravatar.cc/150?u=siti" alt="Avatar" class="w-10 h-10 rounded-full mr-3 border-2 border-white">
@@ -139,11 +153,10 @@
                             <p class="mb-3 text-gray-800">Taco Tuesday! Loaded with fresh ingredients. So colorful and delicious. 🌮</p>
                             <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&q=80" alt="Tacos" class="rounded-lg w-full mb-3">
                              <div class="flex items-center text-gray-500 mt-4">
-                                <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"></path></svg><span class="text-sm">25</span></button>
-                                <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors ml-4"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.158 2.098.286 3.15 0.405a21.23 21.23 0 01-2.672 3.11a.75.75 0 00.058 1.141 22.536 22.536 0 005.102-2.192.53.53 0 00.27-0.215c.012-.02.023-.04.033-.06a21.23 21.23 0 012.894 0c.01.02.021.04.033.06.096.106.18.204.27.215a22.536 22.536 0 005.102 2.192.75.75 0 00.058-1.141 21.23 21.23 0 01-2.672-3.11c1.052-.119 2.082-.247 3.15-.405 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.344 48.344 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"></path></svg><span class="text-sm">6</span></button>
-                            </div>
+                                 <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"></path></svg><span class="text-sm">25</span></button>
+                                 <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors ml-4"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.158 2.098.286 3.15 0.405a21.23 21.23 0 01-2.672 3.11a.75.75 0 00.058 1.141 22.536 22.536 0 005.102-2.192.53.53 0 00.27-0.215c.012-.02.023-.04.033-.06a21.23 21.23 0 012.894 0c.01.02.021.04.033.06.096.106.18.204.27.215a22.536 22.536 0 005.102 2.192.75.75 0 00.058-1.141 21.23 21.23 0 01-2.672-3.11c1.052-.119 2.082-.247 3.15-.405 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.344 48.344 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"></path></svg><span class="text-sm">6</span></button>
+                             </div>
                         </div>
-
                         <div class="glass-card rounded-xl p-4">
                             <div class="flex items-center mb-3">
                                 <img src="https://i.pravatar.cc/150?u=doni" alt="Avatar" class="w-10 h-10 rounded-full mr-3 border-2 border-white">
@@ -155,11 +168,134 @@
                             <p class="mb-3 text-gray-800">Pancakes for a weekend treat! Drizzled with a little bit of honey. 🥞</p>
                             <img src="https://images.unsplash.com/photo-1528207776546-365bb710ee93?w=500&q=80" alt="Pancakes" class="rounded-lg w-full mb-3">
                              <div class="flex items-center text-gray-500 mt-4">
-                                <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"></path></svg><span class="text-sm">50</span></button>
-                                <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors ml-4"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.158 2.098.286 3.15 0.405a21.23 21.23 0 01-2.672 3.11a.75.75 0 00.058 1.141 22.536 22.536 0 005.102-2.192.53.53 0 00.27-0.215c.012-.02.023-.04.033-.06a21.23 21.23 0 012.894 0c.01.02.021.04.033.06.096.106.18.204.27.215a22.536 22.536 0 005.102 2.192.75.75 0 00.058-1.141 21.23 21.23 0 01-2.672-3.11c1.052-.119 2.082-.247 3.15-.405 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.344 48.344 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"></path></svg><span class="text-sm">9</span></button>
-                            </div>
+                                 <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"></path></svg><span class="text-sm">50</span></button>
+                                 <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors ml-4"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.158 2.098.286 3.15 0.405a21.23 21.23 0 01-2.672 3.11a.75.75 0 00.058 1.141 22.536 22.536 0 005.102-2.192.53.53 0 00.27-0.215c.012-.02.023-.04.033-.06a21.23 21.23 0 012.894 0c.01.02.021.04.033.06.096.106.18.204.27.215a22.536 22.536 0 005.102 2.192.75.75 0 00.058-1.141 21.23 21.23 0 01-2.672-3.11c1.052-.119 2.082-.247 3.15-.405 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.344 48.344 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"></path></svg><span class="text-sm">9</span></button>
+                             </div>
                         </div>
                     </div>
+
+                    <div id="feed-transformations" class="hidden space-y-5">
+    <div class="glass-card rounded-xl p-4">
+        <div class="flex items-center mb-3">
+            <img src="https://i.pravatar.cc/150?u=transform1" alt="Avatar" class="w-10 h-10 rounded-full mr-3 border-2 border-white">
+            <div>
+                <p class="font-bold text-gray-800">Mike Anderson</p>
+                <p class="text-xs text-gray-500">3 months progress</p>
+            </div>
+        </div>
+        <p class="mb-3 text-gray-800">Consistency is key! Down 15kg in 3 months by staying disciplined with my diet and workout. Feeling better than ever! 💪</p>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+            <div>
+                <div class="dummy-image-placeholder">BEFORE</div>
+                <p class="text-center text-xs font-semibold text-gray-500 mt-1">JANUARY</p>
+            </div>
+            <div>
+                <div class="dummy-image-placeholder">AFTER</div>
+                <p class="text-center text-xs font-semibold text-gray-500 mt-1">MARCH</p>
+            </div>
+        </div>
+        <div class="flex items-center text-gray-500 mt-4">
+            <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"></path></svg><span class="text-sm">128</span></button>
+            <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors ml-4"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.158 2.098.286 3.15 0.405a21.23 21.23 0 01-2.672 3.11a.75.75 0 00.058 1.141 22.536 22.536 0 005.102-2.192.53.53 0 00.27-0.215c.012-.02.023-.04.033-.06a21.23 21.23 0 012.894 0c.01.02.021.04.033.06.096.106.18.204.27.215a22.536 22.536 0 005.102 2.192.75.75 0 00.058-1.141 21.23 21.23 0 01-2.672-3.11c1.052-.119 2.082-.247 3.15-.405 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.344 48.344 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"></path></svg><span class="text-sm">15</span></button>
+        </div>
+    </div>
+    <div class="glass-card rounded-xl p-4">
+        <div class="flex items-center mb-3">
+            <img src="https://i.pravatar.cc/150?u=transform2" alt="Avatar" class="w-10 h-10 rounded-full mr-3 border-2 border-white">
+            <div>
+                <p class="font-bold text-gray-800">Sarah Johnson</p>
+                <p class="text-xs text-gray-500">6 months journey</p>
+            </div>
+        </div>
+        <p class="mb-3 text-gray-800">Never thought I could do it, but here I am! 20kg lighter and full of energy. Believe in yourself! ✨</p>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+            <div>
+                <div class="dummy-image-placeholder">BEFORE</div>
+                <p class="text-center text-xs font-semibold text-gray-500 mt-1">FEBRUARY</p>
+            </div>
+            <div>
+                <div class="dummy-image-placeholder">AFTER</div>
+                <p class="text-center text-xs font-semibold text-gray-500 mt-1">AUGUST</p>
+            </div>
+        </div>
+        <div class="flex items-center text-gray-500 mt-4">
+             <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"></path></svg><span class="text-sm">210</span></button>
+             <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors ml-4"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.158 2.098.286 3.15 0.405a21.23 21.23 0 01-2.672 3.11a.75.75 0 00.058 1.141 22.536 22.536 0 005.102-2.192.53.53 0 00.27-0.215c.012-.02.023-.04.033-.06a21.23 21.23 0 012.894 0c.01.02.021.04.033.06.096.106.18.204.27.215a22.536 22.536 0 005.102 2.192.75.75 0 00.058-1.141 21.23 21.23 0 01-2.672-3.11c1.052-.119 2.082-.247 3.15-.405 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.344 48.344 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"></path></svg><span class="text-sm">28</span></button>
+        </div>
+    </div>
+    <div class="glass-card rounded-xl p-4">
+        <div class="flex items-center mb-3">
+            <img src="https://i.pravatar.cc/150?u=transform3" alt="Avatar" class="w-10 h-10 rounded-full mr-3 border-2 border-white">
+            <div>
+                <p class="font-bold text-gray-800">David Chen</p>
+                <p class="text-xs text-gray-500">1 year transformation</p>
+            </div>
+        </div>
+        <p class="mb-3 text-gray-800">It's a marathon, not a sprint. This took a whole year of dedication. So proud of how far I've come. Don't give up on your goals! 🏋️‍♂️</p>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+            <div>
+                <div class="dummy-image-placeholder">BEFORE</div>
+                <p class="text-center text-xs font-semibold text-gray-500 mt-1">LAST YEAR</p>
+            </div>
+            <div>
+                <div class="dummy-image-placeholder">AFTER</div>
+                <p class="text-center text-xs font-semibold text-gray-500 mt-1">THIS YEAR</p>
+            </div>
+        </div>
+        <div class="flex items-center text-gray-500 mt-4">
+             <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"></path></svg><span class="text-sm">451</span></button>
+             <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors ml-4"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.158 2.098.286 3.15 0.405a21.23 21.23 0 01-2.672 3.11a.75.75 0 00.058 1.141 22.536 22.536 0 005.102-2.192.53.53 0 00.27-0.215c.012-.02.023-.04.033-.06a21.23 21.23 0 012.894 0c.01.02.021.04.033.06.096.106.18.204.27.215a22.536 22.536 0 005.102 2.192.75.75 0 00.058-1.141 21.23 21.23 0 01-2.672-3.11c1.052-.119 2.082-.247 3.15-.405 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.344 48.344 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"></path></svg><span class="text-sm">52</span></button>
+        </div>
+    </div>
+    <div class="glass-card rounded-xl p-4">
+        <div class="flex items-center mb-3">
+            <img src="https://i.pravatar.cc/150?u=transform4" alt="Avatar" class="w-10 h-10 rounded-full mr-3 border-2 border-white">
+            <div>
+                <p class="font-bold text-gray-800">Emily Carter</p>
+                <p class="text-xs text-gray-500">Post-partum progress</p>
+            </div>
+        </div>
+        <p class="mb-3 text-gray-800">Getting my strength back one day at a time. It's not easy, but every small step counts. Shoutout to all the moms on their fitness journey! ❤️</p>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+            <div>
+                <div class="dummy-image-placeholder">BEFORE</div>
+                <p class="text-center text-xs font-semibold text-gray-500 mt-1">APRIL</p>
+            </div>
+            <div>
+                <div class="dummy-image-placeholder">AFTER</div>
+                <p class="text-center text-xs font-semibold text-gray-500 mt-1">SEPTEMBER</p>
+            </div>
+        </div>
+        <div class="flex items-center text-gray-500 mt-4">
+             <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"></path></svg><span class="text-sm">302</span></button>
+             <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors ml-4"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.158 2.098.286 3.15 0.405a21.23 21.23 0 01-2.672 3.11a.75.75 0 00.058 1.141 22.536 22.536 0 005.102-2.192.53.53 0 00.27-0.215c.012-.02.023-.04.033-.06a21.23 21.23 0 012.894 0c.01.02.021.04.033.06.096.106.18.204.27.215a22.536 22.536 0 005.102 2.192.75.75 0 00.058-1.141 21.23 21.23 0 01-2.672-3.11c1.052-.119 2.082-.247 3.15-.405 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.344 48.344 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"></path></svg><span class="text-sm">41</span></button>
+        </div>
+    </div>
+    <div class="glass-card rounded-xl p-4">
+        <div class="flex items-center mb-3">
+            <img src="https://i.pravatar.cc/150?u=transform5" alt="Avatar" class="w-10 h-10 rounded-full mr-3 border-2 border-white">
+            <div>
+                <p class="font-bold text-gray-800">Ben Stewart</p>
+                <p class="text-xs text-gray-500">Gaining muscle</p>
+            </div>
+        </div>
+        <p class="mb-3 text-gray-800">From skinny to strong. Focused on a calorie surplus and heavy lifting. The journey continues!</p>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+            <div>
+                <div class="dummy-image-placeholder">BEFORE</div>
+                <p class="text-center text-xs font-semibold text-gray-500 mt-1">65 KG</p>
+            </div>
+            <div>
+                <div class="dummy-image-placeholder">AFTER</div>
+                <p class="text-center text-xs font-semibold text-gray-500 mt-1">78 KG</p>
+            </div>
+        </div>
+        <div class="flex items-center text-gray-500 mt-4">
+             <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"></path></svg><span class="text-sm">189</span></button>
+             <button class="flex items-center space-x-1 hover:text-pink-500 transition-colors ml-4"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.158 2.098.286 3.15 0.405a21.23 21.23 0 01-2.672 3.11a.75.75 0 00.058 1.141 22.536 22.536 0 005.102-2.192.53.53 0 00.27-0.215c.012-.02.023-.04.033-.06a21.23 21.23 0 012.894 0c.01.02.021.04.033.06.096.106.18.204.27.215a22.536 22.536 0 005.102 2.192.75.75 0 00.058-1.141 21.23 21.23 0 01-2.672-3.11c1.052-.119 2.082-.247 3.15-.405 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.344 48.344 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"></path></svg><span class="text-sm">33</span></button>
+        </div>
+    </div>
+</div>
                 </div>
             </div>
         </div>
@@ -175,9 +311,9 @@
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                 <span>Progress</span>
             </a>
-            <a href="share-food.html" class="emblem-item">
+            <a href="journal-parent.html" class="emblem-item">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                <span>Create Post</span>
+                <span>Journal</span>
             </a>
              <a href="workout.html" class="emblem-item">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">

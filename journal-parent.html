@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Journal Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .bg-primary-gradient { background-image: linear-gradient(to right, #ec4899, #d946ef); }
+    .stat-card {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+    /* dekorasi halus */
+    .soft-grad::before,
+    .soft-grad::after{
+      content:"";
+      position:absolute;
+      border-radius:9999px;
+      filter: blur(60px);
+      opacity:.25;
+      pointer-events:none;
+    }
+    .soft-grad::before{
+      top:-60px; left:-80px; width:280px; height:280px; background:#f9a8d4; /* pink-300 */
+    }
+    .soft-grad::after{
+      bottom:-60px; right:-80px; width:280px; height:280px; background:#d8b4fe; /* purple-300 */
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen p-4">
+
+  <div id="app-container" class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden relative h-[800px]">
+    <div class="relative flex flex-col h-full bg-gray-50 soft-grad">
+
+      <!-- HEADER -->
+      <header class="flex-shrink-0 px-6 pt-8 pb-4">
+        <div class="relative h-10">
+          <!-- Back (fixed at left) -->
+          <button id="back-btn"
+                  class="absolute left-0 top-1/2 -translate-y-1/2 p-2 text-gray-600 hover:text-pink-600 rounded-full hover:bg-pink-50 transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </button>
+
+          <!-- Title (centered) -->
+          <h1 class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 text-3xl font-bold text-gray-900">
+            My Journal
+          </h1>
+        </div>
+        <p class="text-center text-gray-500 mt-1">Your personal space for reflection</p>
+      </header>
+
+      <!-- MAIN -->
+      <main class="flex-grow flex flex-col justify-center px-6">
+        <div id="stats-container" class="grid grid-cols-3 gap-3 text-center">
+          <div class="stat-card p-4 rounded-xl flex flex-col justify-center">
+            <h2 id="streak-stat" class="text-3xl font-bold bg-clip-text text-transparent bg-primary-gradient">0</h2>
+            <p class="text-xs text-gray-600 font-medium mt-1 leading-tight">Longest Writing Streak</p>
+          </div>
+          <div class="stat-card p-4 rounded-xl flex flex-col justify-center">
+            <h2 id="words-stat" class="text-3xl font-bold text-pink-600">0</h2>
+            <p class="text-xs text-gray-600 font-medium mt-1 leading-tight">Total Words Written</p>
+          </div>
+          <div class="stat-card p-4 rounded-xl flex flex-col justify-center">
+            <h2 id="journals-year-stat" class="text-3xl font-bold text-purple-600">0</h2>
+            <p class="text-xs text-gray-600 font-medium mt-1 leading-tight">Entries in 2025</p>
+          </div>
+        </div>
+
+        <div id="empty-state-prompt" class="text-center my-auto">
+          <p class="text-gray-500 text-lg">Ready to begin your journey?</p>
+          <p class="text-gray-400 text-sm mt-1">Write your first journal and capture today's moments.</p>
+        </div>
+      </main>
+
+      <!-- FOOTER -->
+      <footer class="flex-shrink-0 px-6 pb-6">
+        <a id="new-journal-btn"
+           href="journal.html"
+           class="block w-full text-center bg-primary-gradient text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition">
+          Start Your First Journal
+        </a>
+      </footer>
+    </div>
+  </div>
+
+  <!-- scripts -->
+  <script src="journal-parent.js"></script>
+  <script>
+    // minimal safeguard: handle back if belum ditangani di journal-parent.js
+    (function(){
+      const btn = document.getElementById('back-btn');
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        if (history.length > 1) history.back();
+        else window.location.href = 'index.html';
+      });
+    })();
+  </script>
+</body>
+</html>
