@@ -47,14 +47,18 @@ function calculateTDEE(bmr, activity) {
 }
 
 function calculateTargetCalories(tdee, goal, pace) {
-    if (goal === 'fat_loss') {
-        return tdee - (pace * 7000 / 7);
-    } else if (goal === 'muscle_gain') {
-        return tdee + (pace * 3500 / 7);
-    }
-    return tdee;
+    // Karena goal pasti fat_loss, hanya formula ini yang dibutuhkan
+    // Jika pace null (misal maintain weight), pace * 0 = 0, jadi tetap aman.
+    const weeklyDeficit = (pace || 0) * 7000;
+    const dailyDeficit = weeklyDeficit / 7;
+    return tdee - dailyDeficit;
 }
 
+// Tambahkan fungsi ini
+function startFatLossFlow() {
+    userData.goal = 'fat_loss'; // Otomatis set tujuan
+    showScreen(2);             // Langsung lompat ke screen 2 (About You)
+}
 
 // --- Core Navigation & UI Functions ---
 
@@ -76,12 +80,8 @@ function nextScreen() {
     const goal = userData.goal;
     let nextScreenNumber = currentScreenIndex + 1;
     if (currentScreenIndex === 3) {
-        if (goal === 'maintain_weight') {
-            nextScreenNumber = 6;
-        } else {
-            generatePaceScreen();
-            nextScreenNumber = 4;
-        }
+        generatePaceScreen();
+    nextScreenNumber = 4;
     } else if (currentScreenIndex === 4) {
         nextScreenNumber = 6;
     }
@@ -177,15 +177,9 @@ function generatePaceScreen() {
     const tdee = calculateTDEE(bmr, activity);
 
     let presets, title, unit;
-    if (goal === 'fat_loss') {
-        title = "Set Your Weekly Goal";
-        presets = [0.25, 0.5, 0.75];
-        unit = "kg/week";
-    } else {
-        title = "Set Your Weekly Goal";
-        presets = [0.2, 0.4, 0.6];
-        unit = "kg/week";
-    }
+    title = "Set Your Weekly Goal";
+presets = [0.25, 0.5, 0.75];
+unit = "kg/week";
 
     // [DIUBAH] Preset button kembali simpel, tanpa info kalori di dalamnya
     const presetButtons = presets.map(p => {

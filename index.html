@@ -39,12 +39,11 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        /* Cari style ini dan ganti dengan yang di bawah */
         .option-card.selected {
             border-color: #ec4899;
             box-shadow: 0 0 0 2px #ec4899;
-            transform: translateY(-2px); /* Tambahkan efek sedikit terangkat */
-            background: linear-gradient(to right, #fdf2f8, #fce7f3); /* Tambahkan gradien halus */
+            transform: translateY(-2px);
+            background: linear-gradient(to right, #fdf2f8, #fce7f3);
         }
     </style>
 </head>
@@ -73,25 +72,23 @@
                         <button onclick="showScreen(1)" class="w-full bg-primary-gradient text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:opacity-90 transition-opacity">Get Started</button>
                         <button onclick="window.location.href='diary.html'" class="w-full glass-card text-pink-500 font-bold py-3 px-4 rounded-xl hover:bg-white/50 transition-colors">Log In As User (Demo)</button>
                         <button onclick="window.location.href='./coach-stuff/coach-dashboard.html'" class="w-full glass-card text-pink-500 font-bold py-3 px-4 rounded-xl hover:bg-white/50 transition-colors">Log In As Coach (Demo) - mobile version</button>
-                         <button onclick="window.location.href='./coach-desktop/coach-dashboard-desktop.html'" class="w-full glass-card text-pink-500 font-bold py-3 px-4 rounded-xl hover:bg-white/50 transition-colors">Log In As Coach (Demo) - Desktop version</button>
+                          <button onclick="window.location.href='./coach-desktop/coach-dashboard-desktop.html'" class="w-full glass-card text-pink-500 font-bold py-3 px-4 rounded-xl hover:bg-white/50 transition-colors">Log In As Coach (Demo) - Desktop version</button>
                     </div>
                 </div>
 
-                <div id="screen-1" class="screen hidden">
-                    <h1 class="text-2xl font-bold text-center">Welcome!</h1>
-                    <p class="text-center text-gray-500 mb-8">To get started, what's your main goal?</p>
-                    <div class="space-y-4">
-                        <div onclick="selectOption('goal', 'fat_loss', this)" class="option-card glass-card p-5 rounded-xl cursor-pointer transition-all duration-300">
-                            <h3 class="font-semibold text-lg text-gray-800">Fat Loss</h3>
-                        </div>
-                        <div onclick="selectOption('goal', 'maintain_weight', this)" class="option-card glass-card p-5 rounded-xl cursor-pointer transition-all duration-300">
-                            <h3 class="font-semibold text-lg text-gray-800">Maintain Weight</h3>
-                        </div>
-                        <div onclick="selectOption('goal', 'muscle_gain', this)" class="option-card glass-card p-5 rounded-xl cursor-pointer transition-all duration-300">
-                            <h3 class="font-semibold text-lg text-gray-800">Muscle Gain</h3>
-                        </div>
+                <div id="screen-1" class="screen hidden flex flex-col items-center justify-between h-full p-8 text-center">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800">Ready to Transform?</h1>
+                        <p class="text-gray-500 mt-2">Let's build a healthier you, one step at a time.</p>
                     </div>
-                    <button onclick="nextScreen()" id="btn-screen-1" class="w-full bg-primary-gradient text-white font-bold py-3 px-4 rounded-lg mt-8 hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed" disabled>Continue</button>
+                    <div class="my-8">
+                        <img src="https://i.imgur.com/2s2F5zN.png" alt="Fitness illustration" class="max-w-xs mx-auto">
+                    </div>
+                    <div class="w-full">
+                        <button onclick="startFatLossFlow()" class="w-full bg-primary-gradient text-white font-bold py-4 px-4 rounded-xl shadow-lg hover:opacity-90 transition-opacity">
+                            Let's Go!
+                        </button>
+                    </div>
                 </div>
 
                 <div id="screen-2" class="screen hidden">
@@ -131,19 +128,19 @@
                 </div>
 
                 <div id="screen-3" class="screen hidden">
-                     <div class="relative flex items-center justify-center mb-2 h-8">
+                      <div class="relative flex items-center justify-center mb-2 h-8">
                         <button onclick="prevScreen()" class="absolute left-0 text-gray-500 hover:text-gray-900 p-1 rounded-full hover:bg-white/50 transition-colors">
-                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                         </button>
                         <h1 class="text-2xl font-bold">Your Lifestyle</h1>
-                    </div>
+                      </div>
                     <p class="text-center text-gray-500 mb-8">How active are you? Be honest!</p>
                     <div class="space-y-3">
                         <div onclick="selectOption('activity', 'sedentary', this)" class="option-card glass-card p-4 rounded-xl cursor-pointer"><h3 class="font-semibold">Sedentary</h3><p class="text-sm text-gray-500">Office job, little exercise</p></div>
                         <div onclick="selectOption('activity', 'lightly_active', this)" class="option-card glass-card p-4 rounded-xl cursor-pointer"><h3 class="font-semibold">Lightly Active</h3><p class="text-sm text-gray-500">Light exercise 1-3 days/week</p></div>
                         <div onclick="selectOption('activity', 'moderately_active', this)" class="option-card glass-card p-4 rounded-xl cursor-pointer"><h3 class="font-semibold">Moderately Active</h3><p class="text-sm text-gray-500">Moderate exercise 3-5 days/week</p></div>
-                         <div onclick="selectOption('activity', 'very_active', this)" class="option-card glass-card p-4 rounded-xl cursor-pointer"><h3 class="font-semibold">Very Active</h3><p class="text-sm text-gray-500">Hard exercise 6-7 days/week</p></div>
-                         <div onclick="selectOption('activity', 'extra_active', this)" class="option-card glass-card p-4 rounded-xl cursor-pointer"><h3 class="font-semibold">Extra Active</h3><p class="text-sm text-gray-500">Hard physical job or athlete</p></div>
+                          <div onclick="selectOption('activity', 'very_active', this)" class="option-card glass-card p-4 rounded-xl cursor-pointer"><h3 class="font-semibold">Very Active</h3><p class="text-sm text-gray-500">Hard exercise 6-7 days/week</p></div>
+                          <div onclick="selectOption('activity', 'extra_active', this)" class="option-card glass-card p-4 rounded-xl cursor-pointer"><h3 class="font-semibold">Extra Active</h3><p class="text-sm text-gray-500">Hard physical job or athlete</p></div>
                     </div>
                     <button onclick="nextScreen()" id="btn-screen-3" class="w-full bg-primary-gradient text-white font-bold py-3 px-4 rounded-lg mt-8 hover:opacity-90 transition-opacity disabled:opacity-50" disabled>Continue</button>
                 </div>
@@ -154,10 +151,10 @@
 
                 <div id="screen-6" class="screen hidden text-center flex-col justify-center items-center h-full">
                     <div id="calculating" class="flex flex-col items-center justify-center">
-                         <svg class="animate-spin h-10 w-10 text-pink-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <svg class="animate-spin h-10 w-10 text-pink-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
+                          </svg>
                         <h2 class="text-xl font-semibold text-gray-800">Calculating your plan...</h2>
                     </div>
                     <div id="result-content" class="hidden w-full">
