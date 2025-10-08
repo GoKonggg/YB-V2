@@ -165,6 +165,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 400);
     };
 
+    const updateStreak = () => {
+    const today = new Date();
+    const todayKey = today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+    const yesterdayKey = yesterday.toISOString().split('T')[0];
+
+    let streakCount = parseInt(localStorage.getItem('streakCount')) || 0;
+    let lastLogDate = localStorage.getItem('lastLogDate');
+
+    if (lastLogDate === todayKey) {
+        // Jika sudah log hari ini, jangan lakukan apa-apa
+        return; 
+    }
+
+    if (lastLogDate === yesterdayKey) {
+        // Streak berlanjut
+        streakCount++;
+    } else {
+        // Streak putus, mulai dari 1
+        streakCount = 1;
+    }
+
+    localStorage.setItem('streakCount', streakCount);
+    localStorage.setItem('lastLogDate', todayKey);
+    
+    // Panggil fungsi untuk menampilkan pop-up jika milestone tercapai
+    checkStreakMilestone(streakCount);
+};
+
     const processNewFood = () => {
         const newFoodJSON = sessionStorage.getItem('newlyAddedFood');
         if (newFoodJSON) {
@@ -176,6 +207,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (dailyFood[newFood.meal]) {
                 dailyFood[newFood.meal].push(newFood);
                 saveFoodForDate(dateKey, dailyFood);
+
+                updateStreak();
             }
             
             sessionStorage.removeItem('newlyAddedFood');
@@ -183,6 +216,80 @@ document.addEventListener('DOMContentLoaded', () => {
             loadAndDisplayFoodForDate(currentDate);
         }
     };
+
+    // ... (di dalam diary.js)
+
+const checkStreakMilestone = (streakCount) => {
+    // Tampilkan pop-up jika streak adalah kelipatan 5, atau hari pertama
+    if (streakCount === 1 || (streakCount > 0 && streakCount % 5 === 0)) {
+        showStreakPopup(streakCount);
+    }
+}
+
+// Ganti/update fungsi showStreakPopup yang tadi
+
+const showStreakPopup = (streakCount) => {
+    const overlay = document.getElementById('streak-overlay');
+    const popup = document.getElementById('streak-popup');
+    const streakDays = document.getElementById('streak-days');
+    const closeBtn = document.getElementById('close-streak-btn');
+    const shareBtn = document.getElementById('share-streak-btn');
+    const shareableContent = document.getElementById('shareable-content'); // Div yang akan jadi gambar
+
+    if (!popup) return;
+
+    streakDays.textContent = streakCount;
+    overlay.classList.remove('hidden');
+    popup.classList.remove('hidden');
+
+    confetti({
+        particleCount: 150, // Jumlah partikel
+        spread: 90,         // Seberapa lebar sebarannya
+        origin: { y: 0.9 }  // Mulai dari bagian bawah layar
+    });
+
+    const closePopup = () => {
+        overlay.classList.add('hidden');
+        popup.classList.add('hidden');
+    };
+
+    closeBtn.onclick = closePopup;
+    overlay.onclick = closePopup;
+
+    shareBtn.onclick = async () => {
+        try {
+            const canvas = await html2canvas(shareableContent, { 
+                backgroundColor: null, // Agar background transparan jika ada
+                scale: 2 // Resolusi 2x lebih tinggi agar tidak pecah
+            }); 
+            
+            canvas.toBlob(async (blob) => {
+                const file = new File([blob], `streak-${streakCount}.png`, { type: 'image/png' });
+                const shareData = {
+                    files: [file],
+                    title: `I'm on a ${streakCount}-day streak!`,
+                    text: `I just hit a ${streakCount}-day food logging streak on FoodTracker! 🔥`,
+                };
+
+                // Cek apakah browser mendukung Web Share API untuk file
+                if (navigator.canShare && navigator.canShare(shareData)) {
+                    await navigator.share(shareData);
+                } else {
+                    // Fallback jika tidak bisa share: download gambar
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = `streak-${streakCount}.png`;
+                    link.click();
+                    alert("Image downloaded! You can share it manually from your gallery.");
+                }
+            }, 'image/png');
+
+        } catch (error) {
+            console.error('Oops, something went wrong!', error);
+            alert('Could not generate image to share.');
+        }
+    };
+};
     
     const loadAndDisplayFoodForDate = (date) => {
         const dateKey = formatDateKey(date);
