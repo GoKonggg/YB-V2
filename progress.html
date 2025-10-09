@@ -1,239 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Progress - Food Tracker</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-        }
-        .bg-primary-gradient {
-            background-image: linear-gradient(to right, #ec4899, #d946ef);
-        }
-        .text-primary-gradient {
-            background-image: linear-gradient(to right, #ec4899, #d946ef);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .form-input-custom {
-            background-color: rgba(229, 231, 235, 0.5);
-            border: none;
-            transition: box-shadow 0.2s;
-        }
-        .form-input-custom:focus {
-            box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.5);
-            outline: none;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Journey - Progress</title>
 
-        /* === CSS BARU UNTUK TEMPLATE KARTU SHARE === */
-        #share-card-template {
-            width: 350px; /* Lebar kartu */
-            aspect-ratio: 9 / 16; /* Rasio untuk Instagram Story */
-            background-image: linear-gradient(160deg, #fdf4f8 0%, #f6f4fe 100%);
-            font-family: 'Inter', sans-serif;
-            position: absolute; /* Posisikan di luar layar */
-            left: -9999px;
-            top: 0;
-            z-index: -1; /* Pastikan tidak mengganggu elemen lain */
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .glass-card { background: rgba(255, 255, 255, .6); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, .25) }
+    .bg-primary-gradient { background-image: linear-gradient(to right, #ec4899, #d946ef) }
+    .filter-btn { padding: 6px 14px; border-radius: 9999px; font-size: 0.875rem; font-weight: 600; color: #4b5563; background-color: rgba(255,255,255,.4); transition: all 0.2s ease-in-out; }
+    .filter-btn.active { color: #fff; background-image: linear-gradient(to right, #ec4899, #d946ef); box-shadow: 0 4px 15px -5px rgba(236, 72, 153, 0.7); }
+    #share-overlay { transition: opacity 0.3s ease-in-out; }
+    #share-popup { transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; }
+    .spinner { border: 4px solid rgba(0,0,0,.1); border-left-color: #a37d91; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .share-card-style { background-image: linear-gradient(to right bottom, #b9789a, #e617a7); color: white; }
+    .share-card-style h3, .share-card-style p { color: white !important; }
+    .share-card-style div[class*="border-dashed"] { border-color: rgba(51, 51, 51, 0.5) !important; color: rgba(255,255,255,0.8) !important; }
+     #share-sheet {
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
         }
-    </style>
+        .share-sheet-visible {
+            transform: translateY(0) !important;
+        }
+  </style>
 </head>
 <body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen p-4">
 
-    <div id="app-container" class="w-full max-w-md mx-auto bg-gray-50 rounded-2xl shadow-xl relative h-[800px] overflow-hidden">
+  <div id="app-container" class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden relative h-[800px]">
+    <div class="relative flex flex-col h-full bg-gray-50">
+      <div class="absolute top-0 -left-16 w-72 h-72 bg-pink-300 rounded-full opacity-30 filter blur-3xl"></div>
+      <div class="absolute bottom-0 -right-16 w-72 h-72 bg-purple-300 rounded-full opacity-30 filter blur-3xl"></div>
+      <div class="relative z-10 flex-grow overflow-y-auto pb-28 px-6 pt-8">
         
-        <div class="absolute top-0 -left-16 w-72 h-72 bg-pink-300 rounded-full opacity-30 filter blur-3xl"></div>
-        <div class="absolute bottom-0 -right-16 w-72 h-72 bg-purple-300 rounded-full opacity-30 filter blur-3xl"></div>
-
-        <div class="relative z-10 h-full flex flex-col p-6 pt-8">
-            <div class="flex-shrink-0 flex items-center mb-6">
-                <a href="diary.html" class="p-2 -ml-2 text-gray-600 hover:text-gray-900 rounded-full hover:bg-white/30 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                </a>
-                <h1 class="text-xl font-bold text-center flex-grow text-gray-900">Progress</h1>
-                <div class="w-10"></div> 
-            </div>
-
-            <div class="flex-shrink-0 mb-6 p-1 bg-gray-200/50 rounded-full flex items-center space-x-1">
-                <button data-tab="weight" class="tab-btn flex-1 text-center py-2 px-4 rounded-full text-sm font-semibold bg-white shadow text-pink-500 transition-all duration-300">Weight</button>
-                <button data-tab="measurement" class="tab-btn flex-1 text-center py-2 px-4 rounded-full text-sm font-semibold text-gray-500 transition-all duration-300">Measurement</button>
-                <button data-tab="share" class="tab-btn flex-1 text-center py-2 px-4 rounded-full text-sm font-semibold text-gray-500 transition-all duration-300">Share</button>
-            </div>
-
-            <div class="flex-grow overflow-y-auto -mr-4 pr-4">
-                <div id="weight-view" class="tab-content space-y-4">
-                    <div class="glass-card rounded-xl p-4">
-                        <div class="grid grid-cols-2 gap-4 text-center">
-                            <div>
-                                <p class="text-sm text-gray-600 mb-1">Latest Weight</p>
-                                <p id="latest-weight-display" class="text-3xl font-bold text-gray-900">-- kg</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-600 mb-1">Goal Weight</p>
-                                <p id="goal-weight-display" class="text-3xl font-bold text-primary-gradient">-- kg</p>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3 mt-4">
-                            <button id="set-goal-btn" class="bg-white/80 text-gray-800 font-semibold py-2.5 px-4 rounded-lg shadow-sm">Set Goal</button>
-                            <button id="update-weight-btn" class="bg-primary-gradient text-white font-semibold py-2.5 px-4 rounded-lg shadow-lg">Update Weight</button>
-                        </div>
-                    </div>
-                    <div class="glass-card rounded-xl p-4">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="font-bold text-gray-900">History & Trend</h2>
-                            <select id="history-filter" class="form-input-custom text-sm py-1 px-2 rounded-md">
-                                <option value="4w">Last 4 weeks</option>
-                                <option value="3m">Last 3 months</option>
-                                <option value="6m">Last 6 months</option>
-                                <option value="all">All Time</option>
-                            </select>
-                        </div>
-                        <div><canvas id="weight-chart"></canvas></div>
-                        <div class="mt-4 border-t border-gray-200/50 pt-3">
-                            <h3 class="font-semibold mb-2 text-gray-800">Weight History</h3>
-                            <div id="weight-history-list" class="max-h-40 overflow-y-auto space-y-2 pr-2"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="measurement-view" class="tab-content hidden space-y-4">
-                     <div class="glass-card rounded-xl p-4">
-                        <div class="flex justify-between items-center mb-4">
-                            <button id="prev-day-btn" class="p-2 rounded-full hover:bg-white/30 transition-colors text-gray-500">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                            </button>
-                            <h2 id="measurement-date-display" class="font-bold text-lg text-gray-900 cursor-pointer">Today</h2>
-                            <button id="next-day-btn" class="p-2 rounded-full hover:bg-white/30 transition-colors text-gray-500">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                            </button>
-                        </div>
-                        <div id="measurement-form" class="grid grid-cols-2 gap-x-4 gap-y-3">
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">Neck (cm)</label>
-                                <input type="number" step="0.1" name="neck" placeholder="--" class="form-input-custom w-full p-2 mt-1 rounded-md text-sm">
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">Waist (cm)</label>
-                                <input type="number" step="0.1" name="waist" placeholder="--" class="form-input-custom w-full p-2 mt-1 rounded-md text-sm">
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">Chest (cm)</label>
-                                <input type="number" step="0.1" name="chest" placeholder="--" class="form-input-custom w-full p-2 mt-1 rounded-md text-sm">
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">Hips (cm)</label>
-                                <input type="number" step="0.1" name="hips" placeholder="--" class="form-input-custom w-full p-2 mt-1 rounded-md text-sm">
-                            </div>
-                        </div>
-                        <button id="save-measurement-btn" class="w-full mt-4 bg-primary-gradient text-white font-semibold py-2.5 px-4 rounded-lg shadow-lg">Save Measurement</button>
-                    </div>
-                    <div class="glass-card rounded-xl p-4">
-                        <h2 class="font-bold mb-2 text-gray-900">Measurement History</h2>
-                        <div id="measurement-history-list" class="max-h-48 overflow-y-auto space-y-3 pr-2"></div>
-                    </div>
-                </div>
-
-                <div id="share-view" class="tab-content hidden space-y-4">
-                    </div>
-            </div>
-        </div>
-        
-        <div id="share-preview-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div id="share-modal-overlay" class="absolute inset-0 bg-gray-800/40 backdrop-blur-sm"></div>
-            <div class="glass-card rounded-xl p-6 w-full max-w-sm relative text-center">
-                <h2 class="text-lg font-bold mb-4 text-gray-900">Share Preview</h2>
-                <p class="text-xs text-gray-600 mb-4 -mt-2">This is how your achievement will look.</p>
-                <div class="flex items-center justify-center gap-4 mb-6">
-                    <div class="w-1/2">
-                        <img id="achievement-image-preview" src="" alt="Achievement Preview" class="rounded-lg shadow-md w-full">
-                    </div>
-                    <div class="w-1/2 flex flex-col items-center">
-                        <div id="qrcode-container" class="p-2 bg-white rounded-lg shadow-md"></div>
-                        <p class="text-xs text-gray-500 mt-2">Scan with your phone to share directly to Instagram!</p>
-                    </div>
-                </div>
-                <div class="space-y-2">
-                    <button id="download-achievement-btn" class="w-full bg-primary-gradient text-white font-bold py-2.5 px-4 rounded-lg shadow-lg">Download Image</button>
-                    <button class="w-full bg-gray-200 text-gray-500 font-semibold py-2.5 px-4 rounded-lg cursor-not-allowed">Share to Instagram (Mobile Only)</button>
-                </div>
-            </div>
+        <div class="flex justify-between items-center mb-8">
+          <h1 class="text-2xl font-bold text-gray-900">My Journey</h1>
+          <div id="filter-container" class="flex gap-2 p-1 glass-card rounded-full">
+            <button class="filter-btn active" data-range="30d">30D</button>
+            <button class="filter-btn" data-range="90d">90D</button>
+            <button class="filter-btn" data-range="all">All</button>
+          </div>
         </div>
 
-        <div id="update-weight-modal" class="hidden fixed inset-0 z-40 flex items-center justify-center p-4">
-             <div class="absolute inset-0 bg-gray-800/40 backdrop-blur-sm"></div>
-             <div class="glass-card rounded-xl p-6 w-full max-w-sm relative">
-                 <h2 class="text-lg font-bold mb-4 text-gray-900">Update Weight</h2>
-                 <div class="mb-4">
-                     <label class="font-semibold text-gray-800">Date</label>
-                     <input id="entry-date-input" type="date" class="form-input-custom w-full p-2 mt-1 rounded-md">
-                 </div>
-                 <div>
-                     <label class="font-semibold text-gray-800">Weight (kg)</label>
-                     <input id="new-weight-input" type="number" step="0.1" placeholder="e.g. 70.5" class="form-input-custom w-full p-2 mt-1 rounded-md">
-                 </div>
-                 <div class="flex justify-end gap-2 mt-6">
-                     <button id="cancel-update-btn" class="bg-gray-200/80 text-gray-800 font-semibold py-2 px-4 rounded-lg">Cancel</button>
-                     <button id="save-weight-btn" class="bg-primary-gradient text-white font-semibold py-2 px-4 rounded-lg">Save</button>
-                 </div>
+        <div class="grid grid-cols-3 gap-3 mb-6">
+          <div class="glass-card rounded-xl p-3 flex flex-col justify-center items-center text-center">
+             <p class="text-xs font-bold text-gray-700 mb-2">Diary Streak</p>
+             <div class="flex items-center gap-1">
+                <span class="text-2xl">🔥</span>
+                <p id="summary-diary-streak" class="text-2xl font-bold text-gray-900">0</p>
              </div>
-        </div>
-        
-        <div id="set-goal-modal" class="hidden fixed inset-0 z-40 flex items-center justify-center p-4">
-             <div class="absolute inset-0 bg-gray-800/40 backdrop-blur-sm"></div>
-             <div class="glass-card rounded-xl p-6 w-full max-w-sm relative">
-                 <h2 class="text-lg font-bold mb-4 text-gray-900">Set Your Goal Weight</h2>
-                 <label class="text-gray-800">Goal Weight (kg)</label>
-                 <input id="new-goal-input" type="number" step="0.1" placeholder="e.g. 65" class="form-input-custom w-full p-2 mt-1 rounded-md">
-                 <div class="flex justify-end gap-2 mt-6">
-                     <button id="cancel-goal-btn" class="bg-gray-200/80 text-gray-800 font-semibold py-2 px-4 rounded-lg">Cancel</button>
-                     <button id="save-goal-btn" class="bg-primary-gradient text-white font-semibold py-2 px-4 rounded-lg">Save</button>
-                 </div>
+          </div>
+          <div class="glass-card rounded-xl p-3 flex flex-col justify-center items-center text-center">
+             <p class="text-xs font-bold text-gray-700 mb-2">Journal Streak</p>
+             <div class="flex items-center gap-1">
+                <span class="text-2xl">✍️</span>
+                <p id="summary-journal-streak" class="text-2xl font-bold text-gray-900">0</p>
              </div>
+          </div>
+          <div class="glass-card rounded-xl p-3 flex flex-col justify-center items-center text-center">
+             <p class="text-xs font-bold text-gray-700 mb-2">Workouts <span id="workout-period">(30D)</span></p>
+              <div class="flex items-center gap-1">
+                <span class="text-2xl">💪</span>
+                <p id="summary-workouts" class="text-2xl font-bold text-gray-900">0</p>
+             </div>
+          </div>
         </div>
         
-        <nav class="absolute bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-sm z-30">
-            </nav>
+        <div class="glass-card rounded-xl p-4 mb-6">
+          <h3 class="font-bold text-gray-800 mb-2">Weight Progress</h3>
+          <div id="weight-chart-container" style="height: 200px;">
+            <canvas id="weightChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div class="glass-card rounded-xl p-4">
+            <h3 class="font-bold text-gray-800 mb-2">Macro Breakdown</h3>
+            <div id="nutrition-chart-container" style="height: 150px;" class="flex justify-center items-center">
+              <canvas id="nutritionChart"></canvas>
+            </div>
+          </div>
+          <div class="glass-card rounded-xl p-4">
+            <h3 class="font-bold text-gray-800 mb-2">Workout Frequency</h3>
+            <div id="workout-chart-container" style="height: 150px;" class="flex justify-center items-center">
+               <canvas id="workoutChart"></canvas>
+            </div>
+          </div>
+        </div>
+        
+        <div class="glass-card rounded-xl p-4 mb-6">
+          <h3 class="font-bold text-gray-800 mb-2">Personal Records</h3>
+          <div id="pr-list-container" class="space-y-2">
+            <p class="text-sm text-gray-500 text-center py-4">No records yet.</p>
+          </div>
+        </div>
 
+        <div id="progress-to-share-container" class="glass-card rounded-xl p-4 mb-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-gray-800">Compare Your Progress</h3>
+            <button id="share-progress-btn" class="text-gray-500 hover:text-pink-500 transition">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+            </button>
+          </div>
+          <div id="progress-card-content" class="grid grid-cols-2 gap-4">
+            <div class="flex flex-col items-center">
+              <div class="w-full h-32 border-2 border-dashed border-gray-400 rounded-lg flex items-center justify-center text-gray-500 text-sm">
+                Before Photo
+              </div>
+              <p id="before-date" class="text-xs text-gray-600 mt-2">-</p>
+              <p id="before-weight" class="text-sm font-bold text-gray-800">-</p>
+            </div>
+            <div class="flex flex-col items-center">
+              <div class="w-full h-32 border-2 border-dashed border-gray-400 rounded-lg flex items-center justify-center text-gray-500 text-sm">
+                After Photo
+              </div>
+              <p id="after-date" class="text-xs text-gray-600 mt-2">-</p>
+              <p id="after-weight" class="text-sm font-bold text-gray-800">-</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
-
-    <div id="share-card-template" class="p-8 flex flex-col text-gray-800">
-        <div class="flex items-center mb-6">
-            <div id="template-icon" class="w-12 h-12 rounded-lg flex items-center justify-center mr-4">
-                </div>
-            <div>
-                <p id="template-user-name" class="font-bold text-lg">Your Name</p>
-                <p class="text-xs text-gray-500">New Achievement</p>
-            </div>
+    <div id="menu-overlay" class="hidden"></div>
+    <div id="emblem-menu" class="hidden">
+            <a href="add-food.html" class="emblem-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                <span>Add Food</span>
+            </a>
+            <a href="progress.html" class="emblem-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                <span>Progress</span>
+            </a>
+            <a href="journal-parent.html" class="emblem-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                <span>Journal</span>
+            </a>
+             <a href="workout.html" class="emblem-item">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 3.03v.568c0 .334.148.65.405.864l1.068.89c.442.369.535 1.024.217 1.464l-.657.98c-.318.476-.945.642-1.464.325l-1.068-.89a.993.993 0 00-1.218 0l-1.068.89c-.519.317-1.146.15-1.464-.325l-.657-.98c-.318-.44-.225-1.095.217-1.464l1.068-.89a.993.993 0 00.405-.864v-.568a3 3 0 013-3c.954 0 1.84.464 2.404 1.224a2.998 2.998 0 01.596 2.776zM21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Workout</span>
+            </a>
+             <a href="challenge.html" class="emblem-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l1.8-2.4c.4-.5 1-.8 1.7-.8h.9c.7 0 1.3.3 1.7.8L17 6v13m-2-4h-4m-6-4h16"></path></svg>
+                <span>Challenge</span>
+            </a>
         </div>
+
+    <!-- Bottom nav -->
+    <nav class="absolute bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-sm z-20 glass-card grid grid-cols-5 items-center p-2 rounded-2xl">
+      <a href="community.html" class="flex flex-col items-center text-gray-600 py-1 hover:text-pink-500">
+        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zM21 13a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        <span class="text-xs">Community</span>
+      </a>
+      <a href="diary.html" class="flex flex-col items-center text-pink-500 py-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mb-1 rotate-180" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M5 3h4"/><path d="M7 3v12"/><path d="M4 15h6v3a3 3 0 0 1 -6 0v-3z"/><path d="M14 21v-3a3 3 0 0 1 6 0v3"/><path d="M17 21v-18"/></svg>
+        <span class="text-xs font-bold">Diary</span>
+      </a>
+      <button id="plus-button" class="bg-primary-gradient text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg -mt-6 transform hover:scale-110 transition-transform">
+        <svg class="w-8 h-8 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+      </button>
+      <a href="marketplace.html" class="flex flex-col items-center text-gray-600 py-1 hover:text-pink-500">
+        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        <span class="text-xs">Marketplace</span>
+      </a>
+      <a href="profile.html" class="flex flex-col items-center text-gray-600 py-1 hover:text-pink-500">
+        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        <span class="text-xs">Profile</span>
+      </a>
+    </nav>
+  </div>
+  
+ <div id="share-overlay" class="fixed inset-0 bg-black/70 hidden z-40" style="opacity: 0;"></div>
+
+    <div id="share-popup" class="fixed top-1/2 left-1/2 w-11/12 max-w-sm bg-[rgba(115,125,105,0.2)] p-6 rounded-3xl hidden z-50 transform -translate-x-1/2 -translate-y-1/2 scale-95 opacity-0 border border-white/10 shadow-2xl">
+        <h3 class="font-bold text-xl text-center text-white">✨ Your card is ready! ✨</h3>
+        <p class="text-sm text-center text-gray-400 mb-6">Share your achievement with friends.</p>
         
-        <div class="flex-grow flex flex-col items-center justify-center text-center">
-            <h1 id="template-title" class="text-5xl font-black text-primary-gradient leading-none">Title</h1>
-            <p id="template-subtitle" class="mt-2 text-gray-600">Subtitle goes here</p>
+        <div id="image-preview-container" class="rounded-lg mb-6 min-h-[150px] flex items-center justify-center">
+            <div id="loading-spinner" class="spinner"></div>
+            <img id="image-preview" src="" class="max-w-full rounded-xl shadow-lg hidden" style="box-shadow: 0 10px 30px rgba(236, 72, 153, 0.3);" alt="Progress Preview">
+        </div>
+
+        <div id="share-actions" class="hidden space-y-3">
+            <button id="native-share-btn" class="w-full bg-primary-gradient text-white font-bold py-3 px-4 rounded-xl hover:shadow-lg hover:shadow-pink-500/30 transition duration-300 flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" /></svg>
+                <span>Share Now</span>
+            </button>
             
-            <div id="template-stats" class="mt-8 flex items-end gap-4">
-                </div>
+            <a id="download-btn" class="w-full block text-center bg-transparent border border-white/30 text-white/80 font-semibold py-2 px-4 rounded-xl hover:bg-white/10 transition duration-300">Download Image</a>
         </div>
-        
-        <div class="text-center mt-auto">
-            <p class="text-sm font-bold bg-primary-gradient text-white py-1 px-3 rounded-full inline-block">MyFitApp</p>
-            <p class="text-xs text-gray-400 mt-2">Track your progress and reach your goals</p>
-        </div>
+
+        <button id="close-popup-btn" class="absolute -top-3 -right-3 bg-white/20 backdrop-blur-sm rounded-full h-8 w-8 flex items-center justify-center shadow-lg text-white hover:bg-white/40 transition">&times;</button>
     </div>
 
-    <script src="progress.js"></script>
-    <script src="main.js"></script> 
+<script src="main.js"></script>
+  <script src="progress.js" defer></script>
 </body>
 </html>
