@@ -41,44 +41,48 @@
 
       <!-- HEADER -->
       <header class="flex-shrink-0 px-6 pt-8 pb-4">
-        <div class="relative h-10">
-          <!-- Back (fixed at left) -->
-          <button id="back-btn"
-                  class="absolute left-0 top-1/2 -translate-y-1/2 p-2 text-gray-600 hover:text-pink-600 rounded-full hover:bg-pink-50 transition">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-            </svg>
-          </button>
+        <div class="flex items-center h-10">
+  <button id="back-btn" class="p-2 text-gray-600 hover:text-pink-600 rounded-full hover:bg-pink-50 transition">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+    </svg>
+  </button>
 
-          <!-- Title (centered) -->
-          <h1 class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 text-3xl font-bold text-gray-900">
-            My Journal
-          </h1>
-        </div>
+  <h1 id="greeting-header" class="flex-grow text-center text-3xl font-bold text-gray-900">
+    Good Morning!
+  </h1>
+
+  <div class="w-10"></div>
+</div>
         <p class="text-center text-gray-500 mt-1">Your personal space for reflection</p>
       </header>
 
       <!-- MAIN -->
       <main class="flex-grow flex flex-col justify-center px-6">
-        <div id="stats-container" class="grid grid-cols-3 gap-3 text-center">
-          <div class="stat-card p-4 rounded-xl flex flex-col justify-center">
-            <h2 id="streak-stat" class="text-3xl font-bold bg-clip-text text-transparent bg-primary-gradient">0</h2>
-            <p class="text-xs text-gray-600 font-medium mt-1 leading-tight">Longest Writing Streak</p>
-          </div>
-          <div class="stat-card p-4 rounded-xl flex flex-col justify-center">
-            <h2 id="words-stat" class="text-3xl font-bold text-pink-600">0</h2>
-            <p class="text-xs text-gray-600 font-medium mt-1 leading-tight">Total Words Written</p>
-          </div>
-          <div class="stat-card p-4 rounded-xl flex flex-col justify-center">
-            <h2 id="journals-year-stat" class="text-3xl font-bold text-purple-600">0</h2>
-            <p class="text-xs text-gray-600 font-medium mt-1 leading-tight">Entries in 2025</p>
-          </div>
-        </div>
+       <div id="stats-container" class="grid grid-cols-3 gap-3 text-center">
+    <div class="stat-card p-4 rounded-xl flex flex-col justify-center items-center">
+        <h2 id="streak-stat" class="text-3xl font-bold bg-clip-text text-transparent bg-primary-gradient">0</h2>
+        <p class="text-xs text-gray-600 font-medium mt-1 leading-tight">Current Streak</p>
+    </div>
+
+    <div class="stat-card p-4 rounded-xl flex flex-col justify-center items-center">
+        <h2 id="words-stat" class="text-3xl font-bold text-pink-600">0</h2>
+        <p class="text-xs text-gray-600 font-medium mt-1 leading-tight">Total Words Written</p>
+    </div>
+
+    <div class="stat-card p-4 rounded-xl flex flex-col justify-center items-center">
+        <h2 id="journals-year-stat" class="text-3xl font-bold text-purple-600">0</h2>
+        <p class="text-xs text-gray-600 font-medium mt-1 leading-tight">Entries in 2025</p>
+    </div>
+</div>
 
         <div id="empty-state-prompt" class="text-center my-auto">
-          <p class="text-gray-500 text-lg">Ready to begin your journey?</p>
-          <p class="text-gray-400 text-sm mt-1">Write your first journal and capture today's moments.</p>
-        </div>
+    <svg class="w-24 h-24 mx-auto text-gray-400 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+    </svg>
+    <p class="text-gray-500 text-lg font-medium">Your journal is waiting.</p>
+    <p class="text-gray-400 text-sm mt-1">Start your first entry and capture your thoughts.</p>
+</div>
       </main>
 
       <!-- FOOTER -->

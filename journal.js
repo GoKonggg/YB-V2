@@ -142,13 +142,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function openFontSizePrompt() {
+  // GANTI FUNGSI LAMA DENGAN INI
+// Ganti fungsi lama dengan versi yang lebih pintar ini
+function openFontSizePrompt() {
     window.dispatchEvent(new CustomEvent('pb:hidePopout'));
-    lockToolbarUI(true);
-    let size = prompt("Enter font size (px):", "16");
-    if (size && !isNaN(size)) wrapInline({ fontSize: `${size}px` });
-    lockToolbarUI(false);
-  }
+    
+    const modal = document.getElementById('fontsize-modal-overlay');
+    const input = document.getElementById('fontsize-input');
+    
+    if (!modal || !input) return;
+
+    // SEBELUM: input.value = '16';
+    // SESUDAH:
+    input.value = getCurrentFontSize(); // Ambil ukuran font saat ini
+
+    modal.classList.remove('hidden');
+    setTimeout(() => input.focus(), 50);
+}
   
   function hidePopout() {
     const pbPopout = document.getElementById('pb-popout');
@@ -274,7 +284,51 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     })();
   }
-  
+
+  function isSelectionOnText() {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) {
+        return false;
+    }
+
+    // Kasus 1: Pengguna sedang menyeleksi/mem-blok teks
+    // Kita cek apakah hasil seleksinya (setelah diubah jadi string) punya isi.
+    if (!selection.isCollapsed) {
+        return selection.toString().trim().length > 0;
+    }
+
+    // Kasus 2: Pengguna hanya mengklik (posisi kursor)
+    // Kita cek node tempat kursor berada.
+    const anchorNode = selection.anchorNode;
+    if (!anchorNode) {
+        return false;
+    }
+
+    // Cek apakah node tersebut punya konten teks yang berarti.
+    return anchorNode.textContent.trim().length > 0;
+}
+  function getCurrentFontSize() {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return '16'; // Default
+
+    let element = selection.anchorNode;
+    // Jika node adalah teks, ambil elemen induknya
+    if (element.nodeType === Node.TEXT_NODE) {
+        element = element.parentElement;
+    }
+
+    // Pastikan elemen berada di dalam editor kita
+    if (!editorEl() || !editorEl().contains(element)) {
+        return '16';
+    }
+
+    // Ambil style font-size yang sedang diterapkan
+    const style = window.getComputedStyle(element);
+    const fontSize = style.getPropertyValue('font-size');
+    
+    // Ambil angkanya saja dari "66px" -> 66
+    return parseInt(fontSize, 10) || '16';
+}
   function attachEditorListeners(ICON) {
     const ed = editorEl();
     const datePickerBtn = document.getElementById('date-picker-btn');
@@ -318,16 +372,28 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    document.addEventListener('click', (e) => {
-      const popout = document.getElementById('pb-popout');
-      const rail = document.getElementById('pb-rail');
-      if (popout && !popout.classList.contains('hidden') && !popout.contains(e.target) && !e.target.closest('.pb-group')) {
-        hidePopout();
-      }
-      if (rail && rail.classList.contains('open') && !rail.contains(e.target) && e.target !== pbToggle) {
-        closePbRail();
-      }
-    });
+// SESUDAH
+document.addEventListener('click', (e) => {
+  const popout = document.getElementById('pb-popout');
+  const rail = document.getElementById('pb-rail');
+  const editor = editorEl(); // Dapatkan referensi ke editor
+
+  if (popout && !popout.classList.contains('hidden') && !popout.contains(e.target) && !e.target.closest('.pb-group')) {
+    hidePopout();
+  }
+  
+  // Logika untuk menutup seluruh rail
+  if (
+    rail &&
+    rail.classList.contains('open') &&
+    !rail.contains(e.target) &&
+    !popout.contains(e.target) &&
+    !editor.contains(e.target) && // <-- KONDISI BARU: Pastikan klik bukan di dalam editor
+    e.target !== pbToggle
+  ) {
+    closePbRail();
+  }
+});
 
     window.addEventListener('pb:hidePopout', hidePopout);
     
@@ -519,7 +585,46 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target === calendarModalOverlay) calendarModalOverlay.classList.add('hidden');
   });
 
-  // --- INIT ---
-  renderEditor();
-  initializeCalendar();
+// --- LOGIKA UNTUK FONT SIZE MODAL ---
+const fontSizeModal = document.getElementById('fontsize-modal-overlay');
+const fontSizeInput = document.getElementById('fontsize-input');
+const applyBtn = document.getElementById('apply-fontsize');
+const cancelBtn = document.getElementById('cancel-fontsize');
+const incrementBtn = document.getElementById('increment-fontsize');
+const decrementBtn = document.getElementById('decrement-fontsize');
+
+function closeFontSizeModal() {
+    if (fontSizeModal) fontSizeModal.classList.add('hidden');
+}
+
+incrementBtn?.addEventListener('click', () => {
+    fontSizeInput.value = parseInt(fontSizeInput.value, 10) + 1;
+});
+
+decrementBtn?.addEventListener('click', () => {
+    const currentValue = parseInt(fontSizeInput.value, 10);
+    if (currentValue > 1) {
+        fontSizeInput.value = currentValue - 1;
+    }
+});
+
+applyBtn?.addEventListener('click', () => {
+    const size = fontSizeInput.value;
+    if (size && !isNaN(size)) {
+        wrapInline({ fontSize: `${size}px` });
+    }
+    closeFontSizeModal();
+});
+
+cancelBtn?.addEventListener('click', closeFontSizeModal);
+fontSizeModal?.addEventListener('click', (e) => {
+    if (e.target === fontSizeModal) {
+        closeFontSizeModal();
+    }
+});
+// --- END OF FONT SIZE MODAL LOGIC ---
+
+// --- INIT ---
+renderEditor();
+initializeCalendar();
 });

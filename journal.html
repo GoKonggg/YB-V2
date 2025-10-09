@@ -172,7 +172,7 @@
       <div class="absolute top-0 -left-16 w-72 h-72 bg-pink-300 rounded-full opacity-30 filter blur-3xl"></div>
       <div class="absolute bottom-0 -right-16 w-72 h-72 bg-purple-300 rounded-full opacity-30 filter blur-3xl"></div>
 
-      <div class="relative z-10 flex flex-col flex-grow">
+      <div class="relative z-10 flex flex-col flex-grow min-h-0">
         <!-- HEADER: back + date heading (NO "Journal" title, NO pink divider) -->
         <header class="flex-shrink-0 p-6 pt-8">
   <div class="relative h-10">
@@ -210,6 +210,23 @@
       <div id="calendar-container"></div>
     </div>
   </div>
+
+  <div id="fontsize-modal-overlay" class="hidden absolute inset-0 z-40 bg-white/20 backdrop-blur-sm flex items-center justify-center p-6 transition-opacity duration-300">
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-xs p-6">
+    <h3 class="text-lg font-bold text-gray-800 text-center mb-4">Set Font Size</h3>
+    
+    <div class="stepper-control">
+      <button id="decrement-fontsize" class="panel-button icon-only">-</button>
+      <input type="number" id="fontsize-input" value="16" class="field w-full">
+      <button id="increment-fontsize" class="panel-button icon-only">+</button>
+    </div>
+    
+    <div class="flex gap-3 mt-5">
+      <button id="cancel-fontsize" class="panel-button w-full justify-center">Cancel</button>
+      <button id="apply-fontsize" class="panel-button w-full justify-center">Apply</button>
+    </div>
+  </div>
+</div>
 
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="journal.js"></script>
