@@ -51,6 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const afterDate = document.getElementById('after-date');
     const afterWeight = document.getElementById('after-weight');
     const progressToShareContainer = document.getElementById('progress-to-share-container');
+    const newWeightInput = document.getElementById('new-weight-input');
+const addWeightBtn = document.getElementById('add-weight-btn');
     
     // Elemen Share
     const shareProgressBtn = document.getElementById('share-progress-btn');
@@ -62,6 +64,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const shareActions = document.getElementById('share-actions');
     const nativeShareBtn = document.getElementById('native-share-btn');
     const downloadBtn = document.getElementById('download-btn');
+
+    const openWeightModalBtn = document.getElementById('open-weight-modal-btn');
+const closeWeightModalBtn = document.getElementById('close-weight-modal-btn');
+const weightModalOverlay = document.getElementById('weight-modal-overlay');
+const weightModalPopup = document.getElementById('weight-modal-popup');
 
     // Variabel untuk menyimpan instance charts
     let weightChartInstance, nutritionChartInstance, workoutChartInstance;
@@ -92,6 +99,30 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         return filteredData;
     }
+
+    function openWeightModal() {
+    weightModalOverlay.classList.remove('hidden');
+    weightModalPopup.classList.remove('hidden');
+    
+    // Memberi sedikit waktu agar transisi CSS bisa berjalan
+    setTimeout(() => {
+        weightModalOverlay.style.opacity = '1';
+        weightModalPopup.style.opacity = '1';
+        weightModalPopup.style.transform = 'translate(-50%, -50%) scale(1)';
+        newWeightInput.focus(); // Langsung fokus ke input field
+    }, 10);
+}
+
+function closeWeightModal() {
+    weightModalOverlay.style.opacity = '0';
+    weightModalPopup.style.opacity = '0';
+    weightModalPopup.style.transform = 'translate(-50%, -50%) scale(0.95)';
+
+    setTimeout(() => {
+        weightModalOverlay.classList.add('hidden');
+        weightModalPopup.classList.add('hidden');
+    }, 300); // Waktu harus cocok dengan durasi transisi CSS
+}
 
     // === FUNGSI-FUNGSI RENDER ===
 
@@ -155,6 +186,50 @@ document.addEventListener('DOMContentLoaded', () => {
         html += '</ul>';
         prListContainer.innerHTML = html;
     }
+
+    // progress.js
+
+// ... (di area fungsi-fungsi render)
+
+function renderWeightStats(data) {
+    const startWeightEl = document.getElementById('start-weight');
+    const latestWeightEl = document.getElementById('latest-weight');
+    const weightChangeEl = document.getElementById('weight-change');
+
+    // Gunakan data asli (userProgress) untuk perbandingan start vs latest
+    const weightHistory = userProgress.weightHistory;
+
+    if (weightHistory.length === 0) {
+        startWeightEl.textContent = '- kg';
+        latestWeightEl.textContent = '- kg';
+        weightChangeEl.textContent = '- kg';
+        return;
+    }
+
+    const startWeight = weightHistory[0].weight;
+    const latestWeight = weightHistory[weightHistory.length - 1].weight;
+    
+    startWeightEl.textContent = `${startWeight.toFixed(1)} kg`;
+    latestWeightEl.textContent = `${latestWeight.toFixed(1)} kg`;
+
+    if (weightHistory.length > 1) {
+        const change = latestWeight - startWeight;
+        
+        // Atur teks dan warna berdasarkan perubahan
+        weightChangeEl.classList.remove('text-green-500', 'text-red-500');
+        if (change < 0) {
+            weightChangeEl.textContent = `${change.toFixed(1)} kg`;
+            weightChangeEl.classList.add('text-green-500');
+        } else if (change > 0) {
+            weightChangeEl.textContent = `+${change.toFixed(1)} kg`;
+            weightChangeEl.classList.add('text-red-500');
+        } else {
+            weightChangeEl.textContent = '0.0 kg';
+        }
+    } else {
+        weightChangeEl.textContent = '- kg';
+    }
+}
 
     function renderWeightChart(data) {
         if (weightChartInstance) {
@@ -403,11 +478,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    openWeightModalBtn.addEventListener('click', openWeightModal);
+closeWeightModalBtn.addEventListener('click', closeWeightModal);
+weightModalOverlay.addEventListener('click', closeWeightModal);
     closePopupBtn.addEventListener('click', closeSharePopup);
     shareOverlay.addEventListener('click', closeSharePopup);
 
     // === FUNGSI UTAMA & INISIALISASI ===
     function updateDashboard(data) {
+        renderWeightStats(data);
         renderConsistencyMetrics(data);
         renderPRs(data);
         renderWeightChart(data);
@@ -426,6 +505,37 @@ document.addEventListener('DOMContentLoaded', () => {
             updateDashboard(filteredData);
         }
     });
+
+    // MODIFIKASI listener yang sudah ada
+addWeightBtn.addEventListener('click', () => {
+    // ... (semua logika yang sudah ada untuk ambil value, validasi, push data, dll)
+    const newWeight = parseFloat(newWeightInput.value);
+    if (!newWeight || newWeight <= 0) {
+        alert('Please enter a valid weight.');
+        return;
+    }
+    const today = new Date().toISOString().slice(0, 10);
+    const todayEntryIndex = userProgress.weightHistory.findIndex(entry => entry.date === today);
+
+    if (todayEntryIndex !== -1) {
+        userProgress.weightHistory[todayEntryIndex].weight = newWeight;
+    } else {
+        userProgress.weightHistory.push({ date: today, weight: newWeight });
+    }
+    
+    userProgress.weightHistory.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    const activeFilter = document.querySelector('.filter-btn.active').dataset.range;
+    const updatedFilteredData = filterDataByRange(userProgress, activeFilter);
+    updateDashboard(updatedFilteredData);
+
+    newWeightInput.value = ''; 
+    confetti({ particleCount: 50, spread: 40, origin: { y: 0.8 } }); 
+    console.log("Updated weight history:", userProgress.weightHistory);
+
+    // << TAMBAHAN PENTING DI SINI >>
+    closeWeightModal(); // Tutup pop-up setelah berhasil
+});
 
     function initializeDashboard() {
         workoutPeriodEl.textContent = '(30D)';

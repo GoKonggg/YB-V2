@@ -34,6 +34,9 @@
         .share-sheet-visible {
             transform: translateY(0) !important;
         }
+    #weight-modal-overlay, #weight-modal-popup {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen p-4">
@@ -78,11 +81,33 @@
         </div>
         
         <div class="glass-card rounded-xl p-4 mb-6">
-          <h3 class="font-bold text-gray-800 mb-2">Weight Progress</h3>
-          <div id="weight-chart-container" style="height: 200px;">
-            <canvas id="weightChart"></canvas>
-          </div>
+    <h3 class="font-bold text-gray-800 mb-4">Weight Progress</h3>
+
+    <div class="grid grid-cols-3 gap-3 text-center mb-4">
+        <div>
+            <p class="text-xs font-semibold text-gray-600">Start</p>
+            <p id="start-weight" class="text-xl font-bold text-gray-800">- kg</p>
         </div>
+        <div>
+            <p class="text-xs font-semibold text-gray-600">Latest</p>
+            <p id="latest-weight" class="text-xl font-bold text-gray-800">- kg</p>
+        </div>
+        <div>
+            <p class="text-xs font-semibold text-gray-600">Change</p>
+            <p id="weight-change" class="text-xl font-bold text-gray-800">- kg</p>
+        </div>
+    </div>
+
+    <div class="mb-8">
+    <button id="open-weight-modal-btn" class="w-full text-center bg-transparent border-2 border-pink-400 text-pink-500 font-semibold py-3 px-4 rounded-lg hover:bg-pink-400 hover:text-white transition duration-200">
+    + Add Today's Weight
+</button>
+</div>
+    
+    <div id="weight-chart-container" style="height: 200px;">
+        <canvas id="weightChart"></canvas>
+    </div>
+</div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div class="glass-card rounded-xl p-4">
@@ -207,6 +232,32 @@
 
         <button id="close-popup-btn" class="absolute -top-3 -right-3 bg-white/20 backdrop-blur-sm rounded-full h-8 w-8 flex items-center justify-center shadow-lg text-white hover:bg-white/40 transition">&times;</button>
     </div>
+
+    <div id="weight-modal-overlay" class="fixed inset-0 bg-black/60 hidden z-40 transition-opacity duration-300"></div>
+
+<div id="weight-modal-popup" class="fixed top-1/2 left-1/2 w-11/12 max-w-xs bg-white p-6 rounded-2xl hidden z-50 transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300">
+    <h3 class="font-bold text-xl text-center text-slate-800 mb-1">Today's Weight</h3>
+    <p class="text-sm text-center text-slate-500 mb-6">Let's log your current progress!</p>
+    
+    <div class="flex items-baseline w-full mb-6">
+         <input 
+            type="number" 
+            id="new-weight-input"
+            placeholder=""
+            class="w-full bg-transparent text-slate-900 text-2xl text-center font-bold placeholder-slate-300 focus:outline-none"
+        />
+        <span class="text-lg font-semibold text-slate-400 ml-2">KG</span>
+    </div>
+
+    <button 
+        id="add-weight-btn"
+        class="w-full bg-primary-gradient text-white font-bold py-3 rounded-lg hover:scale-105 transition transform shadow-lg shadow-pink-500/30"
+    >
+        Add
+    </button>
+
+    <button id="close-weight-modal-btn" class="absolute -top-3 -right-3 bg-white/80 backdrop-blur-sm rounded-full h-8 w-8 flex items-center justify-center shadow-lg text-slate-600 hover:bg-white/100 transition">&times;</button>
+</div>
 
 <script src="main.js"></script>
   <script src="progress.js" defer></script>
